@@ -1,0 +1,5 @@
+// Domestic OR* Departures excl. ORBI (13xx)
+RANGE:1301:1377
+ADEP:OR
+NOTADEP:ORBI
+ADES:OR
