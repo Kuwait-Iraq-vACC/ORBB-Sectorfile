@@ -6,7 +6,10 @@ import shutil
 # Compiles shared data files into the TopSky plugin directory
 # ============================================================
 
-OUTPUT = 'ORBB/Plugins/TopSky/'
+OUTPUTS = [
+    'ORBB/Plugins/TopSky/',
+    'ORBB/Plugins/TopSky GRP/',
+]
 SHARED = '.data/TopSky Shared/'
 INDEX  = '.Index.txt'
 
