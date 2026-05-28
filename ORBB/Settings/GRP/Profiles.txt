@@ -1,0 +1,54 @@
+PROFILE
+PROFILE:<Initials>_OBS:100:0
+ATIS2:Levant vACC Observer
+ATIS3:Join the discord server discord.gg/PecYZgNkQx
+ATIS4:Welcome to the Levant vACC
+PROFILE:ORBI_TWR:40:4
+ATIS2:"Baghdad Tower"
+ATIS3:
+ATIS4:Welcome to the Levant vACC | Feedback - vats.im/cfb
+PROFILE:ORBI_GND:20:3
+ATIS2:"Baghdad Ground"
+ATIS3:
+ATIS4:Welcome to the Levant vACC | Feedback - vats.im/cfb
+PROFILE:ORBM_TWR:40:4
+ATIS2:"Mosul Tower"
+ATIS3:
+ATIS4:Welcome to the Levant vACC | Feedback - vats.im/cfb
+PROFILE:ORBM_GND:20:3
+ATIS2:"Mosul Ground"
+ATIS3:
+ATIS4:Welcome to the Levant vACC | Feedback - vats.im/cfb
+PROFILE:ORER_TWR:40:4
+ATIS2:"Erbil Tower"
+ATIS3:
+ATIS4:Welcome to the Levant vACC | Feedback - vats.im/cfb
+PROFILE:ORKK_TWR:40:4
+ATIS2:"Kirkuk Tower"
+ATIS3:
+ATIS4:Welcome to the Levant vACC | Feedback - vats.im/cfb
+PROFILE:ORKK_GND:20:3
+ATIS2:"Kirkuk Ground"
+ATIS3:
+ATIS4:Welcome to the Levant vACC | Feedback - vats.im/cfb
+PROFILE:ORMM_TWR:40:4
+ATIS2:"Basrah Tower"
+ATIS3:
+ATIS4:Welcome to the Levant vACC | Feedback - vats.im/cfb
+PROFILE:ORMM_GND:20:3
+ATIS2:"Basrah Ground"
+ATIS3:
+ATIS4:Welcome to the Levant vACC | Feedback - vats.im/cfb
+PROFILE:ORNI_TWR:40:4
+ATIS2:"Al-Najaf Tower"
+ATIS3:
+ATIS4:Welcome to the Levant vACC | Feedback - vats.im/cfb
+PROFILE:ORNI_GND:20:3
+ATIS2:"Al-Najaf Ground"
+ATIS3:
+ATIS4:Welcome to the Levant vACC | Feedback - vats.im/cfb
+PROFILE:ORSU_TWR:40:4
+ATIS2:"Sulaymaniyah Tower"
+ATIS3:
+ATIS4:Welcome to the Levant vACC | Feedback - vats.im/cfb
+END

@@ -1,0 +1,54 @@
+Settings	alias	\ORBB\Alias\alias.txt
+Settings	sector
+Settings	SettingsfileSYMBOLOGY	\ORBB\Settings\Symbology.txt
+Settings	SettingsfileVOICE	\ORBB\Settings\VoiceChannels.txt
+Settings	SettingsfilePROFILE	\ORBB\Settings\Profiles.txt
+Settings	SettingsfileTAGS	\ORBB\Settings\Tags.txt
+Settings	SettingsfileSIL	\ORBB\Settings\Lists.txt
+Settings	SettingsfileSEL	\ORBB\Settings\Lists.txt
+Settings	SettingsfileDEP	\ORBB\Settings\Lists.txt
+Settings	SettingsfileARR	\ORBB\Settings\Lists.txt
+Settings	SettingsfileFP	\ORBB\Settings\Lists.txt
+Settings	SettingsfilePLUGINS	\ORBB\Settings\Plugins.txt
+Settings	Settingsfile	\ORBB\Settings\General.txt
+Settings	SettingsfileSCREEN	\ORBB\Settings\Screen.txt
+Settings	SettingsfileCONFLICT	\ORBB\Settings\Lists.txt
+Settings	SettingsfileVCCS	\ORBB\Settings\VCCS.txt
+Settings	AselKey	5111808
+Settings	FreqKey	3604480
+Settings	airlines	\ORBB\ICAO\ICAO_Airlines.txt
+Settings	airports	\ORBB\ICAO\ICAO_Airports.txt
+Settings	aircraft	\ORBB\ICAO\ICAO_Aircraft.txt
+Settings	airportcoords	\ORBB\NavData\icao.txt
+Settings	airways	\ORBB\NavData\airway.txt
+RecentFiles	Recent1	\ORBB\ASR\Baghdad ACC.asr
+ASRFastKeys	1	\ORBB\ASR\Baghdad ACC.asr
+Sounds	Sound0	\ORBB\Sounds\handoff_request.wav
+Sounds	Sound1	\ORBB\Sounds\handoff_accept.wav
+Sounds	Sound2	\ORBB\Sounds\conflict_alert.wav
+Sounds	Sound3	\ORBB\Sounds\radio_message.wav
+Sounds	Sound4	\ORBB\Sounds\private_message.wav
+Sounds	Sound5	\ORBB\Sounds\atc_message.wav
+Sounds	Sound6	\ORBB\Sounds\broadcast_message.wav
+Sounds	Sound7	\ORBB\Sounds\landline_request.wav
+Sounds	Sound8	\ORBB\Sounds\supervisor_message.wav
+Sounds	Sound9	\ORBB\Sounds\connected.wav
+Sounds	Sound10	\ORBB\Sounds\disconnected.wav
+Sounds	Sound11	\ORBB\Sounds\ongoing_request.wav
+Sounds	Sound12	\ORBB\Sounds\ongoing_accepted.wav
+Sounds	Sound13	\ORBB\Sounds\ongoing_refused.wav
+Sounds	Sound14	\ORBB\Sounds\ongoing_manual.wav
+Sounds	Sound15	\ORBB\Sounds\new_atis.wav
+Sounds	Sound16	\ORBB\Sounds\handoff_refused.wav
+Sounds	Sound17	\ORBB\Sounds\pointout.wav
+Sounds	Sound18	\ORBB\Sounds\startup.wav
+Plugins	Plugin0	\ORBB\Plugins\DiscordEuroScope\DiscordEuroscope.dll
+Plugins	Plugin1	\ORBB\Plugins\RDFPlugin\RDFPlugin.dll
+LastSession	atis_freq4	118000
+Plugins	Plugin1Display0	Ground Radar display
+Plugins	Plugin2	\ORBB\Plugins\TopSky\TopSky.dll
+Plugins	Plugin2Display0	Standard ES radar screen
+Plugins	Plugin1Display1	Standard ES radar screen
+Plugins	Plugin3	\ORBB\Plugins\GRplugin\GRplugin.dll
+Plugins	Plugin3Display0	Ground Radar display
+Settings	sector	\ORBB-Beta-Package_20251002185621-251001-0001.sct

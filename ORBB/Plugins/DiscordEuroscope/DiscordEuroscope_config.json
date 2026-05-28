@@ -1,0 +1,89 @@
+{
+    "discord_appid": "1383786715386347540",
+    "discord_presence_large_image_key" : "logo",
+    "discord_presence_small_image_key" : "",
+    "sweatbox_bypass" : false,
+    "states" : {
+        "idle": {
+            "presence_small_image_key": "",
+            "presence_large_image_key" : "",
+            "state" : "",
+            "details" : "Sleeping...",
+            "presence_small_image_text" : "",
+            "presence_large_image_text" : "Zzz"
+        },
+        "playback": {
+            "presence_small_image_key": "",
+            "presence_large_image_key" : "",
+            "state" : "",
+            "details" : "Playback",
+            "presence_small_image_text" : "",
+            "presence_large_image_text" : "Is it really that interesting..?"
+        },
+        "sweatbox": {
+            "presence_small_image_key": "",
+            "presence_large_image_key" : "",
+            "state" : "",
+            "details" : "Sweatbox",
+            "presence_small_image_text" : "",
+            "presence_large_image_text" : "Sweating..."
+        },
+        "direct": {
+            "presence_small_image_key": "",
+            "presence_large_image_key" : "",
+            "state" : "",
+            "details" : "",
+            "presence_small_image_text" : "",
+            "presence_large_image_text" : "",
+            
+            "if_observer" : {
+                "presence_small_image_key": "",
+                "presence_large_image_key" : "",
+                "state" : "Aircraft in range: {total_inrange}",
+                "details" : "Observing as {callsign}",
+                "presence_small_image_text" : "",
+                "presence_large_image_text" : ""
+            },
+            
+            "if_controller": {
+                "presence_small_image_key": "",
+                "presence_large_image_key" : "",
+                "state" : "Tracking ({current_tracked} of {total_inrange} ✈)",
+                "details" : "{rcallsign} {frequency}MHz",
+                "presence_small_image_text" : "Total tracks: {total_tracked}",
+                "presence_large_image_text" : "{callsign}",
+                "buttons": [
+                    {
+                        "label": "Join Us!",
+                        "url" : "https://discord.gg/PecYZgNkQx"
+                    }
+                ]
+            },
+            
+            "if_supervisor": {
+                "presence_small_image_key": "",
+                "presence_large_image_key" : "",
+                "state" : "",
+                "details" : "",
+                "presence_small_image_text" : "",
+                "presence_large_image_text" : ""
+            }
+        }
+    },
+    "buttons": [
+        {
+            "label": "Join Us!",
+            "url" : "https://discord.gg/PecYZgNkQx"
+        }
+    ],
+    "radio_callsigns": {
+        "config": {
+            "load_from_ese": false,
+            "path_to_ese" : "..\\..\\"
+        },
+        "custom_callsigns": {
+            "^HECC_CTR$": "Cairo Control Bandbox",
+            "^HECC_(\\d+)(?:_)CTR$" : "Cairo Control ACC $0"
+        }
+    }
+}

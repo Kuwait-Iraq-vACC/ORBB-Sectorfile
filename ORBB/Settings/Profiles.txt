@@ -1,0 +1,58 @@
+PROFILE
+PROFILE:<Initials>_OBS:100:0
+ATIS2:Levant vACC Observer
+ATIS3:Join the discord server discord.gg/PecYZgNkQx
+ATIS4:Welcome to the Levant vACC
+PROFILE:ORBI_DEP:150:5
+ATIS2:"Baghdad Approach"
+ATIS3:Covering the whole Baghdad TMA
+ATIS4:Welcome to the Levant vACC | Feedback - vats.im/cfb
+PROFILE:ORBI_APP:150:5
+ATIS2:"Baghdad Approach"
+ATIS3:Covering the whole Baghdad TMA
+ATIS4:Welcome to the Levant vACC | Feedback - vats.im/cfb
+PROFILE:ORKK_APP:150:5
+ATIS2:"Baghdad Approach"
+ATIS3:Covering the whole Kirkuk TMA
+ATIS4:Welcome to the Levant vACC | Feedback - vats.im/cfb
+PROFILE:ORMM_APP:150:5
+ATIS2:"Baghdad Approach"
+ATIS3:Covering the whole Ali TMA
+ATIS4:Welcome to the Levant vACC | Feedback - vats.im/cfb
+PROFILE:ORNI_APP:150:5
+ATIS2:"Baghdad Approach"
+ATIS3:Covering Ali TMA Sectors 1/2/3
+ATIS4:Welcome to the Levant vACC | Feedback - vats.im/cfb
+PROFILE:ORBB_1_CTR:500:6
+ATIS2:"Baghdad Control"
+ATIS3:Covering the Kirkuk Sector (ORER/ORKK/ORSU)
+ATIS4:Welcome to the Levant vACC | Feedback - vats.im/cfb
+PROFILE:ORBB_2_CTR:500:6
+ATIS2:"Baghdad Control"
+ATIS3:Covering the Central Sector (ORBI)
+ATIS4:Welcome to the Levant vACC | Feedback - vats.im/cfb
+PROFILE:ORBB_N_CTR:500:6
+ATIS2:"Baghdad Control"
+ATIS3:Covering the whole Baghdad FIR
+ATIS4:Welcome to the Levant vACC | Feedback - vats.im/cfb
+PROFILE:ORBB_S_CTR:500:6
+ATIS2:"Baghdad Control"
+ATIS3:Covering the Southern Baghdad FIR (ORNI/ORMM)
+ATIS4:Welcome to the Levant vACC | Feedback - vats.im/cfb
+PROFILE:ORBB_W_CTR:500:6
+ATIS2:"Baghdad Control"
+ATIS3:Covering the Western Baghdad FIR (No Airports)
+ATIS4:Welcome to the Levant vACC | Feedback - vats.im/cfb
+PROFILE:ORBB_U_CTR:500:6
+ATIS2:"Baghdad Control"
+ATIS3:Covering the whole Baghdad FIR above FL325
+ATIS4:Welcome to the Levant vACC | Feedback - vats.im/cfb
+PROFILE:ORBB_V_CTR:500:6
+ATIS2:"Baghdad Control"
+ATIS3:Covering the Southern Baghdad FIR above FL325
+ATIS4:Welcome to the Levant vACC | Feedback - vats.im/cfb
+PROFILE:ORBI_FMP:100:5
+ATIS2:"Baghdad Flow" - Flow management position
+ATIS3:Any questions, please ask me!
+ATIS4:Welcome to the Levant vACC | Feedback - vats.im/cfb
+END

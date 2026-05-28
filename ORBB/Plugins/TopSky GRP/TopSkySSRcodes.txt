@@ -1,0 +1,83 @@
+// File created for the Levant vACC (OLBB, OSTT, ORBB)
+// Developed and maintained by Joshua Ong - 1499880
+//
+// To be used on the VATSIM Network only
+
+// 1001 to 1077: Baghdad International IFR
+// 7201 to 7277: Baghdad International VFR
+
+// 1301 to 1377: Baghdad Domestic IFR
+// 7401 to 7477: Baghdad Domestic VFR
+
+// 7201 to 7277: Other Aerodromes International
+// 1301 to 1377: Other Aerodromes Domestic
+
+// 1001 to 1077: ACC Transitting IFR
+// 7201 to 7277: ACC Transitting VFR
+
+// 7201 to 7277: ACC Arrivals Inernational
+// 1301 to 1377: ACC Arrivals Domestic IFR
+// 7401 to 7477: ACC Arrivals Domestic VFR
+
+// Baghdad International IFR
+RANGE:1001:1077
+ADEP:ORBI
+NOTADES:OR
+IFR
+
+// Baghdad International VFR
+RANGE:7201:7277
+ADEP:ORBI
+NOTADES:OR
+VFR
+
+// Baghdad Domestic IFR
+RANGE:1301:1377
+ADEP:ORBI
+ADES:OR
+IFR
+
+// Baghdad Domestic VFR
+RANGE:7401:7477
+ADEP:ORBI
+ADES:OR
+VFR
+
+// Other Aerodromes International
+RANGE:7201:7277
+ADEP:OR
+NOTADES:OR
+
+// Other Aerodromes Domestic
+RANGE:1301:1377
+ADEP:OR
+ADES:OR
+
+// Area Control Centre Transitting IFR
+RANGE:1001:1077
+NOTADEP:OR
+NOTADES:OR
+IFR
+
+// Area Control Centre Transitting VFR
+RANGE:7201:7277
+NOTADEP:OR
+NOTADES:OR
+VFR
+
+// Area Control Centre Arrivals Inernational
+RANGE:7201:7277
+ADES:OR
+NOTADEP:OR
+
+// Area Control Centre Arrivals Domestic IFR
+RANGE:1301:1377
+ADEP:OR
+ADES:OR
+IFR
+
+// Area Control Centre Arrivals Domestic VFR
+RANGE:7401:7477
+ADEP:OR
+ADES:OR
+VFR

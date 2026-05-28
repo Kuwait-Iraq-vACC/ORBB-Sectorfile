@@ -1,0 +1,14 @@
+// File created for the Levant vACC (OLBB, OSTT, ORBB)
+// Developed and maintained by Joshua Ong - 1499880
+//
+// To be used on the VATSIM Network only
+
+QNHTL:OR:160,980,170
+
+INITIAL_CFL:6000
+CFL_ADEP:ORBI
+CFL_FRUL:I
+
+LEVELS:ORBI:10,20,27,30,36
+LEVELS:ORER:10,20,30,37,38
+LEVELS:ORMM:10,20,30,40,50,60,61,65

@@ -1,0 +1,43 @@
+// File created for the Levant vACC (OLBB, OSTT, ORBB)
+// Developed and maintained by Joshua Ong - 1499880
+//
+// To be used on the VATSIM Network only
+
+Setup_AutoSignIn=1
+
+Window_SM_LeaveHoldTime=3
+Window_SM_LowestLevel=30
+
+[_CTR]
+Window_SAP=1,1640,961
+Window_CARD=1,1458,715
+Window_MsgIn=1,1520,50
+Window_MsgOut=1,1520,100
+System_FPASD=1
+STCA_Coarse_Sep_Lat_U=5
+STCA_Coarse_Sep_Lat_L=5
+STCA_LinPred_Sep_Lat_U=4.5
+STCA_LinPred_Sep_Lat_L=4.5
+STCA_CurrProx_Sep_Lat_U=4.75
+STCA_CurrProx_Sep_Lat_L=4.75
+
+[_APP]
+STCA_Coarse_Sep_Lat_U=5
+STCA_Coarse_Sep_Lat_L=5
+STCA_LinPred_Sep_Lat_U=4.5
+STCA_LinPred_Sep_Lat_L=4.5
+STCA_CurrProx_Sep_Lat_U=4.75
+STCA_CurrProx_Sep_Lat_L=4.75
+Window_SAP=1,1640,961
+Window_CARD=1,1458,715
+System_FPASD=1
+MTCD=0
+
+[_TWR]
+MTCD=0
+
+[_GND]
+MTCD=0
+
+[_DEL]
+MTCD=0
