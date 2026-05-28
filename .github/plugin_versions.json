@@ -27,20 +27,6 @@
     "color": "blue",
     "repo": "MorpheusXAUT/IASsure"
   },
-  "MAESTRO": {
-    "schemaVersion": 1,
-    "label": "MAESTRO",
-    "message": "1.1",
-    "color": "blue",
-    "repo": "VATSIM-SSA/MAESTRO"
-  },
-  "PushbackFlorian": {
-    "schemaVersion": 1,
-    "label": "PushbackFlorian",
-    "message": "1.1.1",
-    "color": "blue",
-    "repo": "MorpheusXAUT/PushbackFlorian"
-  },
   "RDFPlugin": {
     "schemaVersion": 1,
     "label": "RDFPlugin",
@@ -82,12 +68,5 @@
     "message": "2.1.1",
     "color": "blue",
     "repo": "hpeter2/VFPC"
-  },
-  "test": {
-    "schemaVersion": 1,
-    "label": "test",
-    "message": "3.6.5",
-    "color": "blue",
-    "repo": "JYang365/a32nx"
   }
 }

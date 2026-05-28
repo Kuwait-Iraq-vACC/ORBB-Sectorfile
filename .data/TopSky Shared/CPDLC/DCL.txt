@@ -1,0 +1,2 @@
+[DCL]
+DCL:ORBI:*:<callsign> CLRD TO <ades> FPLN ROUTE OFF RWY <drwy> CLIMB <cfl> SQUAWK <assr> NEXT FREQ <freq_next><cr/lf><rmk>
