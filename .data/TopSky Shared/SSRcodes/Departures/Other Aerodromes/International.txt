@@ -1,0 +1,5 @@
+// International OR* Departures excl. ORBI (72xx)
+RANGE:7201:7277
+ADEP:OR
+NOTADEP:ORBI
+ADES:OR

@@ -1,0 +1,14 @@
+// IFR International ORBI Departures (10xx)
+RANGE:1001:1077
+ADEP:ORBI
+NOTADES:OR
+PRIORITY:1
+IFR
+
+// VFR International ORBI Departures (72xx)
+
+RANGE:7201:7277
+ADEP:ORBI
+NOTADES:OR
+PRIORITY:1
+VFR

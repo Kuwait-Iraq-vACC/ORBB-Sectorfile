@@ -1,0 +1,11 @@
+// IFR Domestic OR* Arrivals (13xx)
+RANGE:1301:1377
+NOTADEP:OR
+ADES:OR
+IFR
+
+// VFR Domestic OR* Arrivals (74xx)
+RANGE:7401:7477
+NOTADEP:OR
+ADES:OR
+VFR
