@@ -6,7 +6,10 @@ import shutil
 # Compiles shared data files into the GRplugin directory
 # ============================================================
 
-OUTPUTS = 'ORBB/Plugins/GRplugin/'
+OUTPUTS = [
+    'ORBB/Plugins/GRplugin/',
+    # 'ORBB/Plugins/GRplugin2/',  # Add more output paths here
+]
 SHARED   = '.data/GRplugin Shared/'
 DATAFILES = '.data/DataFiles/'
 INDEX    = '.Index.txt'
@@ -211,7 +214,9 @@ def copy_file(src, dst):
     if not os.path.exists(src):
         print(f'[WARN] Missing source: {src}')
         return
-    os.makedirs(os.path.dirname(dst), exist_ok=True)
+    parent = os.path.dirname(dst)
+    if parent:
+        os.makedirs(parent, exist_ok=True)
     shutil.copy(src, dst)
     print(f'[OK]   Copied {src} -> {dst}')
 

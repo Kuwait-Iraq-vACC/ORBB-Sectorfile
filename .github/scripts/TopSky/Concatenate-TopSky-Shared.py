@@ -8,7 +8,7 @@ import shutil
 
 OUTPUTS = [
     'ORBB/Plugins/TopSky/',
-    'ORBB/Plugins/TopSky GRP/',
+    # 'ORBB/Plugins/TopSky2/',  # Add more output paths here
 ]
 SHARED = '.data/TopSky Shared/'
 INDEX  = '.Index.txt'
@@ -31,13 +31,14 @@ def main():
 
 def copy_single_files():
     singles = {
-        'DataFiles/ICAO_Aircraft.json':  'ICAO_Aircraft.json',
-        'DataFiles/ICAO_Aircraft.txt':   'ICAO_Aircraft.txt',
-        'DataFiles/ICAO_Airlines.txt':   'ICAO_Airlines.txt',
-        'DataFiles/ICAO_Airports.txt':   'ICAO_Airports.txt',
+        'ICAO/ICAO_Aircraft.json':  'ICAO_Aircraft.json',
+        'ICAO/ICAO_Aircraft.txt':   'ICAO_Aircraft.txt',
+        'ICAO/ICAO_Airlines.txt':   'ICAO_Airlines.txt',
+        'ICAO/ICAO_Airports.txt':   'ICAO_Airports.txt',
     }
     for src, dst in singles.items():
-        copy_file(SHARED + src, OUTPUT + dst)
+        for output in OUTPUTS:
+            copy_file(SHARED + src, output + dst)
 
 
 # ============================================================
@@ -72,21 +73,23 @@ def compile_ssr_codes():
 
 def build(folder, output_name):
     """
-    Compiles all .txt files in a shared folder into a single output file.
+    Compiles all .txt files in a shared folder into a single output file,
+    then copies the result to all output directories.
     Uses .Index.txt for ordering if present; otherwise recurses
     subdirectories and loose files alphabetically.
     """
     src_folder = SHARED + folder
-    out_path   = OUTPUT + output_name
 
     files = get_file_list(src_folder, folder)
     if not files:
         print(f'[SKIP] No files found for {output_name}')
         return
 
-    os.makedirs(OUTPUT, exist_ok=True)
+    # Build into the first output, then copy to the rest
+    primary = OUTPUTS[0] + output_name
+    os.makedirs(OUTPUTS[0], exist_ok=True)
 
-    with open(out_path, 'wb') as out:
+    with open(primary, 'wb') as out:
         for relative_path in files:
             full_path = src_folder + relative_path
             if not os.path.exists(full_path):
@@ -96,8 +99,18 @@ def build(folder, output_name):
                 shutil.copyfileobj(f, out)
                 out.write(b'\n\n')
 
-    print(f'[OK]   Built {out_path} from {len(files)} file(s)')
+    print(f'[OK]   Built {primary} from {len(files)} file(s)')
 
+    for output in OUTPUTS[1:]:
+        os.makedirs(output, exist_ok=True)
+        dst = output + output_name
+        shutil.copy(primary, dst)
+        print(f'[OK]   Copied to {dst}')
+
+
+# ============================================================
+# File ordering
+# ============================================================
 
 def get_file_list(folder_path, folder_label):
     """
@@ -188,7 +201,9 @@ def copy_file(src, dst):
     if not os.path.exists(src):
         print(f'[WARN] Missing source: {src}')
         return
-    os.makedirs(os.path.dirname(dst), exist_ok=True)
+    parent = os.path.dirname(dst)
+    if parent:
+        os.makedirs(parent, exist_ok=True)
     shutil.copy(src, dst)
     print(f'[OK]   Copied {src} -> {dst}')
 
