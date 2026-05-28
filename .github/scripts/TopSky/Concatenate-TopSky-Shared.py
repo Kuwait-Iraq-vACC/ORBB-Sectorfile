@@ -101,27 +101,49 @@ def get_file_list(folder_path, folder_label):
     Returns an ordered list of relative file paths to compile.
     Priority:
       1. .Index.txt in the folder root (manual ordering)
+         Supports:
+           - Specific files:   CategoryDefinitions/CategoryDefs.txt
+           - Whole subfolders: Prohibited/
+         Files within a subfolder entry are sorted alphabetically.
       2. Auto-discovery: subdirs alphabetically, then loose root .txt files
     """
     index_path = folder_path + INDEX
 
     if os.path.exists(index_path):
-        return read_index(index_path, folder_label)
+        return read_index(index_path, folder_label, folder_path)
 
     return auto_discover(folder_path)
 
 
-def read_index(index_path, folder_label):
+def read_index(index_path, folder_label, folder_path):
     files = []
     with open(index_path, 'r') as f:
         for raw_line in f:
             line = raw_line.split('//')[0].strip()  # strip comments
             if not line:
                 continue
-            if '.' not in line:
-                print(f'[WARN] Skipped index entry (no extension): "{line}" in {index_path}')
-                continue
-            files.append(line)
+
+            if line.endswith('/'):
+                # Whole subfolder — discover all .txt files alphabetically
+                sub_path = folder_path + line
+                if not os.path.exists(sub_path):
+                    print(f'[WARN] Subfolder not found: {sub_path}')
+                    continue
+                sub_files = sorted(
+                    e.name for e in os.scandir(sub_path)
+                    if e.is_file() and e.name.endswith('.txt')
+                )
+                for f_name in sub_files:
+                    files.append(line + f_name)
+                print(f'[INFO] {line} expanded to {len(sub_files)} file(s)')
+
+            elif '.' in line:
+                # Specific file
+                files.append(line)
+
+            else:
+                print(f'[WARN] Skipped index entry (no extension or /): "{line}" in {index_path}')
+
     print(f'[INFO] {folder_label} using index ({len(files)} entries)')
     return files
 
