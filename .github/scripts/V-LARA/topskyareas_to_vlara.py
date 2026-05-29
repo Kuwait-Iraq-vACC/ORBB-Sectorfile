@@ -2,12 +2,8 @@
 """
 topskyareas_to_vlara.py
 -----------------------
-Reads TopSky area definition files (.txt) from one or more input
-directories and writes a single GeoJSON FeatureCollection to disk.
-
-Each .txt file may define a polygon using COORD lines, or a circle
-using a single CIRCLE line. Mixed use of both in the same file is
-not permitted.
+Converts TopSky area definition files (.txt) into a single GeoJSON
+FeatureCollection for use with V-LARA.
 
 Usage:
     python topskyareas_to_vlara.py \
@@ -21,46 +17,42 @@ Usage:
 
 import argparse
 import json
-import math
 import re
+import math
 import sys
 import traceback
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 # ---------------------------------------------------------------------------
-# Coordinate conversion
+# Coordinate parsing
 # ---------------------------------------------------------------------------
 
-# Matches DMS tokens such as N029.58.11.000 or E048.35.24.000
-_DMS_RE = re.compile(r'^([NSEW])(\d{1,3})\.(\d{1,2})\.(\d{1,2}(?:\.\d+)?)$')
+# Matches DMS tokens like N057.17.30.423 or W004.48.01.020
+DMS_RE = re.compile(r'^([NSEW])(\d{1,3})\.(\d{1,2})\.(\d{1,2}(?:\.\d+)?)$')
+
+# Matches bare coordinate lines like N032.20.28.000:E046.55.52.000
+BARE_COORD_RE = re.compile(
+    r'^([NSEW]\d{1,3}\.\d{1,2}\.\d{1,2}(?:\.\d+)?)'
+    r':'
+    r'([NSEW]\d{1,3}\.\d{1,2}\.\d{1,2}(?:\.\d+)?)$'
+)
 
 
 def dms_to_decimal(token: str) -> float:
-    """
-    Convert a DMS coordinate token to decimal degrees.
-    Hemisphere S and W produce negative values.
-    """
-    match = _DMS_RE.match(token.strip())
-    if not match:
-        raise ValueError(f"Unrecognised coordinate token: {token!r}")
-    hemi, deg, mnt, sec = match.groups()
-    value = int(deg) + int(mnt) / 60.0 + float(sec) / 3600.0
+    """Convert a DMS token (e.g. N052.28.00.000) to decimal degrees."""
+    m = DMS_RE.match(token.strip())
+    if not m:
+        raise ValueError(f"Invalid coordinate format: {token!r}")
+    hemi, d, mnt, sec = m.groups()
+    val = int(d) + int(mnt) / 60.0 + float(sec) / 3600.0
     if hemi in ('S', 'W'):
-        value = -value
-    return value
+        val = -val
+    return val
 
 
-def _parse_flexible(token: str) -> float:
-    """Accept plain decimal degrees or DMS format."""
-    try:
-        return float(token)
-    except ValueError:
-        return dms_to_decimal(token)
-
-
-def coord_pair(lat_token: str, lon_token: str) -> List[float]:
-    """Return [longitude, latitude] as required by GeoJSON."""
+def parse_coord_pair(lat_token: str, lon_token: str) -> List[float]:
+    """Return [lon, lat] for GeoJSON (longitude first)."""
     return [dms_to_decimal(lon_token), dms_to_decimal(lat_token)]
 
 
@@ -68,118 +60,111 @@ def coord_pair(lat_token: str, lon_token: str) -> List[float]:
 # Circle approximation
 # ---------------------------------------------------------------------------
 
-_EARTH_RADIUS_NM = 3440.065
+EARTH_RADIUS_NM = 3440.065  # mean Earth radius in nautical miles
 
 
-def _dest_point(lat: float, lon: float, bearing: float, dist_nm: float):
-    """
-    Compute the destination point on a sphere given an origin (decimal degrees),
-    a bearing (decimal degrees) and a distance (nautical miles).
-    Returns (latitude, longitude) in decimal degrees.
-    """
-    lat_r = math.radians(lat)
-    lon_r = math.radians(lon)
-    brg_r = math.radians(bearing)
-    ang   = dist_nm / _EARTH_RADIUS_NM
+def _to_rad(d: float) -> float:
+    return d * math.pi / 180.0
 
-    sin_lat = math.sin(lat_r)
-    cos_lat = math.cos(lat_r)
-    sin_ang = math.sin(ang)
-    cos_ang = math.cos(ang)
 
-    sin_lat2 = sin_lat * cos_ang + cos_lat * sin_ang * math.cos(brg_r)
-    lat2     = math.asin(sin_lat2)
-    lon2     = lon_r + math.atan2(
-        math.sin(brg_r) * sin_ang * cos_lat,
-        cos_ang - sin_lat * sin_lat2,
-    )
+def _to_deg(r: float) -> float:
+    return r * 180.0 / math.pi
+
+
+def _dest_point(lat_deg: float, lon_deg: float, bearing_deg: float, dist_nm: float):
+    """Compute destination point from origin, bearing and distance (spherical)."""
+    lat1 = _to_rad(lat_deg)
+    lon1 = _to_rad(lon_deg)
+    brg  = _to_rad(bearing_deg)
+    ang  = dist_nm / EARTH_RADIUS_NM
+
+    sin1, cos1 = math.sin(lat1), math.cos(lat1)
+    sin_a, cos_a = math.sin(ang), math.cos(ang)
+
+    sin2 = sin1 * cos_a + cos1 * sin_a * math.cos(brg)
+    lat2 = math.asin(sin2)
+    lon2 = lon1 + math.atan2(math.sin(brg) * sin_a * cos1, cos_a - sin1 * sin2)
     lon2 = (lon2 + math.pi) % (2 * math.pi) - math.pi
-    return math.degrees(lat2), math.degrees(lon2)
+    return _to_deg(lat2), _to_deg(lon2)
 
 
-def circle_to_ring(
-    center_lat: float, center_lon: float,
-    radius_nm: float, spacing_deg: float,
-) -> List[List[float]]:
-    """
-    Approximate a circle as a closed GeoJSON polygon ring.
-    Points are generated every `spacing_deg` degrees around the centre.
-    """
+def _parse_latlon_token(token: str) -> float:
+    """Accept either plain decimal or DMS format."""
+    try:
+        return float(token)
+    except ValueError:
+        return dms_to_decimal(token)
+
+
+def _circle_ring(center_lat: float, center_lon: float,
+                 radius_nm: float, spacing_deg: float) -> List[List[float]]:
+    """Approximate a circle as a closed polygon ring."""
     if not (0.1 <= radius_nm <= 9999.9):
-        raise ValueError(f"Circle radius out of range: {radius_nm} NM")
+        raise ValueError(f"Radius out of bounds: {radius_nm}")
     if not (0.1 <= spacing_deg <= 120.0):
-        raise ValueError(f"Circle spacing out of range: {spacing_deg} deg")
+        raise ValueError(f"Spacing out of bounds: {spacing_deg}")
 
-    n    = max(3, math.ceil(360.0 / spacing_deg))
+    n    = max(3, int(math.ceil(360.0 / spacing_deg)))
     step = 360.0 / n
     ring = []
     for i in range(n):
         lat, lon = _dest_point(center_lat, center_lon, i * step, radius_nm)
         ring.append([lon, lat])
-    ring.append(ring[0])  # close
+    ring.append(ring[0])  # close the ring
     return ring
 
 
 def parse_circle_line(line: str) -> List[List[float]]:
-    """Parse a CIRCLE:Lat:Lon:Radius:Spacing definition line."""
+    """Parse a CIRCLE:Lat:Lon:Radius:Spacing line."""
     parts = [p.strip() for p in line.split(':')]
     if len(parts) != 5 or parts[0].upper() != 'CIRCLE':
-        raise ValueError(f"Malformed CIRCLE line: {line!r}")
-    return circle_to_ring(
-        center_lat  = _parse_flexible(parts[1]),
-        center_lon  = _parse_flexible(parts[2]),
-        radius_nm   = float(parts[3]),
-        spacing_deg = float(parts[4]),
-    )
+        raise ValueError(f"Invalid CIRCLE line: {line!r}")
+    lat        = _parse_latlon_token(parts[1])
+    lon        = _parse_latlon_token(parts[2])
+    radius_nm  = float(parts[3])
+    spacing_deg = float(parts[4])
+    return _circle_ring(lat, lon, radius_nm, spacing_deg)
 
 
 # ---------------------------------------------------------------------------
-# Altitude helpers
+# Altitude / FL helpers
 # ---------------------------------------------------------------------------
 
-def parse_fl(value: str) -> int:
-    """
-    Parse a flight level string to an integer.
-    SFC and GND map to 0; UNL and UNLIMITED map to 999.
-    """
-    normalised = value.strip().upper()
-    if normalised in ('SFC', 'GND'):
+def fl_value(s: str) -> int:
+    """Convert a FL string, SFC or UNL to a numeric value."""
+    s = s.strip().upper()
+    if s in ('SFC', 'GND'):
         return 0
-    if normalised in ('UNL', 'UNLIMITED'):
+    if s in ('UNL', 'UNLIMITED'):
         return 999
-    return int(normalised)
+    return int(s)
 
 
 # ---------------------------------------------------------------------------
-# Area file parser
+# File parser
 # ---------------------------------------------------------------------------
 
 def parse_area_file(path: Path, fallback_type: str) -> Dict[str, Any]:
     """
-    Parse a single TopSky area definition file.
+    Parse a single TopSky area .txt file.
 
-    Returns a dictionary with the following keys:
-        name            str   – area identifier
-        type            str   – airspace category
-        lowerFL         int   – lower flight level limit
-        upperFL         int   – upper flight level limit
-        coords          list  – list of [lon, lat] pairs (closed ring)
-        activePermanent bool  – True if ACTIVE:1 is set
+    Returns a dict with keys:
+        name, type, lowerFL, upperFL, coords, activePermanent
     """
-    name:             Optional[str]         = None
-    area_type:        Optional[str]         = None
-    lower_fl:         Optional[int]         = None
-    upper_fl:         Optional[int]         = None
-    poly_coords:      List[List[float]]     = []
-    circle_coords:    List[List[float]]     = []
-    has_coord_lines                         = False
-    has_circle_line                         = False
-    active_permanent                        = False
+    name            = None
+    a_type          = None
+    lower_fl        = None
+    upper_fl        = None
+    coords: List[List[float]]        = []
+    circle_coords: List[List[float]] = []
+    saw_coords      = False
+    saw_circle      = False
+    active_permanent = False
 
     try:
         with path.open('r', encoding='utf-8', errors='ignore') as fh:
-            for raw_line in fh:
-                line = raw_line.strip()
+            for raw in fh:
+                line = raw.strip()
                 if not line or line.startswith(';'):
                     continue
 
@@ -190,69 +175,60 @@ def parse_area_file(path: Path, fallback_type: str) -> Dict[str, Any]:
 
                 elif line.startswith('CATEGORY:'):
                     _, val = line.split(':', 1)
-                    area_type = val.strip()
+                    a_type = val.strip()
 
                 elif line.startswith('LIMITS:'):
                     parts = line.split(':')
                     if len(parts) >= 3:
-                        lower_fl = parse_fl(parts[1])
-                        upper_fl = parse_fl(parts[2])
+                        lower_fl = fl_value(parts[1])
+                        upper_fl = fl_value(parts[2])
 
-                # Handle coordinates with OR without COORD: prefix
                 elif line.startswith('COORD:'):
-                    if has_circle_line:
-                        raise ValueError(
-                            f"{path.name}: cannot mix COORD and CIRCLE lines"
-                        )
-                    # Remove 'COORD:' prefix and process
-                    coord_line = line[6:].strip()
-                    parts = coord_line.split(':')
-                    if len(parts) >= 2:
-                        poly_coords.append(
-                            coord_pair(parts[0].strip(), parts[1].strip())
-                        )
-                        has_coord_lines = True
-
-                # Handle coordinate lines without COORD: prefix (direct coordinates)
-                elif re.match(r'^[NS]\d{3}\.\d{2}\.\d{2}\.\d{3}:[EW]\d{3}\.\d{2}\.\d{2}\.\d{3}', line):
-                    if has_circle_line:
-                        raise ValueError(
-                            f"{path.name}: cannot mix COORD and CIRCLE lines"
-                        )
+                    if saw_circle:
+                        raise ValueError(f"{path}: mixed CIRCLE and COORD lines are not allowed")
                     parts = line.split(':')
-                    if len(parts) >= 2:
-                        poly_coords.append(
-                            coord_pair(parts[0].strip(), parts[1].strip())
-                        )
-                        has_coord_lines = True
+                    if len(parts) >= 3:
+                        coords.append(parse_coord_pair(parts[1].strip(), parts[2].strip()))
+                        saw_coords = True
 
                 elif line.startswith('CIRCLE:'):
-                    if has_coord_lines:
-                        raise ValueError(
-                            f"{path.name}: cannot mix COORD and CIRCLE lines"
-                        )
-                    circle_coords   = parse_circle_line(line)
-                    has_circle_line = True
+                    if saw_coords:
+                        raise ValueError(f"{path}: mixed COORD and CIRCLE lines are not allowed")
+                    circle_coords = parse_circle_line(line)
+                    saw_circle = True
 
                 elif line.startswith('ACTIVE:'):
                     _, val = line.split(':', 1)
                     if val.strip() == '1':
                         active_permanent = True
 
+                else:
+                    # Bare coordinate line: N032.20.28.000:E046.55.52.000
+                    # Used by MOA files (no COORD: prefix)
+                    bare = BARE_COORD_RE.match(line)
+                    if bare:
+                        if saw_circle:
+                            raise ValueError(
+                                f"{path.name}: cannot mix CIRCLE and bare coordinate lines"
+                            )
+                        coords.append(parse_coord_pair(bare.group(1), bare.group(2)))
+                        saw_coords = True
+
     except Exception as exc:
         print(f"WARNING: Error while parsing {path}: {exc}", file=sys.stderr)
         traceback.print_exc()
 
-    if has_circle_line:
+    if saw_circle:
         final_coords = circle_coords
     else:
-        final_coords = poly_coords
+        final_coords = coords
+        # Close the ring if not already closed
         if final_coords and final_coords[0] != final_coords[-1]:
             final_coords.append(final_coords[0])
 
     return {
         "name":            name or path.stem,
-        "type":            area_type or fallback_type,
+        "type":            a_type or fallback_type,
         "lowerFL":         lower_fl if lower_fl is not None else 0,
         "upperFL":         upper_fl if upper_fl is not None else 999,
         "coords":          final_coords,
@@ -261,63 +237,48 @@ def parse_area_file(path: Path, fallback_type: str) -> Dict[str, Any]:
 
 
 # ---------------------------------------------------------------------------
-# File collection
+# Directory walker
 # ---------------------------------------------------------------------------
 
-def collect_txt_files(directories: List[str]) -> List[Path]:
-    """Recursively collect all .txt files under the given directories."""
+def collect_files(input_dirs: List[str]) -> List[Path]:
+    """Recursively collect all .txt files from the given directories."""
     files: List[Path] = []
-    for directory in directories:
-        path = Path(directory)
-        if not path.exists():
-            print(f"WARNING: Skipping missing directory: {path}", file=sys.stderr)
+    for d in input_dirs:
+        p = Path(d)
+        if not p.exists():
+            print(f"⚠️  Skipping missing directory: {p}", file=sys.stderr)
             continue
-        files.extend(sorted(path.rglob('*.txt')))
+        files.extend(sorted(p.rglob('*.txt')))
     return files
 
 
 # ---------------------------------------------------------------------------
-# Main
+# Entry point
 # ---------------------------------------------------------------------------
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Convert TopSky area files to a V-LARA GeoJSON FeatureCollection."
+        description="Compile TopSky area files into a single V-LARA GeoJSON."
     )
     parser.add_argument(
         '--input-dir', action='append', required=True,
-        metavar='DIR',
-        help='Directory to scan for .txt files. May be specified multiple times.',
+        help='Input directory (repeat for multiple directories).'
     )
-    parser.add_argument(
-        '--output', required=True,
-        metavar='FILE',
-        help='Destination path for the output GeoJSON file.',
-    )
-    parser.add_argument(
-        '--debug', action='store_true',
-        help='Print additional diagnostic information.',
-    )
-    parser.add_argument(
-        '--include-active', action='store_true',
-        help='Include areas marked as permanently active (ACTIVE:1). By default they are skipped.',
-    )
+    parser.add_argument('--output', required=True, help='Output GeoJSON path.')
+    parser.add_argument('--debug', action='store_true', help='Verbose output.')
     args = parser.parse_args()
 
-    source_files = collect_txt_files(args.input_dir)
+    features: List[Dict[str, Any]] = []
+    input_files = collect_files(args.input_dir)
 
     if args.debug:
-        print(f"Located {len(source_files)} source file(s).")
+        print(f"Located {len(input_files)} source file(s).")
 
-    features: List[Dict[str, Any]] = []
+    for file_path in input_files:
+        fallback_type = file_path.parent.name
+        area = parse_area_file(file_path, fallback_type)
 
-    for file_path in source_files:
-        # Use the parent folder name as a fallback type (e.g. Danger, Restricted)
-        fallback = file_path.parent.name
-        area     = parse_area_file(file_path, fallback)
-
-        # Skip permanently active areas unless explicitly included
-        if not args.include_active and area['activePermanent']:
+        if area['activePermanent']:
             if args.debug:
                 print(f"Skipping {file_path.name} — marked as permanently active.")
             continue
@@ -341,18 +302,15 @@ def main() -> None:
             },
         })
 
-    output_path = Path(args.output)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
+    feature_collection = {"type": "FeatureCollection", "features": features}
+
+    out_path = Path(args.output)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
 
     try:
-        with output_path.open('w', encoding='utf-8') as fh:
-            json.dump(
-                {"type": "FeatureCollection", "features": features},
-                fh,
-                ensure_ascii=False,
-                indent=2,
-            )
-        print(f"GeoJSON written to {output_path} — {len(features)} feature(s) included.")
+        with out_path.open('w', encoding='utf-8') as fh:
+            json.dump(feature_collection, fh, ensure_ascii=False, indent=2)
+        print(f"GeoJSON written to {out_path} — {len(features)} feature(s) included.")
     except Exception as exc:
         print(f"ERROR: Could not write output file: {exc}", file=sys.stderr)
         sys.exit(1)
