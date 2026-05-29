@@ -197,15 +197,31 @@ def parse_area_file(path: Path, fallback_type: str) -> Dict[str, Any]:
                         lower_fl = parse_fl(parts[1])
                         upper_fl = parse_fl(parts[2])
 
+                # Handle coordinates with OR without COORD: prefix
                 elif line.startswith('COORD:'):
                     if has_circle_line:
                         raise ValueError(
                             f"{path.name}: cannot mix COORD and CIRCLE lines"
                         )
-                    parts = line.split(':')
-                    if len(parts) >= 3:
+                    # Remove 'COORD:' prefix and process
+                    coord_line = line[6:].strip()
+                    parts = coord_line.split(':')
+                    if len(parts) >= 2:
                         poly_coords.append(
-                            coord_pair(parts[1].strip(), parts[2].strip())
+                            coord_pair(parts[0].strip(), parts[1].strip())
+                        )
+                        has_coord_lines = True
+
+                # Handle coordinate lines without COORD: prefix (direct coordinates)
+                elif re.match(r'^[NS]\d{3}\.\d{2}\.\d{2}\.\d{3}:[EW]\d{3}\.\d{2}\.\d{2}\.\d{3}', line):
+                    if has_circle_line:
+                        raise ValueError(
+                            f"{path.name}: cannot mix COORD and CIRCLE lines"
+                        )
+                    parts = line.split(':')
+                    if len(parts) >= 2:
+                        poly_coords.append(
+                            coord_pair(parts[0].strip(), parts[1].strip())
                         )
                         has_coord_lines = True
 
@@ -281,6 +297,10 @@ def main() -> None:
         '--debug', action='store_true',
         help='Print additional diagnostic information.',
     )
+    parser.add_argument(
+        '--include-active', action='store_true',
+        help='Include areas marked as permanently active (ACTIVE:1). By default they are skipped.',
+    )
     args = parser.parse_args()
 
     source_files = collect_txt_files(args.input_dir)
@@ -295,7 +315,8 @@ def main() -> None:
         fallback = file_path.parent.name
         area     = parse_area_file(file_path, fallback)
 
-        if area['activePermanent']:
+        # Skip permanently active areas unless explicitly included
+        if not args.include_active and area['activePermanent']:
             if args.debug:
                 print(f"Skipping {file_path.name} — marked as permanently active.")
             continue
