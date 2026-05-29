@@ -14,6 +14,7 @@ Usage:
         --input-dir ".data/TopSky Shared/Areas/Danger" \
         --input-dir ".data/TopSky Shared/Areas/Prohibited" \
         --input-dir ".data/TopSky Shared/Areas/Restricted" \
+        --input-dir ".data/TopSky Shared/Areas/MOA" \
         --output ".data/V-LARA/orbb.geojson" \
         --debug
 """
