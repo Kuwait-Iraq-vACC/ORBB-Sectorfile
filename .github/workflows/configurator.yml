@@ -107,7 +107,12 @@ jobs:
           pip install pyinstaller
 
       - name: Compile executable
-        run: pyinstaller --distpath . scripts/configurator/configurator.spec
+        run: |
+          pyinstaller --onefile --windowed `
+            --add-data "logo.ico;." `
+            --icon logo.ico `
+            --name Configurator `
+            scripts/configurator/configurator.py
 
       - name: Commit executable
         run: |
