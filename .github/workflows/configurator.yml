@@ -56,14 +56,13 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~\AppData\Local\pip\Cache
-          key: ${{ runner.os }}-pip-${{ hashFiles('scripts/configurator/requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('.github/scripts/configurator/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
       - name: Install dependencies
         run: |
           pip install Pillow
-          pip install pytest
           pip install pyinstaller
 
       - name: Skip tests
@@ -78,15 +77,11 @@ jobs:
       needs.changes.outputs.source == 'true' &&
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main'
-    concurrency:
-      group: orbb-configurator-build-${{ github.ref }}
-      cancel-in-progress: true
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Pull latest changes
-        run: git pull --ff-only
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -97,7 +92,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~\AppData\Local\pip\Cache
-          key: ${{ runner.os }}-pip-${{ hashFiles('scripts/configurator/requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('.github/scripts/configurator/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
@@ -108,11 +103,13 @@ jobs:
 
       - name: Compile executable
         run: |
-          pyinstaller --onefile --windowed `
-            --add-data "logo.ico;." `
-            --icon logo.ico `
-            --name Configurator `
-            .github/scripts/configurator/configurator.py
+          cd .github/scripts/configurator
+          pyinstaller --onefile --windowed --name Configurator configurator.py
+          cd ../../..
+
+      - name: Move executable to root
+        run: |
+          Move-Item -Path ".github/scripts/configurator/dist/Configurator.exe" -Destination "." -Force
 
       - name: Commit executable
         run: |
