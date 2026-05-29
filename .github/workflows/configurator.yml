@@ -36,7 +36,8 @@ jobs:
         with:
           filters: |
             source:
-              - 'scripts/configurator/configurator.py'
+              - 'scripts/configurator/**'
+              - '.github/workflows/configurator.yml'
 
   # ── 2. Run tests (PRs and pushes to main) ───────────────────────────────────
   test:
