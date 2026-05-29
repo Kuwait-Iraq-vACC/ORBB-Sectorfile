@@ -5,7 +5,7 @@ on:
     branches:
       - "main"
     paths:
-      - "scripts/configurator/**"
+      - ".github/scripts/configurator/**"
       - ".github/workflows/configurator.yml"
   pull_request:
     branches:
