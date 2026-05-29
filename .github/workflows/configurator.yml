@@ -16,8 +16,6 @@ on:
 
 jobs:
 
-  # ── 1. Detect whether configurator.py itself changed ────────────────────────
-  # Only runs on push (not PRs). If only assets/tests changed we skip the build.
   changes:
     name: Detect source changes
     runs-on: ubuntu-latest
@@ -39,7 +37,6 @@ jobs:
               - '.github/scripts/configurator/**'
               - '.github/workflows/configurator.yml'
 
-  # ── 2. Run tests (PRs and pushes to main) ───────────────────────────────────
   test:
     name: Run tests
     runs-on: windows-latest
@@ -68,7 +65,6 @@ jobs:
       - name: Skip tests
         run: echo "No tests configured"
 
-  # ── 3. Build exe (push to main only, only when configurator.py changed) ─────
   build-exe:
     name: Build executable
     runs-on: windows-latest
@@ -104,12 +100,22 @@ jobs:
       - name: Compile executable
         run: |
           cd .github/scripts/configurator
-          pyinstaller --onefile --windowed --name Configurator configurator.py
+          pyinstaller --onefile --windowed `
+            --add-data "logo.ico;." `
+            --icon logo.ico `
+            --name Configurator `
+            configurator.py
           cd ../../..
 
       - name: Move executable to root
         run: |
-          Move-Item -Path ".github/scripts/configurator/dist/Configurator.exe" -Destination "." -Force
+          if (Test-Path ".github/scripts/configurator/dist/Configurator.exe") {
+            Move-Item -Path ".github/scripts/configurator/dist/Configurator.exe" -Destination "." -Force
+            Write-Host "Successfully moved Configurator.exe to root"
+          } else {
+            Write-Host "ERROR: Configurator.exe not found at .github/scripts/configurator/dist/Configurator.exe"
+            exit 1
+          }
 
       - name: Commit executable
         run: |

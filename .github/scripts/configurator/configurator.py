@@ -18,7 +18,10 @@ _original_init = simpledialog.Dialog.__init__
 def _custom_init(self, master, title=None):
     _original_init(self, master, title)
     try:
-        self.wm_iconbitmap(resource_path("logo.ico"))
+        # Try to load icon if it exists
+        icon_path = resource_path("logo.ico")
+        if os.path.exists(icon_path):
+            self.wm_iconbitmap(icon_path)
     except Exception:
         pass
 
@@ -28,8 +31,12 @@ simpledialog.Dialog.__init__ = _custom_init
 def resource_path(filename):
     """Path to a bundled resource (works frozen and unfrozen)."""
     if getattr(sys, 'frozen', False):
-        return os.path.join(sys._MEIPASS, filename)
-    return os.path.join(os.path.abspath("."), filename)
+        # PyInstaller creates a temp folder and stores files in _MEIPASS
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, filename)
 
 if getattr(sys, 'frozen', False):
     BASE_DIR = os.path.dirname(sys.executable)
@@ -39,8 +46,6 @@ else:
 OPTIONS_PATH = os.path.join(BASE_DIR, "controller_pack_config.json")
 
 # ── Structure JSON ─────────────────────────────────────────────────────────────
-# Default location relative to the exe.  Can be overridden by placing a
-# "structure_json_path" key inside controller_pack_config.json.
 DEFAULT_STRUCTURE_JSON = os.path.join(BASE_DIR, "ORBB", "Plugins", "structure.json")
 
 def get_structure_json_path():
@@ -67,32 +72,6 @@ def load_structure():
         return {}
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
-
-# ── Theme ──────────────────────────────────────────────────────────────────────
-def is_dark_theme_enabled():
-    try:
-        registry = winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER)
-        key = winreg.OpenKey(
-            registry,
-            r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"
-        )
-        value, _ = winreg.QueryValueEx(key, "AppsUseLightTheme")
-        return value == 0
-    except Exception:
-        return False
-
-def apply_azure_theme(root):
-    try:
-        style = ttk.Style()
-        theme_dir = resource_path("theme")
-        if "azure-light" not in style.theme_names():
-            root.tk.call("source", os.path.join(theme_dir, "light.tcl"))
-        if "azure-dark" not in style.theme_names():
-            root.tk.call("source", os.path.join(theme_dir, "dark.tcl"))
-        theme = "azure-dark" if is_dark_theme_enabled() else "azure-light"
-        style.theme_use(theme)
-    except Exception as e:
-        messagebox.showwarning("Theme Load Failed", f"Could not load Azure theme:\n{e}")
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
 def center_window(win):
@@ -143,7 +122,9 @@ def ask_string(prompt, default=""):
     result = None
     dialog = tk.Toplevel()
     try:
-        dialog.iconbitmap(resource_path("logo.ico"))
+        icon_path = resource_path("logo.ico")
+        if os.path.exists(icon_path):
+            dialog.iconbitmap(icon_path)
     except Exception:
         pass
     dialog.title("ORBB Configurator")
@@ -183,7 +164,9 @@ def ask_yesno(prompt, title="ORBB Configurator"):
     result = None
     dialog = tk.Toplevel()
     try:
-        dialog.iconbitmap(resource_path("logo.ico"))
+        icon_path = resource_path("logo.ico")
+        if os.path.exists(icon_path):
+            dialog.iconbitmap(icon_path)
     except Exception:
         pass
     dialog.title(title)
@@ -237,7 +220,9 @@ def ask_rating(current=None):
 
     dialog = tk.Toplevel()
     try:
-        dialog.iconbitmap(resource_path("logo.ico"))
+        icon_path = resource_path("logo.ico")
+        if os.path.exists(icon_path):
+            dialog.iconbitmap(icon_path)
     except Exception:
         pass
     dialog.minsize(300, 200)
@@ -257,12 +242,13 @@ def ask_rating(current=None):
 
 # ── Field prompts ──────────────────────────────────────────────────────────────
 FIELD_DESCRIPTIONS = {
-    "name":             "Enter your preferred name convention. (Code of Conduct A4(B))",
-    "initials":         "Enter your observer initials (e.g. AB, JS) (Code of Conduct A4(B)).",
-    "cid":              "Enter your CID.",
-    "rating":           "Select your controller rating.",
-    "password":         "Enter your password.",
-    "cpdlc":            "Enter your ACARS logon code."
+    "name":             "Enter your name as used on VATSIM (Code of Conduct A4b).",
+    "initials":         "Enter your 2–3 letter observer identifier (e.g. LB or JSM).",
+    "cid":              "Enter your VATSIM CID (6 or 7 digits).",
+    "rating":           "Select your current controller rating.",
+    "password":         "Enter your VATSIM password.",
+    "cpdlc":            "Enter your Hoppie CPDLC logon code (leave blank if you don't have one).",
+    "discord_presence": "Enable DiscordEuroscope plugin to show where you're controlling on Discord?",
 }
 
 def prompt_for_field(key, current):
@@ -286,12 +272,13 @@ def collect_basic_config():
     root = tk.Tk()
     root.title("ORBB Configurator")
     try:
-        root.iconbitmap(resource_path("logo.ico"))
+        icon_path = resource_path("logo.ico")
+        if os.path.exists(icon_path):
+            root.iconbitmap(icon_path)
     except Exception:
         pass
     root.withdraw()
     tk._default_root = root
-    apply_azure_theme(root)
 
     previous_options = load_previous_options()
     options = {}
