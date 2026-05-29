@@ -3,18 +3,14 @@ name: Build V-LARA GeoJSON [ORBB]
 on:
   push:
     paths:
-      - ".data/TopSky Shared/Areas/Danger/**/*.txt"
-      - ".data/TopSky Shared/Areas/Prohibited/**/*.txt"
-      - ".data/TopSky Shared/Areas/Restricted/**/*.txt"
+      - ".data/TopSky Shared/Areas/**/*.txt"
       - ".github/workflows/build-orbb-geojson.yml"
       - ".github/scripts/V-LARA/topskyareas_to_vlara.py"
       - ".github/scripts/V-LARA/validate_geojson.py"
       - ".github/scripts/V-LARA/summarise_geojson.py"
   pull_request:
     paths:
-      - ".data/TopSky Shared/Areas/Danger/**/*.txt"
-      - ".data/TopSky Shared/Areas/Prohibited/**/*.txt"
-      - ".data/TopSky Shared/Areas/Restricted/**/*.txt"
+      - ".data/TopSky Shared/Areas/**/*.txt"
       - ".github/workflows/build-orbb-geojson.yml"
       - ".github/scripts/V-LARA/topskyareas_to_vlara.py"
       - ".github/scripts/V-LARA/validate_geojson.py"
