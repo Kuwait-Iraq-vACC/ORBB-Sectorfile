@@ -105,7 +105,6 @@ jobs:
           > **Merge blocked** - This PR targets **AIRAC cycle $CYCLE** (effective $EFFECTIVE_DATE).
           >
           > The merge check will pass automatically once the cycle date arrives.
-          > You can [enable auto-merge](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/automatically-merging-a-pull-request) now - the PR will merge on its own once all checks pass.
           >
           > [View all PRs for AIRAC $CYCLE](https://github.com/$GH_REPO/pulls?q=is%3Apr+is%3Aopen+label%3A${LABEL})"
           else
