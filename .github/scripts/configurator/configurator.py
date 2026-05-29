@@ -35,7 +35,7 @@ def resource_path(filename):
         base_path = sys._MEIPASS
     else:
         base_path = os.path.abspath(".")
-
+    
     return os.path.join(base_path, filename)
 
 if getattr(sys, 'frozen', False):
@@ -102,10 +102,9 @@ DEFAULT_FIELDS = {
     "rating": "",
     "password": "",
     "cpdlc": "",
-    "discord_presence": "n",
 }
 
-BASIC_FIELDS = ["name", "initials", "cid", "rating", "password", "cpdlc", "discord_presence"]
+BASIC_FIELDS = ["name", "initials", "cid", "rating", "password", "cpdlc"]
 
 def load_previous_options():
     if os.path.exists(OPTIONS_PATH):
@@ -242,21 +241,18 @@ def ask_rating(current=None):
 
 # ── Field prompts ──────────────────────────────────────────────────────────────
 FIELD_DESCRIPTIONS = {
-    "name":             "Enter your name as used on VATSIM (Code of Conduct A4b).",
-    "initials":         "Enter your 2–3 letter observer identifier (e.g. LB or JSM).",
-    "cid":              "Enter your VATSIM CID (6 or 7 digits).",
-    "rating":           "Select your current controller rating.",
-    "password":         "Enter your VATSIM password.",
-    "cpdlc":            "Enter your Hoppie CPDLC logon code (leave blank if you don't have one).",
-    "discord_presence": "Enable DiscordEuroscope plugin to show where you're controlling on Discord?",
+    "name":             "Enter your preferred name convention. (Code of Conduct A4(B))",
+    "initials":         "Enter your observer initials (e.g. AB, JS) (Code of Conduct A4(B)).",
+    "cid":              "Enter your CID.",
+    "rating":           "Select your controller rating.",
+    "password":         "Enter your password.",
+    "cpdlc":            "Enter your ACARS logon code."
 }
 
 def prompt_for_field(key, current):
     desc = FIELD_DESCRIPTIONS.get(key, f"Enter {key.replace('_', ' ')}")
     if key == "rating":
         return ask_rating(current)
-    elif key == "discord_presence":
-        return "y" if ask_yesno(desc) else "n"
     else:
         while True:
             response = ask_string(desc, current)
@@ -363,78 +359,14 @@ def patch_prf_file(file_path, name, initials, cid, rating, password):
     except Exception as e:
         print(f"Failed to write {file_path}: {e}")
 
-
-def _resolve_discord_relpath(file_path: str) -> str:
-    prf_dir = Path(file_path).parent
-    for root in [prf_dir] + list(prf_dir.parents):
-        plugin_dir = root / "Data" / "Plugin"
-        if plugin_dir.exists():
-            dll_abs = plugin_dir / "DiscordEuroscope.dll"
-            rel = os.path.relpath(dll_abs, start=prf_dir).replace("/", "\\")
-            if not rel.startswith("\\"):
-                rel = "\\" + rel
-            return rel
-    return r"\..\Data\Plugin\DiscordEuroscope.dll"
-
-
-def patch_discord_plugin(file_path: str, state: str = "present"):
-    try:
-        with open(file_path, "r", encoding="utf-8") as f:
-            raw = f.read()
-    except Exception as e:
-        print(f"Failed to read {file_path}: {e}")
-        return
-
-    text = raw.replace("\r\n", "\n").replace("\r", "\n")
-    lines = text.split("\n")
-
-    if state == "absent":
-        new_lines = [l for l in lines if "DiscordEuroscope.dll" not in l]
-        if new_lines != lines:
-            with open(file_path, "w", encoding="utf-8", newline="\n") as f:
-                f.write("\n".join(new_lines).rstrip("\n") + "\n")
-        return
-
-    if any("DiscordEuroscope.dll" in l for l in lines):
-        return
-
-    plugin_rx = re.compile(r"^Plugins\tPlugin(\d+)\t")
-    last_idx, max_num = -1, 0
-    for i, line in enumerate(lines):
-        m = plugin_rx.match(line)
-        if m:
-            last_idx = i
-            try:
-                max_num = max(max_num, int(m.group(1)))
-            except ValueError:
-                pass
-
-    next_num = max_num + 1 if max_num else 1
-    dll_rel = _resolve_discord_relpath(file_path)
-    new_line = f"Plugins\tPlugin{next_num}\t{dll_rel}"
-
-    if last_idx >= 0:
-        lines.insert(last_idx + 1, new_line)
-    else:
-        if lines and lines[-1] != "":
-            lines.append("")
-        lines.append(new_line)
-
-    try:
-        with open(file_path, "w", encoding="utf-8", newline="\n") as f:
-            f.write("\n".join(lines).rstrip("\n") + "\n")
-    except Exception as e:
-        print(f"Failed to write {file_path}: {e}")
-
-
 def patch_profiles_file(file_path, cid):
     """
     Applies all replacements defined in the [profiles_replacements] section of
     controller_pack_config.json.
 
     Default replacement (always applied):
-        "Submit feedback at vats.im/atcfb"
-        → "Submit feedback at vatsim.uk/atcfb?cid=<CID>"
+        "Submit feedback at PLACEHOLDER"
+        → "Submit feedback at placeholder?cid=<CID>"
 
     You can add extra find/replace pairs to the saved config under
     "profiles_replacements", for example:
@@ -456,8 +388,8 @@ def patch_profiles_file(file_path, cid):
 
     # Built-in default replacement
     replacements = {
-        "Submit feedback at vats.im/atcfb":
-            f"Submit feedback at vatsim.uk/atcfb?cid={cid}"
+        "Submit feedback at PLACEHOLDER":
+            f"Submit feedback at placeholder?cid={cid}"
     }
 
     # Merge in any user-defined replacements from the saved config
@@ -475,14 +407,11 @@ def patch_profiles_file(file_path, cid):
     except Exception as e:
         print(f"Failed to write {file_path}: {e}")
 
-
 def patch_topsky_cpdlc(cpdlc_code):
     """Write the Hoppie code to all four TopSky CPDLC code files."""
     topsky_paths = [
-        "Data/Plugin/TopSky_iTEC/TopSkyCPDLChoppieCode.txt",
-        "Data/Plugin/TopSky_NERC/TopSkyCPDLChoppieCode.txt",
-        "Data/Plugin/TopSky_NODE/TopSkyCPDLChoppieCode.txt",
-        "Data/Plugin/TopSky_NOVA/TopSkyCPDLChoppieCode.txt",
+        "Data/Plugin/TopSky/TopSkyCPDLChoppieCode.txt",
+        "Data/Plugin/TopSkyGRP/TopSkyCPDLChoppieCode.txt",
     ]
     for rel_path in topsky_paths:
         full_path = os.path.join(BASE_DIR, rel_path)
@@ -493,9 +422,8 @@ def patch_topsky_cpdlc(cpdlc_code):
         except Exception as e:
             print(f"Failed to write {full_path}: {e}")
 
-
 # ── Main apply ─────────────────────────────────────────────────────────────────
-def apply_configuration(name, initials, cid, rating, password, cpdlc, discord_presence):
+def apply_configuration(name, initials, cid, rating, password, cpdlc):
     """Walk every subdirectory and patch all relevant files."""
     for root, _, files in os.walk(BASE_DIR):
         for file in files:
@@ -503,17 +431,12 @@ def apply_configuration(name, initials, cid, rating, password, cpdlc, discord_pr
 
             if file.endswith(".prf"):
                 patch_prf_file(path, name, initials, cid, rating, password)
-                if discord_presence == "y":
-                    patch_discord_plugin(path, state="present")
-                else:
-                    patch_discord_plugin(path, state="absent")
 
             elif file.endswith("Profiles.txt"):
                 patch_profiles_file(path, cid)
 
     # TopSky CPDLC files (written to fixed locations)
     patch_topsky_cpdlc(cpdlc)
-
 
 # ── Entry point ────────────────────────────────────────────────────────────────
 def main():
@@ -545,7 +468,6 @@ def main():
             rating=options["rating"],
             password=options["password"],
             cpdlc=options["cpdlc"],
-            discord_presence=options.get("discord_presence", "n"),
         )
 
         # 4. Persist options for next run
@@ -557,7 +479,6 @@ def main():
     finally:
         if os.path.exists(lockfile):
             os.remove(lockfile)
-
 
 if __name__ == "__main__":
     try:
