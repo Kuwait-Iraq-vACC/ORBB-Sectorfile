@@ -36,7 +36,7 @@ jobs:
         with:
           filters: |
             source:
-              - 'scripts/configurator/**'
+              - '.github/scripts/configurator/**'
               - '.github/workflows/configurator.yml'
 
   # ── 2. Run tests (PRs and pushes to main) ───────────────────────────────────
@@ -112,7 +112,7 @@ jobs:
             --add-data "logo.ico;." `
             --icon logo.ico `
             --name Configurator `
-            scripts/configurator/configurator.py
+            .github/scripts/configurator/configurator.py
 
       - name: Commit executable
         run: |
