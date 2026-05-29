@@ -17,6 +17,8 @@ jobs:
   compile:
     name: Compile TopSky Data Files
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -45,5 +47,6 @@ jobs:
             git commit -m "Compile TopSky data files | ${{ github.event.head_commit.message }}
 
             Co-authored-by: ${{ github.event.head_commit.author.name }} <${{ github.event.head_commit.author.email }}>"
+            git pull --rebase
             git push
           fi
