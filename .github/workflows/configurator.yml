@@ -60,7 +60,10 @@ jobs:
             ${{ runner.os }}-pip-
 
       - name: Install dependencies
-        run: pip install -r scripts/configurator/requirements.txt
+        run: |
+          pip install Pillow
+          pip install pytest
+          pip install pyinstaller
 
       - name: Run tests
         run: python -m pytest scripts/configurator/tests/
@@ -100,7 +103,9 @@ jobs:
             ${{ runner.os }}-pip-
 
       - name: Install dependencies
-        run: pip install -r scripts/configurator/requirements.txt
+        run: |
+          pip install Pillow
+          pip install pyinstaller
 
       - name: Compile executable
         run: pyinstaller --distpath . scripts/configurator/configurator.spec
