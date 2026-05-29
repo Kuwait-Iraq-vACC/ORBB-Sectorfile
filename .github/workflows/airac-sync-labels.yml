@@ -21,15 +21,9 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    permissions: {}
+    permissions:
+      contents: read
     steps:
-      - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          sparse-checkout: .github/airac-cycles.yml
-          sparse-checkout-cone-mode: false
-          persist-credentials: false
-
       - name: Generate GitHub token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         id: generate-token
@@ -37,11 +31,20 @@ jobs:
           client-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
-          repositories: vacs-data
+          repositories: ${{ github.event.repository.name }}
+
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          sparse-checkout: .github/airac-cycles.yml
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+          token: ${{ steps.generate-token.outputs.token }}
 
       - name: Sync labels
         env:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+          GH_REPO: ${{ github.repository }}
           MAX_UPCOMING: ${{ inputs.max_upcoming || 4 }}
         shell: bash
         run: |
@@ -64,36 +67,38 @@ jobs:
           # Keep only the next N upcoming cycles
           upcoming=("${upcoming[@]:0:$MAX_UPCOMING}")
 
-          # Now process all entries
+          # Process all entries
           while IFS=: read -r date cycle_raw; do
             [[ "$date" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || continue
             cycle=$(echo "$cycle_raw" | tr -d ' "')
             label="airac/$cycle"
 
             if [[ "$date" < "$CUTOFF_DATE" ]]; then
-              # Delete old labels if no open PRs reference them
-              if gh label view "$label" --json name &>/dev/null; then
-                open_prs=$(gh pr list --label "$label" --state open --json number --jq 'length')
+              # Delete stale labels with no open PRs
+              if gh label view "$label" --repo "$GH_REPO" --json name &>/dev/null; then
+                open_prs=$(gh pr list --repo "$GH_REPO" --label "$label" \
+                  --state open --json number --jq 'length')
                 if [[ "$open_prs" -eq 0 ]]; then
                   echo "Deleting stale label: $label (cycle date: $date)"
-                  gh label delete "$label" --yes
+                  gh label delete "$label" --repo "$GH_REPO" --yes
                 else
                   echo "Keeping stale label: $label ($open_prs open PRs)"
                 fi
               fi
             elif [[ " ${upcoming[*]} " == *" $date "* ]]; then
-              # Create/update labels only for the next N upcoming cycles
+              # Create/update labels for the next N upcoming cycles
               description="AIRAC $cycle - effective $date"
-              gh label create "$label" --color "$LABEL_COLOR" --description "$description" --force
+              gh label create "$label" --repo "$GH_REPO" \
+                --color "$LABEL_COLOR" --description "$description" --force
               echo "Synced label: $label"
             else
-              # Future cycle beyond the window, or past cycle within 90 days - delete if it exists
-              # (past-but-recent labels with open PRs are kept)
-              if gh label view "$label" --json name &>/dev/null; then
-                open_prs=$(gh pr list --label "$label" --state open --json number --jq 'length')
+              # Beyond the window - delete if no open PRs reference it
+              if gh label view "$label" --repo "$GH_REPO" --json name &>/dev/null; then
+                open_prs=$(gh pr list --repo "$GH_REPO" --label "$label" \
+                  --state open --json number --jq 'length')
                 if [[ "$open_prs" -eq 0 ]]; then
                   echo "Deleting out-of-window label: $label"
-                  gh label delete "$label" --yes
+                  gh label delete "$label" --repo "$GH_REPO" --yes
                 fi
               fi
             fi

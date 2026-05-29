@@ -1,4 +1,4 @@
-name: AIRAC
+name: AIRAC Gate
 
 on:
   pull_request:
@@ -19,15 +19,23 @@ jobs:
     permissions:
       contents: read
     steps:
+      - name: Generate GitHub token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        id: generate-token
+        with:
+          client-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+
       - name: Check AIRAC labels
         id: check
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
           GH_REPO: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          # Find any airac/* label on this PR
-          AIRAC_LABEL=$(gh pr view "$PR_NUMBER" --json labels \
+          AIRAC_LABEL=$(gh pr view "$PR_NUMBER" --repo "$GH_REPO" --json labels \
             --jq '.labels[].name | select(startswith("airac/"))' | head -1)
 
           if [[ -z "$AIRAC_LABEL" ]]; then
@@ -38,9 +46,9 @@ jobs:
 
           CYCLE="${AIRAC_LABEL#airac/}"
           echo "Found AIRAC label: $AIRAC_LABEL (cycle $CYCLE)"
-          echo "has_label=true" >> "$GITHUB_OUTPUT"
+          echo "has_label=true"  >> "$GITHUB_OUTPUT"
           echo "label=$AIRAC_LABEL" >> "$GITHUB_OUTPUT"
-          echo "cycle=$CYCLE" >> "$GITHUB_OUTPUT"
+          echo "cycle=$CYCLE"    >> "$GITHUB_OUTPUT"
 
       - name: Checkout cycles file
         if: steps.check.outputs.has_label == 'true'
@@ -49,6 +57,7 @@ jobs:
           sparse-checkout: .github/airac-cycles.yml
           sparse-checkout-cone-mode: false
           persist-credentials: false
+          token: ${{ steps.generate-token.outputs.token }}
 
       - name: Evaluate gate
         if: steps.check.outputs.has_label == 'true'
@@ -59,8 +68,8 @@ jobs:
         run: |
           TODAY=$(date -u +%Y-%m-%d)
 
-          # Look up the effective date for this cycle
-          EFFECTIVE_DATE=$(grep "\"$CYCLE\"" .github/airac-cycles.yml | cut -d: -f1 | tr -d ' ' || true)
+          EFFECTIVE_DATE=$(grep "\"$CYCLE\"" .github/airac-cycles.yml \
+            | cut -d: -f1 | tr -d ' ' || true)
 
           if [[ -z "$EFFECTIVE_DATE" ]]; then
             echo "::error::Label '$LABEL' references unknown AIRAC cycle '$CYCLE'. Check .github/airac-cycles.yml."
@@ -77,18 +86,8 @@ jobs:
             echo "AIRAC $CYCLE is effective ($EFFECTIVE_DATE <= $TODAY). Gate open."
           fi
 
-      - name: Generate GitHub token
-        if: steps.check.outputs.has_label == 'true' && github.event.pull_request.head.repo.full_name == github.repository
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-        id: generate-token
-        with:
-          client-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-          repositories: vacs-data
-
       - name: Post or update comment
-        if: steps.check.outputs.has_label == 'true' && github.event.pull_request.head.repo.full_name == github.repository
+        if: steps.check.outputs.has_label == 'true'
         env:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
           GH_REPO: ${{ github.repository }}
@@ -115,7 +114,6 @@ jobs:
           > **AIRAC cycle $CYCLE** is now effective ($EFFECTIVE_DATE). This PR is ready to merge!"
           fi
 
-          # Find existing bot comment
           COMMENT_ID=$(gh api "repos/$GH_REPO/issues/$PR_NUMBER/comments" \
             --jq ".[] | select(.body | startswith(\"$MARKER\")) | .id" | head -1)
 

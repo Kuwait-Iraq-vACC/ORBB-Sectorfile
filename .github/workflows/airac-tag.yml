@@ -14,10 +14,20 @@ jobs:
     permissions:
       contents: read
     steps:
+      - name: Generate GitHub token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        id: generate-token
+        with:
+          client-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
+          token: ${{ steps.generate-token.outputs.token }}
 
       - name: Check for AIRAC cycle
         id: check
@@ -26,7 +36,6 @@ jobs:
           TODAY=$(date -u +%Y-%m-%d)
           echo "Checking for AIRAC cycle on $TODAY..."
 
-          # Read YAML file and look for current date
           CYCLE=$(grep "^$TODAY:" .github/airac-cycles.yml | cut -d '"' -f 2 || true)
 
           if [[ -n "$CYCLE" ]]; then
@@ -36,65 +45,54 @@ jobs:
             echo "No AIRAC cycle found for today."
           fi
 
-      - name: Generate GitHub token
-        if: steps.check.outputs.cycle_name != ''
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-        id: generate-token
-        with:
-          client-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-          repositories: vacs-data
-
-      - name: Create AIRAC Tag
+      - name: Create AIRAC tag
         if: steps.check.outputs.cycle_name != ''
         env:
           CYCLE: ${{ steps.check.outputs.cycle_name }}
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+          GH_REPO: ${{ github.repository }}
         run: |
           TAG_NAME="airac-$CYCLE"
 
-          # Check if tag already exists
-          if gh api "repos/${{ github.repository }}/git/refs/tags/$TAG_NAME" --silent 2>/dev/null; then
-            echo "Tag $TAG_NAME already exists on remote, skipping."
+          if gh api "repos/$GH_REPO/git/refs/tags/$TAG_NAME" --silent 2>/dev/null; then
+            echo "Tag $TAG_NAME already exists, skipping."
             exit 0
           fi
 
-          echo "Creating verified tag $TAG_NAME"
+          echo "Creating annotated tag $TAG_NAME"
 
-          # Create an annotated tag object via the API
-          TAG_SHA=$(gh api "repos/${{ github.repository }}/git/tags" \
+          TAG_SHA=$(gh api "repos/$GH_REPO/git/tags" \
             -f tag="$TAG_NAME" \
             -f message="AIRAC cycle $CYCLE" \
             -f object="${{ github.sha }}" \
             -f type="commit" \
             --jq '.sha')
 
-          # Create the ref pointing to the annotated tag object
-          gh api "repos/${{ github.repository }}/git/refs" \
+          gh api "repos/$GH_REPO/git/refs" \
             -f ref="refs/tags/$TAG_NAME" \
             -f sha="$TAG_SHA"
 
-          echo "Created verified tag $TAG_NAME"
+          echo "Created tag $TAG_NAME"
 
       - name: Unlock AIRAC PRs
         if: steps.check.outputs.cycle_name != ''
         env:
           CYCLE: ${{ steps.check.outputs.cycle_name }}
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+          GH_REPO: ${{ github.repository }}
         shell: bash
         run: |
           LABEL="airac/$CYCLE"
+          MARKER="<!-- airac-gate-bot -->"
 
-          # Find all open PRs with this cycle's label
-          PR_NUMBERS=$(gh pr list --label "$LABEL" --state open --json number --jq '.[].number')
+          PR_NUMBERS=$(gh pr list --repo "$GH_REPO" --label "$LABEL" \
+            --state open --json number --jq '.[].number')
 
           if [[ -z "$PR_NUMBERS" ]]; then
             echo "No open PRs with label $LABEL"
             exit 0
           fi
 
-          MARKER="<!-- airac-gate-bot -->"
           COMMENT="$MARKER
           > [!TIP]
           > **AIRAC cycle $CYCLE is now effective.** This PR is ready to merge!
@@ -104,25 +102,22 @@ jobs:
           for pr in $PR_NUMBERS; do
             echo "Unlocking PR #$pr..."
 
-            # Remove the AIRAC label (triggers gate re-evaluation → pass)
-            gh pr edit "$pr" --remove-label "$LABEL"
+            gh pr edit "$pr" --repo "$GH_REPO" --remove-label "$LABEL"
 
-            # Update or post the bot comment
-            COMMENT_ID=$(gh api "repos/${{ github.repository }}/issues/$pr/comments" \
+            COMMENT_ID=$(gh api "repos/$GH_REPO/issues/$pr/comments" \
               --jq ".[] | select(.body | startswith(\"$MARKER\")) | .id" | head -1)
 
             if [[ -n "$COMMENT_ID" ]]; then
-              gh api "repos/${{ github.repository }}/issues/comments/$COMMENT_ID" \
+              gh api "repos/$GH_REPO/issues/comments/$COMMENT_ID" \
                 -X PATCH -f body="$COMMENT" --silent
             else
-              gh api "repos/${{ github.repository }}/issues/$pr/comments" \
+              gh api "repos/$GH_REPO/issues/$pr/comments" \
                 -f body="$COMMENT" --silent
             fi
 
-            # Check for merge conflicts
-            MERGEABLE=$(gh pr view "$pr" --json mergeable --jq '.mergeable')
+            MERGEABLE=$(gh pr view "$pr" --repo "$GH_REPO" --json mergeable --jq '.mergeable')
             if [[ "$MERGEABLE" == "CONFLICTING" ]]; then
-              gh pr comment "$pr" --body "> [!WARNING]
+              gh pr comment "$pr" --repo "$GH_REPO" --body "> [!WARNING]
           > This PR has **merge conflicts** that must be resolved before it can merge.
           > Please rebase or merge \`main\` into your branch and push to unblock auto-merge."
               echo "  PR #$pr has merge conflicts - notified author"
