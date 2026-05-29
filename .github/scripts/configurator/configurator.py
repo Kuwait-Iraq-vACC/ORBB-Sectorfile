@@ -257,13 +257,12 @@ def ask_rating(current=None):
 
 # ── Field prompts ──────────────────────────────────────────────────────────────
 FIELD_DESCRIPTIONS = {
-    "name":             "Enter your name as used on VATSIM (Code of Conduct A4b).",
-    "initials":         "Enter your 2–3 letter observer identifier (e.g. LB or JSM).",
-    "cid":              "Enter your VATSIM CID (6 or 7 digits).",
-    "rating":           "Select your current controller rating.",
-    "password":         "Enter your VATSIM password.",
-    "cpdlc":            "Enter your Hoppie CPDLC logon code (leave blank if you don't have one).",
-    "discord_presence": "Enable DiscordEuroscope plugin to show where you're controlling on Discord?",
+    "name":             "Enter your preferred name convention. (Code of Conduct A4(B))",
+    "initials":         "Enter your observer initials (e.g. AB, JS) (Code of Conduct A4(B)).",
+    "cid":              "Enter your CID.",
+    "rating":           "Select your controller rating.",
+    "password":         "Enter your password.",
+    "cpdlc":            "Enter your ACARS logon code."
 }
 
 def prompt_for_field(key, current):
