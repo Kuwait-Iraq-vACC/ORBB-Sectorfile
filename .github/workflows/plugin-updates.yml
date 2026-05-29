@@ -1,4 +1,4 @@
-name: 🔍 Check for Plugin Updates
+name: Check for Plugin Updates
 
 on:
   schedule:
