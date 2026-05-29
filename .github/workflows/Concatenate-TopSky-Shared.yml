@@ -1,4 +1,4 @@
-name: 🛰️ TopSky Data File Compiler
+name: 📡️ TopSky Shared Files Compiler
 
 on:
   push:

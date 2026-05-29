@@ -1,4 +1,4 @@
-name: 🗺️ GRplugin Data File Compiler
+name: 🗺️ GRplugin Shared Files Compiler
 
 on:
   push:
