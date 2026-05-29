@@ -461,7 +461,7 @@ def apply_configuration(options: dict) -> None:
 # ── Entry point ────────────────────────────────────────────────────────────────
 def main() -> None:
     lockfile = os.path.join(BASE_DIR, "configurator.lock")
-    if os.path.exists(lockfile):
+    if os.path.exists(lockfile)
         # Ensure a root window exists for messagebox
         _tmp = tk.Tk(); _tmp.withdraw()
         messagebox.showerror("Already Running", "The configurator is already running.")
