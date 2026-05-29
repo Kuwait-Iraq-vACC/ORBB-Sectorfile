@@ -20,17 +20,17 @@ jobs:
       REPO_NAME: ORBB-Sectorfile
 
     steps:
-      - name: 🧰 Checkout
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 📦 Install dependencies
+      - name: Install dependencies
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y jq gh
 
-      - name: 🔍 Check for new releases
+      - name: Check for new releases
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -120,7 +120,7 @@ jobs:
             jq --arg v "$display_version" '.message = $v' "$badge_file" > "$badge_file.tmp"
             mv "$badge_file.tmp" "$badge_file"
 
-            echo "🏷️  Badge updated for $plugin → $display_version"
+            echo "Badge updated for $plugin → $display_version"
           }
 
           update_version_file() {
@@ -160,7 +160,7 @@ jobs:
             pinned_tag=$(cut -f3 <<< "$row")
             allow_pre=$(cut -f4 <<< "$row")
 
-            echo "🔎 Checking $plugin ($repo) — pinned: $pinned_tag, allow_prerelease: $allow_pre"
+            echo "Checking $plugin ($repo) — pinned: $pinned_tag, allow_prerelease: $allow_pre"
 
             latest_tag=$(fetch_latest_tag "$repo" "$allow_pre")
 
@@ -168,11 +168,11 @@ jobs:
             latest_norm=$(printf '%s' "$latest_tag" | strip_v)
 
             if [[ "$latest_norm" == "$pinned_norm" || "$latest_tag" == "v0.0.0" ]]; then
-              echo "✅ $plugin is up to date ($pinned_tag)"
+              echo "$plugin is up to date ($pinned_tag)"
               continue
             fi
 
-            echo "🆕 Update found for $plugin: $pinned_tag → $latest_tag"
+            echo "Update found for $plugin: $pinned_tag → $latest_tag"
 
             # Update badge JSON and version file
             update_badge "$plugin" "$latest_tag"
@@ -181,17 +181,17 @@ jobs:
 
             # Create issue if one doesn't already exist
             if issue_already_exists "$repo" "$latest_tag"; then
-              echo "⏭️  Issue already open for $repo $latest_tag — skipping"
+              echo "Issue already open for $repo $latest_tag — skipping"
               continue
             fi
 
             create_issue "$plugin" "$repo" "$latest_tag"
-            echo "📝 Issue created for $plugin $latest_tag"
+            echo "Issue created for $plugin $latest_tag"
           done
 
           echo "CHANGES_MADE=$CHANGES_MADE" >> "$GITHUB_ENV"
 
-      - name: 📤 Commit and push badge updates
+      - name: Commit and push badge updates
         if: env.CHANGES_MADE == 'true'
         run: |
           git config user.name "github-actions[bot]"
