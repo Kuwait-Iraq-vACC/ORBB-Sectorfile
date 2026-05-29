@@ -1,0 +1,114 @@
+name: Compile Configurator.exe
+
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "scripts/configurator/**"
+      - ".github/workflows/configurator.yml"
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - "scripts/configurator/**"
+      - ".github/workflows/configurator.yml"
+
+jobs:
+
+  # ── 1. Detect whether configurator.py itself changed ────────────────────────
+  # Only runs on push (not PRs). If only assets/tests changed we skip the build.
+  changes:
+    name: Detect source changes
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    permissions:
+      contents: read
+    outputs:
+      source: ${{ steps.filter.outputs.source }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for source changes
+        uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            source:
+              - 'scripts/configurator/configurator.py'
+
+  # ── 2. Run tests (PRs and pushes to main) ───────────────────────────────────
+  test:
+    name: Run tests
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v5
+        with:
+          path: ~\AppData\Local\pip\Cache
+          key: ${{ runner.os }}-pip-${{ hashFiles('scripts/configurator/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: pip install -r scripts/configurator/requirements.txt
+
+      - name: Run tests
+        run: python -m pytest scripts/configurator/tests/
+
+  # ── 3. Build exe (push to main only, only when configurator.py changed) ─────
+  build-exe:
+    name: Build executable
+    runs-on: windows-latest
+    needs: [changes, test]
+    if: |
+      needs.changes.outputs.source == 'true' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main'
+    concurrency:
+      group: orbb-configurator-build-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.ORBB_GITHUB_TOKEN }}
+
+      - name: Pull latest changes
+        run: git pull --ff-only
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v5
+        with:
+          path: ~\AppData\Local\pip\Cache
+          key: ${{ runner.os }}-pip-${{ hashFiles('scripts/configurator/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: pip install -r scripts/configurator/requirements.txt
+
+      - name: Compile executable
+        run: pyinstaller --distpath . scripts/configurator/configurator.spec
+
+      - name: Commit executable
+        run: |
+          git config --local user.email "github-actions@users.noreply.github.com"
+          git config --local user.name "ORBB Automation"
+          git add Configurator.exe
+          git diff --staged --quiet || git commit -m "chore: update Configurator.exe [skip ci]"
+          git push
