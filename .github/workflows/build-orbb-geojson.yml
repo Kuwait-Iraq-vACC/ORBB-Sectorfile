@@ -1,0 +1,259 @@
+name: Build V-LARA GeoJSON [ORBB]
+
+on:
+  push:
+    paths:
+      - ".data/TopSky Shared/Areas/Danger/**/*.txt"
+      - ".data/TopSky Shared/Areas/Prohibited/**/*.txt"
+      - ".data/TopSky Shared/Areas/Restricted/**/*.txt"
+      - ".github/workflows/build-orbb-geojson.yml"
+      - ".github/scripts/V-LARA/topskyareas_to_vlara.py"
+      - ".github/scripts/V-LARA/validate_geojson.py"
+      - ".github/scripts/V-LARA/summarise_geojson.py"
+  pull_request:
+    paths:
+      - ".data/TopSky Shared/Areas/Danger/**/*.txt"
+      - ".data/TopSky Shared/Areas/Prohibited/**/*.txt"
+      - ".data/TopSky Shared/Areas/Restricted/**/*.txt"
+      - ".github/workflows/build-orbb-geojson.yml"
+      - ".github/scripts/V-LARA/topskyareas_to_vlara.py"
+      - ".github/scripts/V-LARA/validate_geojson.py"
+      - ".github/scripts/V-LARA/summarise_geojson.py"
+  workflow_dispatch: {}
+
+concurrency:
+  group: geojson-build-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  GEOJSON_OUT: .data/V-LARA/orbb.geojson
+  SCRIPT_PATH: ".github/scripts/V-LARA/topskyareas_to_vlara.py"
+  INPUT_DIRS: |
+    .data/TopSky Shared/Areas/Danger
+    .data/TopSky Shared/Areas/Prohibited
+    .data/TopSky Shared/Areas/Restricted
+
+jobs:
+  build:
+    name: Build GeoJSON
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.changed.outputs.changed }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Verify script exists
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -f "$SCRIPT_PATH" ]; then
+            echo "ERROR: Script not found at $SCRIPT_PATH" >&2
+            exit 1
+          fi
+          echo "Found script: $SCRIPT_PATH"
+
+      - name: Check input directories
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r d; do
+            [ -z "$d" ] && continue
+            if [ ! -d "$d" ]; then
+              echo "WARNING: Directory not found: $d" >&2
+            else
+              count=$(find "$d" -type f -name '*.txt' | wc -l)
+              echo "Found: $d ($count .txt file(s))"
+            fi
+          done <<< "$INPUT_DIRS"
+
+      - name: Build GeoJSON
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=()
+          while IFS= read -r d; do
+            [ -z "$d" ] && continue
+            args+=( --input-dir "$d" )
+          done <<< "$INPUT_DIRS"
+          python "$SCRIPT_PATH" "${args[@]}" --output "$GEOJSON_OUT" --debug
+
+      - name: Verify output file exists
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -f "$GEOJSON_OUT" ]; then
+            echo "ERROR: Expected output not found: $GEOJSON_OUT" >&2
+            exit 1
+          fi
+          ls -lh "$GEOJSON_OUT"
+
+      - name: Validate GeoJSON
+        shell: bash
+        run: |
+          set -euo pipefail
+          python ".github/scripts/V-LARA/validate_geojson.py"
+
+      - name: Write step summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python ".github/scripts/V-LARA/summarise_geojson.py" | tee -a "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          head -n 50 "$GEOJSON_OUT" >> "$GITHUB_STEP_SUMMARY" || true
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload artifact (pull requests only)
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: orbb-airspace-geojson
+          path: ${{ env.GEOJSON_OUT }}
+          if-no-files-found: error
+
+      - name: Detect changes (push only)
+        if: github.event_name == 'push'
+        id: changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -N "$GEOJSON_OUT" || true
+          if git diff --quiet -- "$GEOJSON_OUT"; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No changes to GeoJSON detected."
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "GeoJSON has changed."
+          fi
+
+      - name: Commit and push GeoJSON (push only)
+        if: github.event_name == 'push' && steps.changed.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$GEOJSON_OUT"
+          git commit -m "chore: rebuild ORBB V-LARA GeoJSON" || exit 0
+          BRANCH="${GITHUB_REF_NAME}"
+          for attempt in 1 2 3; do
+            echo "Push attempt $attempt..."
+            git pull --rebase origin "$BRANCH" || true
+            if git push origin "HEAD:$BRANCH"; then
+              echo "Push succeeded."
+              exit 0
+            fi
+            echo "Push failed. Retrying in 3s..."
+            sleep 3
+          done
+          echo "ERROR: Push failed after 3 attempts." >&2
+          exit 1
+
+      - name: Show last commit (always)
+        if: always()
+        shell: bash
+        run: git --no-pager log -1 --stat || true
+
+  submit-pr:
+    name: Submit PR to V-LARA upstream
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ secrets.LARA_DEPLOY_KEY }}
+      UPSTREAM: ottotuhkunen/virtual-lara-airspace-data
+      FORK: YOUR-ORG/virtual-lara-airspace-data
+      SOURCE_PATH: .data/V-LARA/orbb.geojson
+      DEST_PATH: data/orbb.geojson
+      BRANCH: auto/update-orbb-geojson
+    steps:
+      - name: Checkout ORBB-Sectorfile
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify GeoJSON exists
+        run: |
+          set -euo pipefail
+          if [ ! -f "$SOURCE_PATH" ]; then
+            echo "ERROR: Missing GeoJSON at $SOURCE_PATH" >&2
+            exit 1
+          fi
+          ls -lh "$SOURCE_PATH"
+
+      - name: Clone fork and push updated GeoJSON
+        run: |
+          set -euo pipefail
+          gh repo clone "$FORK" fork -- --depth=1
+          cd fork
+
+          if git remote get-url upstream >/dev/null 2>&1; then
+            git remote set-url upstream "https://github.com/${UPSTREAM}.git"
+          else
+            git remote add upstream "https://github.com/${UPSTREAM}.git"
+          fi
+
+          git fetch upstream --depth=1
+          git checkout -B "$BRANCH" "upstream/main"
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${FORK}.git"
+
+          mkdir -p "$(dirname "$DEST_PATH")"
+          cp "../$SOURCE_PATH" "$DEST_PATH"
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add "$DEST_PATH"
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Update ORBB GeoJSON from ${GITHUB_REPOSITORY}"
+
+          if git ls-remote --exit-code origin "refs/heads/${BRANCH}" >/dev/null 2>&1; then
+            git fetch origin "${BRANCH}" --depth=1 || true
+            git rebase "origin/${BRANCH}" || true
+          fi
+
+          for attempt in 1 2 3; do
+            if git push -u origin "$BRANCH" --force-with-lease; then
+              echo "Push succeeded."
+              break
+            fi
+            echo "Push failed. Retrying..."
+            git fetch origin "${BRANCH}" --depth=1 || true
+            git rebase "origin/${BRANCH}" || true
+            sleep 3
+          done
+
+      - name: Open or update upstream PR
+        run: |
+          set -euo pipefail
+          if gh pr view --repo "$UPSTREAM" --head "YOUR-ORG:${BRANCH}" >/dev/null 2>&1; then
+            gh pr comment --repo "$UPSTREAM" --head "YOUR-ORG:${BRANCH}" \
+              --body "Automated update from **${{ github.repository }}** on main."
+          else
+            gh pr create \
+              --repo "$UPSTREAM" \
+              --head "YOUR-ORG:${BRANCH}" \
+              --base "main" \
+              --title "Update ORBB GeoJSON" \
+              --body "Automated update of \`$DEST_PATH\` from **${{ github.repository }}** (main)."
+          fi
