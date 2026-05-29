@@ -1,112 +1,87 @@
-"""
-ORBB GNG Configurator
-Bootstraps its own dependencies, then configures EuroScope profiles.
-"""
-
-# ── Bootstrap: install Pillow if missing ──────────────────────────────────────
-import importlib, subprocess, sys
-
-def _ensure(package, import_name=None):
-    import_name = import_name or package
-    try:
-        importlib.import_module(import_name)
-    except ImportError:
-        subprocess.check_call(
-            [sys.executable, "-m", "pip", "install", "--quiet", package],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-
-_ensure("Pillow", "PIL")
-
-# ── Standard imports ───────────────────────────────────────────────────────────
-import json
 import os
 import re
 import shutil
+from pathlib import Path
+import sys
+import json
 import time
 import winreg
 import tkinter as tk
-import tkinter.simpledialog as simpledialog
-from ctypes import windll, c_uint
-from pathlib import Path
 from tkinter import messagebox, ttk
-
+import tkinter.simpledialog as simpledialog
 from PIL import Image, ImageTk
+from ctypes import windll, c_uint
 
 # ── Monkey-patch Dialog icon ───────────────────────────────────────────────────
-_orig_dialog_init = simpledialog.Dialog.__init__
+_original_init = simpledialog.Dialog.__init__
 
-def _patched_dialog_init(self, master, title=None):
-    _orig_dialog_init(self, master, title)
+def _custom_init(self, master, title=None):
+    _original_init(self, master, title)
     try:
         self.wm_iconbitmap(resource_path("logo.ico"))
     except Exception:
         pass
 
-simpledialog.Dialog.__init__ = _patched_dialog_init
+simpledialog.Dialog.__init__ = _custom_init
 
-# ── Runtime paths ──────────────────────────────────────────────────────────────
-def resource_path(filename: str) -> str:
-    """Resolve a bundled resource path (PyInstaller-aware)."""
-    base = sys._MEIPASS if getattr(sys, "frozen", False) else os.path.abspath(".")
-    return os.path.join(base, filename)
+# ── Paths ──────────────────────────────────────────────────────────────────────
+def resource_path(filename):
+    """Path to a bundled resource (works frozen and unfrozen)."""
+    if getattr(sys, 'frozen', False):
+        return os.path.join(sys._MEIPASS, filename)
+    return os.path.join(os.path.abspath("."), filename)
 
-BASE_DIR: str = (
-    os.path.dirname(sys.executable)
-    if getattr(sys, "frozen", False)
-    else os.path.dirname(os.path.abspath(__file__))
-)
+if getattr(sys, 'frozen', False):
+    BASE_DIR = os.path.dirname(sys.executable)
+else:
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-OPTIONS_PATH = os.path.join(BASE_DIR, "configurator_config.json")
+OPTIONS_PATH = os.path.join(BASE_DIR, "controller_pack_config.json")
 
-# ── structure.json ─────────────────────────────────────────────────────────────
+# ── Structure JSON ─────────────────────────────────────────────────────────────
+# Default location relative to the exe.  Can be overridden by placing a
+# "structure_json_path" key inside controller_pack_config.json.
 DEFAULT_STRUCTURE_JSON = os.path.join(BASE_DIR, "ORBB", "Plugins", "structure.json")
 
-def _structure_json_path() -> str:
-    override = _load_options().get("structure_json_path", "").strip()
+def get_structure_json_path():
+    """Return the path to structure.json, respecting any override in the saved config."""
+    saved = load_previous_options()
+    override = saved.get("structure_json_path", "").strip()
     if override:
-        return override if os.path.isabs(override) else os.path.join(BASE_DIR, override)
+        p = override if os.path.isabs(override) else os.path.join(BASE_DIR, override)
+        return p
     return DEFAULT_STRUCTURE_JSON
 
-def _load_structure() -> dict:
-    path = _structure_json_path()
+def load_structure():
+    """
+    Load the prf→folder mapping from structure.json.
+    Returns a dict like {"Baghdad ACC.prf": "ORBB/Baghdad ACC/", ...}
+    """
+    path = get_structure_json_path()
     if not os.path.exists(path):
         messagebox.showwarning(
             "structure.json missing",
             f"Could not find structure.json at:\n{path}\n\n"
-            "PRF files will not be reorganised.",
+            "PRF files will not be reorganised."
         )
         return {}
-    with open(path, "r", encoding="utf-8") as fh:
-        return json.load(fh)
-
-# ── Config persistence ─────────────────────────────────────────────────────────
-FIELDS = ["name", "initials", "cid", "rating", "password", "cpdlc", "discord_presence"]
-
-def _load_options() -> dict:
-    if os.path.exists(OPTIONS_PATH):
-        with open(OPTIONS_PATH, "r", encoding="utf-8") as fh:
-            return json.load(fh)
-    return {}
-
-def _save_options(options: dict) -> None:
-    with open(OPTIONS_PATH, "w", encoding="utf-8") as fh:
-        json.dump(options, fh, indent=2)
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 # ── Theme ──────────────────────────────────────────────────────────────────────
-def _windows_dark_mode() -> bool:
+def is_dark_theme_enabled():
     try:
-        reg = winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER)
+        registry = winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER)
         key = winreg.OpenKey(
-            reg, r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"
+            registry,
+            r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"
         )
-        val, _ = winreg.QueryValueEx(key, "AppsUseLightTheme")
-        return val == 0
+        value, _ = winreg.QueryValueEx(key, "AppsUseLightTheme")
+        return value == 0
     except Exception:
         return False
 
-def _apply_theme(root: tk.Tk) -> None:
+def apply_azure_theme(root):
     try:
         style = ttk.Style()
         theme_dir = resource_path("theme")
@@ -114,260 +89,328 @@ def _apply_theme(root: tk.Tk) -> None:
             root.tk.call("source", os.path.join(theme_dir, "light.tcl"))
         if "azure-dark" not in style.theme_names():
             root.tk.call("source", os.path.join(theme_dir, "dark.tcl"))
-        style.theme_use("azure-dark" if _windows_dark_mode() else "azure-light")
-    except Exception as exc:
-        messagebox.showwarning("Theme", f"Could not load Azure theme:\n{exc}")
+        theme = "azure-dark" if is_dark_theme_enabled() else "azure-light"
+        style.theme_use(theme)
+    except Exception as e:
+        messagebox.showwarning("Theme Load Failed", f"Could not load Azure theme:\n{e}")
 
-# ── GUI utilities ──────────────────────────────────────────────────────────────
-WINDOW_TITLE = "ORBB Configurator"
-
-def _centre(win: tk.Toplevel) -> None:
+# ── Helpers ────────────────────────────────────────────────────────────────────
+def center_window(win):
     win.update_idletasks()
     w, h = win.winfo_width(), win.winfo_height()
-    x = (win.winfo_screenwidth() - w) // 2
-    y = (win.winfo_screenheight() - h) // 2
+    x = (win.winfo_screenwidth() // 2) - (w // 2)
+    y = (win.winfo_screenheight() // 2) - (h // 2)
     win.geometry(f"{w}x{h}+{x}+{y}")
 
-def _set_icon(win) -> None:
+def on_close():
     try:
-        win.iconbitmap(resource_path("logo.ico"))
-    except Exception:
-        pass
-
-def _on_close() -> None:
-    try:
-        root = tk._default_root
-        if root:
-            root.destroy()
+        if tk._default_root:
+            for w in tk._default_root.children.values():
+                w.destroy()
+            tk._default_root.destroy()
     except Exception:
         pass
     sys.exit()
 
-def _make_dialog(resizable=False) -> tk.Toplevel:
-    dlg = tk.Toplevel()
-    _set_icon(dlg)
-    dlg.title(WINDOW_TITLE)
-    dlg.resizable(resizable, resizable)
-    dlg.protocol("WM_DELETE_WINDOW", _on_close)
-    dlg.transient()
-    dlg.grab_set()
-    dlg.attributes("-topmost", True)
-    dlg.focus_force()
-    return dlg
+def is_valid_cid(cid):
+    return cid.isdigit() and 6 <= len(cid) <= 7
 
+# ── Config persistence ─────────────────────────────────────────────────────────
+DEFAULT_FIELDS = {
+    "name": "",
+    "initials": "",
+    "cid": "",
+    "rating": "",
+    "password": "",
+    "cpdlc": "",
+    "discord_presence": "n",
+}
 
-def ask_string(prompt: str, default: str = "") -> str | None:
+BASIC_FIELDS = ["name", "initials", "cid", "rating", "password", "cpdlc", "discord_presence"]
+
+def load_previous_options():
+    if os.path.exists(OPTIONS_PATH):
+        with open(OPTIONS_PATH, "r") as f:
+            return json.load(f)
+    return {}
+
+def save_options(options):
+    with open(OPTIONS_PATH, "w") as f:
+        json.dump(options, f, indent=2)
+
+# ── GUI widgets ────────────────────────────────────────────────────────────────
+def ask_string(prompt, default=""):
     result = None
+    dialog = tk.Toplevel()
+    try:
+        dialog.iconbitmap(resource_path("logo.ico"))
+    except Exception:
+        pass
+    dialog.title("ORBB Configurator")
+    dialog.resizable(False, False)
+    dialog.protocol("WM_DELETE_WINDOW", on_close)
 
-    dlg = _make_dialog()
-    ttk.Label(dlg, text=prompt, wraplength=360, justify="left").pack(padx=20, pady=(15, 5))
-    var = tk.StringVar(value=default)
-    entry = ttk.Entry(dlg, textvariable=var, width=40)
+    ttk.Label(dialog, text=prompt, wraplength=360, justify="left").pack(padx=20, pady=(15, 5))
+    entry_var = tk.StringVar(value=default)
+    entry = ttk.Entry(dialog, textvariable=entry_var, width=40)
     entry.pack(padx=20, pady=5)
 
-    def submit(_=None):
+    def submit(event=None):
         nonlocal result
-        result = var.get()
-        dlg.destroy()
+        result = entry_var.get()
+        dialog.destroy()
 
-    bf = ttk.Frame(dlg)
+    def cancel(event=None):
+        dialog.destroy()
+
+    bf = ttk.Frame(dialog)
     bf.pack(pady=15)
-    ttk.Button(bf, text="OK",     command=submit).pack(side="left", padx=5)
-    ttk.Button(bf, text="Cancel", command=dlg.destroy).pack(side="left", padx=5)
-    dlg.bind("<Return>", submit)
-    dlg.bind("<Escape>", lambda _: dlg.destroy())
+    ttk.Button(bf, text="OK", command=submit).pack(side="left", padx=5)
+    ttk.Button(bf, text="Cancel", command=cancel).pack(side="left", padx=5)
 
-    _centre(dlg)
+    dialog.bind("<Return>", submit)
+    dialog.bind("<Escape>", cancel)
+    dialog.transient()
+    dialog.grab_set()
+    dialog.attributes("-topmost", True)
+    dialog.focus_force()
+    center_window(dialog)
     entry.focus_set()
-    dlg.wait_window()
+    dialog.wait_window()
     return result
 
+def ask_yesno(prompt, title="ORBB Configurator"):
+    result = None
+    dialog = tk.Toplevel()
+    try:
+        dialog.iconbitmap(resource_path("logo.ico"))
+    except Exception:
+        pass
+    dialog.title(title)
+    dialog.protocol("WM_DELETE_WINDOW", on_close)
+    dialog.resizable(False, False)
 
-def ask_yesno(prompt: str, title: str = WINDOW_TITLE) -> bool:
-    result = False
-
-    dlg = _make_dialog()
-    dlg.title(title)
-    frame = ttk.Frame(dlg, padding=20)
+    frame = ttk.Frame(dialog, padding=20)
     frame.pack(fill="both", expand=True)
-    ttk.Label(frame, text=prompt, wraplength=360, justify="left").pack(pady=(0, 15))
+    ttk.Label(frame, text=prompt, wraplength=350, justify="left").pack(pady=(0, 15))
 
-    def yes(_=None):
+    def yes():
         nonlocal result
         result = True
-        dlg.destroy()
+        dialog.destroy()
+
+    def no():
+        nonlocal result
+        result = False
+        dialog.destroy()
 
     bf = ttk.Frame(frame)
     bf.pack()
     ttk.Button(bf, text="Yes", command=yes).pack(side="left", padx=10)
-    ttk.Button(bf, text="No",  command=dlg.destroy).pack(side="left", padx=10)
-    dlg.bind("<Return>", yes)
-    dlg.bind("<Escape>", lambda _: dlg.destroy())
+    ttk.Button(bf, text="No", command=no).pack(side="left", padx=10)
 
-    _centre(dlg)
-    dlg.wait_window()
+    dialog.bind("<Return>", lambda e: yes())
+    dialog.bind("<Escape>", lambda e: no())
+    dialog.transient()
+    dialog.grab_set()
+    dialog.attributes("-topmost", True)
+    dialog.focus_force()
+    center_window(dialog)
+    dialog.wait_window()
     return result
 
-
-def ask_rating(current: str = "") -> str:
-    RATINGS = ["OBS", "S1", "S2", "S3", "C1", "C2 (not used)", "C3",
-               "I1", "I2 (not used)", "I3", "SUP", "ADM"]
+def ask_rating(current=None):
+    ratings = ['OBS', 'S1', 'S2', 'S3', 'C1', 'C2 (not used)', 'C3',
+               'I1', 'I2 (not used)', 'I3', 'SUP', 'ADM']
     try:
-        idx = max(0, min(int(current), len(RATINGS) - 1))
+        index = int(current)
+        if index < 0 or index >= len(ratings):
+            index = 0
     except (ValueError, TypeError):
-        idx = 0
+        index = 0
 
-    selected = tk.StringVar(value=RATINGS[idx])
-    done = tk.BooleanVar(value=False)
+    selected = tk.StringVar(value=ratings[index])
 
-    dlg = _make_dialog()
-    dlg.minsize(300, 180)
-    ttk.Label(dlg, text="Select your VATSIM controller rating:").pack(padx=20, pady=(15, 5))
-    ttk.Combobox(dlg, textvariable=selected, values=RATINGS, state="readonly", width=24).pack(padx=20, pady=5)
+    def submit():
+        dialog.quit()
+        dialog.destroy()
 
-    def submit(_=None):
-        done.set(True)
-        dlg.destroy()
+    dialog = tk.Toplevel()
+    try:
+        dialog.iconbitmap(resource_path("logo.ico"))
+    except Exception:
+        pass
+    dialog.minsize(300, 200)
+    dialog.title("ORBB Configurator")
+    ttk.Label(dialog, text="Select your rating:").pack(pady=5)
+    dropdown = ttk.Combobox(dialog, textvariable=selected, values=ratings, state="readonly")
+    dropdown.pack(pady=5)
+    ttk.Button(dialog, text="OK", command=submit).pack()
+    dialog.protocol("WM_DELETE_WINDOW", on_close)
+    dialog.transient()
+    dialog.grab_set()
+    dialog.attributes("-topmost", True)
+    dialog.focus_force()
+    center_window(dialog)
+    dialog.mainloop()
+    return str(ratings.index(selected.get()))
 
-    ttk.Button(dlg, text="OK", command=submit).pack(pady=10)
-    dlg.bind("<Return>", submit)
-    _centre(dlg)
-    dlg.wait_window()
-
-    return str(RATINGS.index(selected.get()))
-
-# ── Field prompting ────────────────────────────────────────────────────────────
-FIELD_PROMPTS = {
-    "name":             "Enter your full name as registered on VATSIM\n(Code of Conduct A4b).",
-    "initials":         "Enter your 2–3 letter observer identifier\n(e.g. LB or JSM).",
+# ── Field prompts ──────────────────────────────────────────────────────────────
+FIELD_DESCRIPTIONS = {
+    "name":             "Enter your name as used on VATSIM (Code of Conduct A4b).",
+    "initials":         "Enter your 2–3 letter observer identifier (e.g. LB or JSM).",
     "cid":              "Enter your VATSIM CID (6 or 7 digits).",
-    "rating":           None,   # handled by ask_rating
+    "rating":           "Select your current controller rating.",
     "password":         "Enter your VATSIM password.",
-    "cpdlc":            "Enter your Hoppie CPDLC logon code.\nLeave blank if you do not have one.",
-    "discord_presence": "Enable the DiscordEuroscope plugin?\nThis shows where you are controlling on your Discord profile.",
+    "cpdlc":            "Enter your Hoppie CPDLC logon code (leave blank if you don't have one).",
+    "discord_presence": "Enable DiscordEuroscope plugin to show where you're controlling on Discord?",
 }
 
-def _is_valid_cid(cid: str) -> bool:
-    return cid.isdigit() and 6 <= len(cid) <= 7
-
-def prompt_field(key: str, current: str = "") -> str:
+def prompt_for_field(key, current):
+    desc = FIELD_DESCRIPTIONS.get(key, f"Enter {key.replace('_', ' ')}")
     if key == "rating":
         return ask_rating(current)
-
-    if key == "discord_presence":
-        return "y" if ask_yesno(FIELD_PROMPTS[key]) else "n"
-
-    prompt = FIELD_PROMPTS.get(key, f"Enter {key.replace('_', ' ')}.")
-    while True:
-        value = ask_string(prompt, current)
-        if value is None:
-            sys.exit()
-        if key == "cid" and not _is_valid_cid(value):
-            messagebox.showerror("Invalid CID", "CID must be a 6 or 7 digit number.")
-            continue
-        return value
+    elif key == "discord_presence":
+        return "y" if ask_yesno(desc) else "n"
+    else:
+        while True:
+            response = ask_string(desc, current)
+            if response is None:
+                sys.exit()
+            if key == "cid" and not is_valid_cid(response):
+                messagebox.showerror("Invalid CID", "CID must be a 6 or 7 digit number.")
+                continue
+            return response
 
 # ── Config collection ──────────────────────────────────────────────────────────
-def collect_config() -> dict:
+def collect_basic_config():
     root = tk.Tk()
-    _set_icon(root)
-    root.title(WINDOW_TITLE)
+    root.title("ORBB Configurator")
+    try:
+        root.iconbitmap(resource_path("logo.ico"))
+    except Exception:
+        pass
     root.withdraw()
     tk._default_root = root
-    _apply_theme(root)
+    apply_azure_theme(root)
 
-    previous = _load_options()
-    options: dict = {}
+    previous_options = load_previous_options()
+    options = {}
 
-    if previous and ask_yesno("Load your previously saved options?"):
-        options = dict(previous)
+    if previous_options:
+        if ask_yesno("Do you want to load your previous options?"):
+            options.update(previous_options)
+            for key in BASIC_FIELDS:
+                if key not in options:
+                    options[key] = prompt_for_field(key, "")
+        # else: start fresh
 
-    for key in FIELDS:
-        if not options.get(key):
-            options[key] = prompt_field(key, options.get(key, ""))
+    for key in BASIC_FIELDS:
+        if key not in options or not options[key]:
+            options[key] = prompt_for_field(key, "")
 
     return options
 
 # ── PRF restructure ────────────────────────────────────────────────────────────
-def restructure_prf_files() -> None:
+def restructure_prf_files():
     """
-    Move .prf files from the root folder into the sub-folders defined in
-    structure.json.  Files already in a sub-folder (re-runs) are skipped.
+    Move .prf files from the root (next to the exe) into the folders defined
+    in structure.json.  Any .prf not listed in structure.json is left alone.
     """
-    structure = _load_structure()
+    structure = load_structure()
     if not structure:
         return
+
+    moved = []
+    skipped = []
 
     for prf_name, target_rel in structure.items():
         src = os.path.join(BASE_DIR, prf_name)
         if not os.path.exists(src):
-            continue  # already moved or never present
+            # Already moved, or never existed — skip silently
+            continue
 
         target_dir = os.path.join(BASE_DIR, target_rel)
         os.makedirs(target_dir, exist_ok=True)
         dst = os.path.join(target_dir, prf_name)
+
         try:
             shutil.move(src, dst)
-            print(f"Moved: {prf_name} → {target_rel}")
-        except Exception as exc:
-            print(f"Could not move {prf_name}: {exc}")
+            moved.append(f"  {prf_name}  →  {target_rel}")
+        except Exception as e:
+            skipped.append(f"  {prf_name}: {e}")
+
+    if moved:
+        print("Moved PRF files:\n" + "\n".join(moved))
+    if skipped:
+        print("Could not move:\n" + "\n".join(skipped))
 
 # ── File patchers ──────────────────────────────────────────────────────────────
-def _patch_prf_logon(path: str, name: str, initials: str,
-                     cid: str, rating: str, password: str) -> None:
+def patch_prf_file(file_path, name, initials, cid, rating, password):
     try:
-        lines = Path(path).read_text(encoding="utf-8").splitlines(keepends=True)
-    except Exception as exc:
-        print(f"Read failed {path}: {exc}")
+        with open(file_path, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+    except Exception as e:
+        print(f"Failed to read {file_path}: {e}")
         return
 
-    drop = {"LastSession\trealname", "LastSession\tcertificate",
-            "LastSession\trating",   "LastSession\tcallsign",
-            "LastSession\tpassword"}
-    lines = [l for l in lines if not any(l.startswith(d) for d in drop)]
-    lines += [
-        "\n",
+    lines = [l for l in lines if not (
+        l.startswith("LastSession\trealname") or
+        l.startswith("LastSession\tcertificate") or
+        l.startswith("LastSession\trating") or
+        l.startswith("LastSession\tcallsign") or
+        l.startswith("LastSession\tpassword")
+    )]
+
+    new_lines = [
         f"LastSession\trealname\t{name}\n",
         f"LastSession\tcertificate\t{cid}\n",
         f"LastSession\trating\t{rating}\n",
         f"LastSession\tcallsign\t{initials}_OBS\n",
         f"LastSession\tpassword\t{password}\n",
     ]
+    lines += ["\n"] + new_lines
+
     try:
-        Path(path).write_text("".join(lines), encoding="utf-8")
-    except Exception as exc:
-        print(f"Write failed {path}: {exc}")
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.writelines(lines)
+    except Exception as e:
+        print(f"Failed to write {file_path}: {e}")
 
 
-def _discord_dll_relpath(prf_path: str) -> str:
-    prf_dir = Path(prf_path).parent
-    for candidate in [prf_dir, *prf_dir.parents]:
-        plugin_dir = candidate / "Data" / "Plugin"
+def _resolve_discord_relpath(file_path: str) -> str:
+    prf_dir = Path(file_path).parent
+    for root in [prf_dir] + list(prf_dir.parents):
+        plugin_dir = root / "Data" / "Plugin"
         if plugin_dir.exists():
-            rel = os.path.relpath(plugin_dir / "DiscordEuroscope.dll", prf_dir)
-            rel = rel.replace("/", "\\")
-            return rel if rel.startswith("\\") else "\\" + rel
+            dll_abs = plugin_dir / "DiscordEuroscope.dll"
+            rel = os.path.relpath(dll_abs, start=prf_dir).replace("/", "\\")
+            if not rel.startswith("\\"):
+                rel = "\\" + rel
+            return rel
     return r"\..\Data\Plugin\DiscordEuroscope.dll"
 
 
-def _patch_prf_discord(path: str, enable: bool) -> None:
+def patch_discord_plugin(file_path: str, state: str = "present"):
     try:
-        raw = Path(path).read_text(encoding="utf-8")
-    except Exception as exc:
-        print(f"Read failed {path}: {exc}")
+        with open(file_path, "r", encoding="utf-8") as f:
+            raw = f.read()
+    except Exception as e:
+        print(f"Failed to read {file_path}: {e}")
         return
 
-    lines = raw.replace("\r\n", "\n").replace("\r", "\n").split("\n")
+    text = raw.replace("\r\n", "\n").replace("\r", "\n")
+    lines = text.split("\n")
 
-    if not enable:
-        cleaned = [l for l in lines if "DiscordEuroscope.dll" not in l]
-        if cleaned != lines:
-            Path(path).write_text("\n".join(cleaned).rstrip("\n") + "\n",
-                                  encoding="utf-8", newline="\n" if hasattr(Path(path), 'write_text') else None)
+    if state == "absent":
+        new_lines = [l for l in lines if "DiscordEuroscope.dll" not in l]
+        if new_lines != lines:
+            with open(file_path, "w", encoding="utf-8", newline="\n") as f:
+                f.write("\n".join(new_lines).rstrip("\n") + "\n")
         return
 
     if any("DiscordEuroscope.dll" in l for l in lines):
-        return  # already present
+        return
 
     plugin_rx = re.compile(r"^Plugins\tPlugin(\d+)\t")
     last_idx, max_num = -1, 0
@@ -380,103 +423,151 @@ def _patch_prf_discord(path: str, enable: bool) -> None:
             except ValueError:
                 pass
 
-    new_entry = f"Plugins\tPlugin{max_num + 1}\t{_discord_dll_relpath(path)}"
+    next_num = max_num + 1 if max_num else 1
+    dll_rel = _resolve_discord_relpath(file_path)
+    new_line = f"Plugins\tPlugin{next_num}\t{dll_rel}"
+
     if last_idx >= 0:
-        lines.insert(last_idx + 1, new_entry)
+        lines.insert(last_idx + 1, new_line)
     else:
-        lines.extend(["", new_entry])
+        if lines and lines[-1] != "":
+            lines.append("")
+        lines.append(new_line)
 
     try:
-        with open(path, "w", encoding="utf-8", newline="\n") as fh:
-            fh.write("\n".join(lines).rstrip("\n") + "\n")
-    except Exception as exc:
-        print(f"Write failed {path}: {exc}")
+        with open(file_path, "w", encoding="utf-8", newline="\n") as f:
+            f.write("\n".join(lines).rstrip("\n") + "\n")
+    except Exception as e:
+        print(f"Failed to write {file_path}: {e}")
 
 
-def _patch_profiles(path: str, cid: str) -> None:
+def patch_profiles_file(file_path, cid):
     """
-    Apply the default CID replacement plus any user-defined replacements from
-    the saved config under "profiles_replacements": {"old": "new"}.
-    Use {cid} in a replacement value to insert the actual CID.
+    Applies all replacements defined in the [profiles_replacements] section of
+    controller_pack_config.json.
+
+    Default replacement (always applied):
+        "Submit feedback at vats.im/atcfb"
+        → "Submit feedback at vatsim.uk/atcfb?cid=<CID>"
+
+    You can add extra find/replace pairs to the saved config under
+    "profiles_replacements", for example:
+        {
+          "profiles_replacements": {
+            "ORBB_PLACEHOLDER": "ORBB_REAL_VALUE",
+            "old string": "new string"
+          }
+        }
+    The token {cid} in a replacement value will be substituted with the
+    controller's actual CID automatically.
     """
     try:
-        content = Path(path).read_text(encoding="utf-8")
-    except Exception as exc:
-        print(f"Read failed {path}: {exc}")
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+    except Exception as e:
+        print(f"Failed to read {file_path}: {e}")
         return
 
+    # Built-in default replacement
     replacements = {
         "Submit feedback at vats.im/atcfb":
-            f"Submit feedback at vatsim.uk/atcfb?cid={cid}",
+            f"Submit feedback at vatsim.uk/atcfb?cid={cid}"
     }
-    for find, replace in _load_options().get("profiles_replacements", {}).items():
+
+    # Merge in any user-defined replacements from the saved config
+    saved = load_previous_options()
+    user_replacements = saved.get("profiles_replacements", {})
+    for find, replace in user_replacements.items():
         replacements[find] = replace.replace("{cid}", cid)
 
     for find, replace in replacements.items():
         content = content.replace(find, replace)
 
     try:
-        Path(path).write_text(content, encoding="utf-8")
-    except Exception as exc:
-        print(f"Write failed {path}: {exc}")
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write(content)
+    except Exception as e:
+        print(f"Failed to write {file_path}: {e}")
 
 
-def _patch_topsky_cpdlc(cpdlc: str) -> None:
-    for rel in [
+def patch_topsky_cpdlc(cpdlc_code):
+    """Write the Hoppie code to all four TopSky CPDLC code files."""
+    topsky_paths = [
         "Data/Plugin/TopSky_iTEC/TopSkyCPDLChoppieCode.txt",
         "Data/Plugin/TopSky_NERC/TopSkyCPDLChoppieCode.txt",
         "Data/Plugin/TopSky_NODE/TopSkyCPDLChoppieCode.txt",
         "Data/Plugin/TopSky_NOVA/TopSkyCPDLChoppieCode.txt",
-    ]:
-        full = os.path.join(BASE_DIR, rel)
-        os.makedirs(os.path.dirname(full), exist_ok=True)
+    ]
+    for rel_path in topsky_paths:
+        full_path = os.path.join(BASE_DIR, rel_path)
+        os.makedirs(os.path.dirname(full_path), exist_ok=True)
         try:
-            Path(full).write_text(cpdlc, encoding="utf-8")
-        except Exception as exc:
-            print(f"Write failed {full}: {exc}")
+            with open(full_path, "w") as f:
+                f.write(cpdlc_code)
+        except Exception as e:
+            print(f"Failed to write {full_path}: {e}")
 
-# ── Apply all patches ──────────────────────────────────────────────────────────
-def apply_configuration(options: dict) -> None:
-    name     = options["name"]
-    initials = options["initials"]
-    cid      = options["cid"]
-    rating   = options["rating"]
-    password = options["password"]
-    cpdlc    = options["cpdlc"]
-    discord  = options.get("discord_presence", "n") == "y"
 
-    for dirpath, _, filenames in os.walk(BASE_DIR):
-        for filename in filenames:
-            path = os.path.join(dirpath, filename)
+# ── Main apply ─────────────────────────────────────────────────────────────────
+def apply_configuration(name, initials, cid, rating, password, cpdlc, discord_presence):
+    """Walk every subdirectory and patch all relevant files."""
+    for root, _, files in os.walk(BASE_DIR):
+        for file in files:
+            path = os.path.join(root, file)
 
-            if filename.endswith(".prf"):
-                _patch_prf_logon(path, name, initials, cid, rating, password)
-                _patch_prf_discord(path, discord)
+            if file.endswith(".prf"):
+                patch_prf_file(path, name, initials, cid, rating, password)
+                if discord_presence == "y":
+                    patch_discord_plugin(path, state="present")
+                else:
+                    patch_discord_plugin(path, state="absent")
 
-            elif filename == "Profiles.txt":
-                _patch_profiles(path, cid)
+            elif file.endswith("Profiles.txt"):
+                patch_profiles_file(path, cid)
 
-    _patch_topsky_cpdlc(cpdlc)
+    # TopSky CPDLC files (written to fixed locations)
+    patch_topsky_cpdlc(cpdlc)
+
 
 # ── Entry point ────────────────────────────────────────────────────────────────
-def main() -> None:
+def main():
+    if not tk._default_root:
+        root = tk.Tk()
+        root.withdraw()
+        tk._default_root = root
+
     lockfile = os.path.join(BASE_DIR, "configurator.lock")
     if os.path.exists(lockfile):
-        # Ensure a root window exists for messagebox
-        _tmp = tk.Tk(); _tmp.withdraw()
-        messagebox.showerror("Already Running", "The configurator is already running.")
-        _tmp.destroy()
-        sys.exit(1)
+        messagebox.showerror("Already Running", "Configurator is already running.")
+        sys.exit()
 
-    Path(lockfile).write_text(str(os.getpid()))
+    with open(lockfile, "w") as f:
+        f.write(str(os.getpid()))
 
     try:
-        options = collect_config()
+        # 1. Collect options via GUI
+        options = collect_basic_config()
+
+        # 2. Restructure PRF files into folders defined by structure.json
         restructure_prf_files()
-        apply_configuration(options)
-        _save_options(options)
+
+        # 3. Patch all files
+        apply_configuration(
+            name=options["name"],
+            initials=options["initials"],
+            cid=options["cid"],
+            rating=options["rating"],
+            password=options["password"],
+            cpdlc=options["cpdlc"],
+            discord_presence=options.get("discord_presence", "n"),
+        )
+
+        # 4. Persist options for next run
+        save_options(options)
+
         messagebox.showinfo("Complete", "Profile configuration complete.")
-        time.sleep(1)
+        time.sleep(1.5)
+
     finally:
         if os.path.exists(lockfile):
             os.remove(lockfile)
@@ -487,9 +578,13 @@ if __name__ == "__main__":
         main()
     finally:
         try:
-            root = tk._default_root
-            if root:
-                root.destroy()
+            if tk._default_root:
+                for w in tk._default_root.children.values():
+                    w.destroy()
+                tk._default_root.destroy()
         except Exception:
             pass
-        os._exit(0) if getattr(sys, "frozen", False) else sys.exit(0)
+        if getattr(sys, "frozen", False):
+            os._exit(0)
+        else:
+            sys.exit(0)
