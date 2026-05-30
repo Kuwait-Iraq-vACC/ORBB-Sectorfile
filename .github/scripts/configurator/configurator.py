@@ -202,16 +202,33 @@ def ask_yesno(prompt, title="ORBB Configurator"):
     return result
 
 def ask_rating(current=None):
-    ratings = ['OBS', 'S1', 'S2', 'S3', 'C1', 'C2 (not used)', 'C3',
-               'I1', 'I2 (not used)', 'I3', 'SUP', 'ADM']
-    try:
-        index = int(current)
-        if index < 0 or index >= len(ratings):
-            index = 0
-    except (ValueError, TypeError):
-        index = 0
+    ratings_display = [
+        'Observer (OBS)',
+        'Developing Controller (S1)',
+        'Aerodrome Controller (S2)',
+        'Terminal Controller (S3)',
+        'Enroute Controller (C1)',
+        'Senior Controller (C3)',
+        'Instructor (I1)',
+        'Senior Instructor (I3)',
+        'SUP',
+        'ADM'
+    ]
+    # Maps display index → original .prf index (skipping C2=5 and I2=8)
+    prf_index_map = [0, 1, 2, 3, 4, 6, 7, 9, 10, 11]
 
-    selected = tk.StringVar(value=ratings[index])
+    try:
+        prf_val = int(current)
+        # If saved value was C2(5) or I2(8), fall back to C1(4) or I1(7)
+        if prf_val == 5:
+            prf_val = 4
+        elif prf_val == 8:
+            prf_val = 7
+        display_index = prf_index_map.index(prf_val) if prf_val in prf_index_map else 0
+    except (ValueError, TypeError):
+        display_index = 0
+
+    selected = tk.StringVar(value=ratings_display[display_index])
 
     def submit():
         dialog.quit()
@@ -227,7 +244,7 @@ def ask_rating(current=None):
     dialog.minsize(300, 200)
     dialog.title("ORBB Configurator")
     ttk.Label(dialog, text="Select your rating:").pack(pady=5)
-    dropdown = ttk.Combobox(dialog, textvariable=selected, values=ratings, state="readonly")
+    dropdown = ttk.Combobox(dialog, textvariable=selected, values=ratings_display, state="readonly")
     dropdown.pack(pady=5)
     ttk.Button(dialog, text="OK", command=submit).pack()
     dialog.protocol("WM_DELETE_WINDOW", on_close)
@@ -237,7 +254,9 @@ def ask_rating(current=None):
     dialog.focus_force()
     center_window(dialog)
     dialog.mainloop()
-    return str(ratings.index(selected.get()))
+
+    chosen_display_index = ratings_display.index(selected.get())
+    return str(prf_index_map[chosen_display_index])
 
 # ── Field prompts ──────────────────────────────────────────────────────────────
 FIELD_DESCRIPTIONS = {
