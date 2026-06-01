@@ -23,6 +23,7 @@ def main():
     compile_msaw()
     compile_radars()
     compile_ssr_codes()
+    compile_settings()
 
 
 # ============================================================
@@ -65,6 +66,9 @@ def compile_radars():
 
 def compile_ssr_codes():
     build('SSRcodes/', 'TopSkySSRcodes.txt')
+
+def compile_settings():
+    build('Settings/', 'TopSkySettings.txt')
 
 
 # ============================================================
