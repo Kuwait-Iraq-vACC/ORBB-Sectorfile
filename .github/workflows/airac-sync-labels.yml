@@ -6,7 +6,7 @@ on:
     paths:
       - ".github/airac-cycles.yml"
   schedule:
-    - cron: "0 0 * * 1" # Every Monday 0000z
+    - cron: "0 0 * * *" # 0000z daily
   workflow_dispatch:
     inputs:
       max_upcoming:
