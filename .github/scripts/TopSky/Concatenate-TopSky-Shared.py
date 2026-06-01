@@ -170,8 +170,8 @@ def read_index(index_path, folder_label, folder_path):
 
 def auto_discover(folder_path):
     """
-    Walks the folder structure:
-      - Subdirectories first, sorted alphabetically
+    Walks the folder structure recursively:
+      - All subdirectories (depth-first, sorted alphabetically at each level)
       - .txt files within each subdir, sorted alphabetically
       - Then any loose .txt files at the root, sorted alphabetically
     """
@@ -185,10 +185,10 @@ def auto_discover(folder_path):
 
     for entry in entries:
         if entry.is_dir() and not entry.name.startswith('.'):
-            sub_entries = sorted(os.scandir(entry.path), key=lambda e: e.name)
-            for sub in sub_entries:
-                if sub.is_file() and sub.name.endswith('.txt'):
-                    files.append(os.path.join(entry.name, sub.name))
+            # Recurse and prefix relative paths with the subdir name
+            sub_files = auto_discover(entry.path)
+            for f in sub_files:
+                files.append(os.path.join(entry.name, f))
 
     for entry in entries:
         if entry.is_file() and entry.name.endswith('.txt'):
