@@ -1,7 +1,7 @@
 name: Ground Radar plugin Report
 description: Report a bug or required change for the Ground Radar plugin.
 title: "[GroundRadar]: "
-labels: ["bug"]
+labels: ["enhancement", "GRplugin"]
 body:
   - type: markdown
     attributes:

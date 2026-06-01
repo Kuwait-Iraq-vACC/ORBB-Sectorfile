@@ -1,9 +1,9 @@
-// File created for the Levant vACC (OLBB, OSTT, ORBB)
-// Developed and maintained by Joshua Ong - 1499880
-//
-// To be used on the VATSIM Network only
-
 RDF_Mode=-1
+
+
+Shortcut_RadarMenu_Combo=0x12
+Shortcut_Map_Xfr_Key=1,0x54 ; T
+Shortcut_Map_Target=1,(Extended) Centrelines\All Centrelines
 
 ; GENERAL SETUP
 Setup_COOPANS=1

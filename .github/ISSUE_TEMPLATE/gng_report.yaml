@@ -1,7 +1,7 @@
 name: GNG Report
 description: Report a bug, or a change required for to update on GNG.
 title: "[GNG]: "
-labels: ["enhancement"]
+labels: ["enhancement", "GNG"]
 body:
   - type: markdown
     attributes:

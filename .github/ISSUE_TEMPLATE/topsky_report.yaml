@@ -1,7 +1,7 @@
 name: TopSky Report
 description: Report a bug or required change for TopSky.
 title: "[TOPSKY]: "
-labels: ["bug"]
+labels: ["bug", "TopSky"]
 body:
   - type: markdown
     attributes:
