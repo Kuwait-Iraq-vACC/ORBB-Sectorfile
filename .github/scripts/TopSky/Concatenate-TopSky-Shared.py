@@ -32,10 +32,10 @@ def main():
 
 def copy_single_files():
     singles = {
-        'ICAO/ICAO_Aircraft.json':  'ICAO_Aircraft.json',
-        'ICAO/ICAO_Aircraft.txt':   'ICAO_Aircraft.txt',
-        'ICAO/ICAO_Airlines.txt':   'ICAO_Airlines.txt',
-        'ICAO/ICAO_Airports.txt':   'ICAO_Airports.txt',
+        'DataFiles/ICAO_Aircraft.json':  'ICAO_Aircraft.json',
+        'DataFiles/ICAO_Aircraft.txt':   'ICAO_Aircraft.txt',
+        'DataFiles/ICAO_Airlines.txt':   'ICAO_Airlines.txt',
+        'DataFiles/ICAO_Airports.txt':   'ICAO_Airports.txt',
     }
     for src, dst in singles.items():
         for output in OUTPUTS:
