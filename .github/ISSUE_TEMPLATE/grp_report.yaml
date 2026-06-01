@@ -1,0 +1,51 @@
+name: Ground Radar plugin Report
+description: Report a bug or required change for the Ground Radar plugin.
+title: "[GroundRadar]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: "# Ground Radar plugin Report"
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of the bug or change required.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: To Reproduce
+      description: Provide steps to reproduce the behavior, if applicable.
+    validations:
+      required: false
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: A clear and concise description of what you expected to happen.
+    validations:
+      required: false
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain your problem.
+    validations:
+      required: false
+  - type: input
+    id: sectorfile-airac
+    attributes:
+      label: Sectorfile AIRAC
+      description: What sectorfile version are you using?
+      placeholder: e.g. 2606/01
+    validations:
+      required: false
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here.
+    validations:
+      required: false
