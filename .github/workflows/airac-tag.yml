@@ -13,6 +13,7 @@ jobs:
     timeout-minutes: 10
     permissions:
       contents: read
+      contents: write
     steps:
       - name: Generate GitHub token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
@@ -73,6 +74,29 @@ jobs:
             -f sha="$TAG_SHA"
 
           echo "Created tag $TAG_NAME"
+
+      - name: Update issue template AIRAC placeholders
+        if: steps.check.outputs.cycle_name != ''
+        env:
+          CYCLE: ${{ steps.check.outputs.cycle_name }}
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Replace any existing AIRAC placeholder (e.g. 2604/01) with the new cycle
+          find .github/ISSUE_TEMPLATE -name "*.yml" -o -name "*.yaml" | \
+            xargs sed -i "s/placeholder: e\.g\. [0-9]\{4\}\/[0-9]\{2\}/placeholder: e.g. $CYCLE/g"
+
+          if git diff --quiet; then
+            echo "No placeholder changes needed."
+            exit 0
+          fi
+
+          git add .github/ISSUE_TEMPLATE/
+          git commit -m "chore: update issue template AIRAC placeholder to $CYCLE"
+          git push
 
       - name: Unlock AIRAC PRs
         if: steps.check.outputs.cycle_name != ''
