@@ -6,6 +6,9 @@ body:
   - type: markdown
     attributes:
       value: "# Bug Report"
+  - type: markdown
+    attributes:
+      value: "Before reporting a bug, ensure that you have the correct [EuroScope version](http://kuwait-iraqvacc.net/Controller%20Guidance/Software/EuroScope%20Setup/) and that you have the most up-to-date sectorfile installed."
   - type: textarea
     id: description
     attributes:
@@ -38,8 +41,7 @@ body:
     id: euroscope-version
     attributes:
       label: EuroScope Version
-      description: Which version of EuroScope are you running?
-      placeholder: e.g. 3.2.9
+      placeholder: e.g. 3.2.3.2 or 3.2.9
     validations:
       required: false
   - type: textarea
