@@ -5,7 +5,7 @@ labels: ["enhancement"]
 body:
   - type: markdown
     attributes:
-      value: "# GNG Report
+      value: "# GNG Report"
   - type: textarea
     id: description
     attributes:
