@@ -20,7 +20,7 @@
                "max_fl": 460
             },
             {
-               "direction": "EVEN",
+               "direction": "ODD",
                "airways": [
                   "NOLDO B411 PAXAT"
                ],
