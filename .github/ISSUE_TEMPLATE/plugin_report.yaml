@@ -1,6 +1,6 @@
 name: Plugin Report
 description: Report a bug or required change for a EuroScope plugin.
-title: "[Plugin]: "
+title: "[PLUGIN]: "
 labels: ["bug"]
 body:
   - type: markdown
