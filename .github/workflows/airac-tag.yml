@@ -2,7 +2,7 @@ name: AIRAC Tag
 
 on:
   schedule:
-    - cron: "4 18 * * *" # 0000z daily
+    - cron: "0 0 * * *" # 0000z daily
   workflow_dispatch:
 
 permissions: {}
