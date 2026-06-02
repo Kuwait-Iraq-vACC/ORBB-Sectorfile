@@ -1,0 +1,83 @@
+[
+       {
+      "icao": "ORSJ",
+      "sids": {
+         "SUL": [
+            {
+               "direction": "EVEN",
+               "airways": [
+                  "SEVKU L718 KABAN"
+               ],
+               "min_fl": 160,
+               "max_fl": 460
+            },
+            {
+               "direction": "EVEN",
+               "airways": [
+                  "TOMSI M860 NINVA"
+               ],
+               "min_fl": 195,
+               "max_fl": 285
+            },
+            {
+               "direction": "ODD",
+               "airways": [
+                  "BOXIX"
+               ]
+            },
+            {
+               "direction": "ODD",
+               "airways": [
+                  "SOBIL M688 VAXEN DCT PAXAT"
+               ],
+               "min_fl": 195,
+               "max_fl": 285
+            },
+            {
+               "direction": "ODD",
+               "airways": [
+                  "SOBIL M688 SIDAD"
+               ],
+               "max_fl": 285,
+               "min_fl": 195
+            },
+            {
+               "direction": "EVEN",
+               "airways": [
+                  "MUTAG DCT ANBAR DCT MURIB"
+               ]
+            },
+            {
+               "direction": "EVEN",
+               "airways": [
+                  "MUTAG R652 GIBUX L200 PASIP"
+               ],
+               "min_fl": 80,
+               "max_fl": 600,
+               "forbidden_fls": [
+                  240,
+                  250,
+                  260,
+                  270,
+                  280
+               ]
+            },
+            {
+               "direction": "EVEN",
+               "airways": [
+                  "MUTAG R652 RAPLU G202 MODIK"
+               ],
+               "forbidden_fls": [
+                  240,
+                  250,
+                  260,
+                  270,
+                  280
+               ],
+               "min_fl": 80,
+               "max_fl": 600
+            }
+         ]
+      }
+   }
+]

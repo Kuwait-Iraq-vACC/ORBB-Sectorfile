@@ -1,0 +1,82 @@
+[
+   {
+      "icao": "ORBI",
+      "sids": {
+         "BGD": [
+            {
+               "direction": "EVEN",
+               "airways": [
+                  "NAMDI M860 NINVA"
+               ],
+               "min_fl": 195,
+               "max_fl": 285
+            },
+            {
+               "direction": "EVEN",
+               "airways": [
+                  "TAGRU L718 KABAN"
+               ],
+               "min_fl": 160,
+               "max_fl": 460
+            },
+            {
+               "direction": "ODD",
+               "airways": [
+                  "NOLDO B411 PAXAT"
+               ],
+               "min_fl": 80,
+               "max_fl": 600
+            },
+            {
+               "direction": "ODD",
+               "airways": [
+                  "NOLDO P975 SIDAD"
+               ],
+               "min_fl": 240
+            },
+            {
+               "direction": "EVEN",
+               "airways": [
+                  "DELMI DCT RUKAM B411 MURIB"
+               ],
+               "min_fl": 80,
+               "max_fl": 600,
+               "forbidden_fls": [
+                  250,
+                  260,
+                  270,
+                  280
+               ]
+            },
+            {
+               "direction": "EVEN",
+               "airways": [
+                  "DELMI G202 MODIK"
+               ],
+               "min_fl": 100,
+               "forbidden_fls": [
+                  240,
+                  250,
+                  260,
+                  270,
+                  280
+               ]
+            },
+            {
+               "direction": "EVEN",
+               "airways": [
+                  "DELMI G202 RAPLU R652 GIBUX L200 PASIP"
+               ],
+               "min_fl": 100,
+               "forbidden_fls": [
+                  240,
+                  250,
+                  260,
+                  270,
+                  280
+               ]
+            }
+         ]
+      }
+   }
+]

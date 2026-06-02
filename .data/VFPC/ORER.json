@@ -1,0 +1,79 @@
+[
+       {
+      "icao": "ORER",
+      "sids": {
+         "RER": [
+            {
+               "direction": "EVEN",
+               "airways": [
+                  "EMIDO L718 KABAN"
+               ],
+               "min_fl": 160,
+               "max_fl": 460
+            },
+            {
+               "direction": "EVEN",
+               "airways": [
+                  "ROXOP M860 NINVA"
+               ],
+               "min_fl": 195,
+               "max_fl": 285
+            },
+            {
+               "direction": "ODD",
+               "airways": [
+                  "DAVAS M434 BOXIX"
+               ],
+               "min_fl": 235,
+               "max_fl": 460
+            },
+            {
+               "direction": "ODD",
+               "airways": [
+                  "TOTAM DCT SOBIL M688 SIDAD"
+               ],
+               "min_fl": 195,
+               "max_fl": 285
+            },
+            {
+               "direction": "EVEN",
+               "airways": [
+                  "UMESA Z417 MUTAG R652 GIBUX L200 PASIP"
+               ],
+               "min_fl": 160,
+               "max_fl": 460,
+               "forbidden_fls": [
+                  240,
+                  250,
+                  260,
+                  270,
+                  279
+               ]
+            },
+            {
+               "direction": "EVEN",
+               "airways": [
+                  "UMESA Z417 MUTAG R652 RAPLU G202 MODIK"
+               ],
+               "forbidden_fls": [
+                  240,
+                  250,
+                  260,
+                  270,
+                  280
+               ],
+               "min_fl": 160,
+               "max_fl": 460
+            },
+            {
+               "direction": "EVEN",
+               "airways": [
+                  "UMESA Z417 MUTAG DCT ANBAR DCT MURIB"
+               ],
+               "min_fl": 160,
+               "max_fl": 460
+            }
+         ]
+      }
+   }
+]

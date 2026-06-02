@@ -1,0 +1,82 @@
+[
+   {
+      "icao": "ORMM",
+      "sids": {
+         "BSR": [
+            {
+               "direction": "EVEN",
+               "airways": [
+                  "ALPET L718 KABAN"
+               ],
+               "min_fl": 160,
+               "max_fl": 460
+            },
+            {
+               "direction": "EVEN",
+               "airways": [
+                  "KODAV M860 NINVA"
+               ],
+               "min_fl": 195,
+               "max_fl": 285
+            },
+            {
+               "direction": "ODD",
+               "airways": [
+                  "KODAV M860 RESAK DCT PAPUS B411 PAXAT"
+               ],
+               "min_fl": 80,
+               "max_fl": 600
+            },
+            {
+               "direction": "ODD",
+               "airways": [
+                  "SIDAD"
+               ]
+            },
+            {
+               "direction": "EVEN",
+               "airways": [
+                  "ALPET DCT RUKAM B411 MURIB"
+               ],
+               "min_fl": 80,
+               "max_fl": 600,
+               "forbidden_fls": [
+                  250,
+                  260,
+                  270,
+                  280
+               ]
+            },
+            {
+               "direction": "EVEN",
+               "airways": [
+                  "ALPET DCT RUKAM M703 ANBAR DCT RAPLU G202 MODIK"
+               ],
+               "min_fl": 210,
+               "max_fl": 460,
+               "forbidden_fls": [
+                  240,
+                  250,
+                  260,
+                  270,
+                  280
+               ]
+            },
+            {
+               "direction": "EVEN",
+               "airways": [
+                  "ALPET DCT RUKAM M703 PASIP"
+               ],
+               "min_fl": 210,
+               "max_fl": 460,
+               "forbidden_fls": [
+                  250,
+                  260,
+                  270,
+                  280
+               ]
+            }
+         ]
+      }
+   }
+]
