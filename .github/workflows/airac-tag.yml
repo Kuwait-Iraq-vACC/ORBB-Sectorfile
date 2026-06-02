@@ -2,7 +2,7 @@ name: AIRAC Tag
 
 on:
   schedule:
-    - cron: "0 0 * * *" # 0000z daily
+    - cron: "4 18 * * *" # 0000z daily
   workflow_dispatch:
 
 permissions: {}
@@ -73,6 +73,28 @@ jobs:
             -f sha="$TAG_SHA"
 
           echo "Created tag $TAG_NAME"
+
+      - name: Close AIRAC milestone
+        if: steps.check.outputs.cycle_name != ''
+        env:
+          CYCLE: ${{ steps.check.outputs.cycle_name }}
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          MILESTONE_TITLE="AIRAC $CYCLE"
+
+          MILESTONE_NUMBER=$(gh api "repos/$GH_REPO/milestones?state=open&per_page=100" \
+            --jq ".[] | select(.title == \"$MILESTONE_TITLE\") | .number" | head -1)
+
+          if [[ -z "$MILESTONE_NUMBER" ]]; then
+            echo "No open milestone found for $MILESTONE_TITLE, skipping."
+            exit 0
+          fi
+
+          gh api "repos/$GH_REPO/milestones/$MILESTONE_NUMBER" -X PATCH \
+            -f state="closed" --silent
+
+          echo "Closed milestone: $MILESTONE_TITLE (#$MILESTONE_NUMBER)"
 
       - name: Update issue template AIRAC placeholders
         if: steps.check.outputs.cycle_name != ''

@@ -6,7 +6,7 @@ on:
     paths:
       - ".github/airac-cycles.yml"
   schedule:
-    - cron: "0 0 * * *" # 0000z daily
+    - cron: "4 18 * * *" # 0000z daily
   workflow_dispatch:
     inputs:
       max_upcoming:
@@ -41,7 +41,7 @@ jobs:
           persist-credentials: false
           token: ${{ steps.generate-token.outputs.token }}
 
-      - name: Sync labels
+      - name: Sync labels and milestones
         env:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
           GH_REPO: ${{ github.repository }}
@@ -53,9 +53,61 @@ jobs:
           CUTOFF_DATE=$(date -u -d "-90 days" +%Y-%m-%d 2>/dev/null \
                      || date -u -v-90d +%Y-%m-%d) # GNU/BSD compat
 
-          echo "Syncing AIRAC labels (today: $TODAY, cutoff: $CUTOFF_DATE, max upcoming: $MAX_UPCOMING)..."
+          echo "Syncing AIRAC labels and milestones (today: $TODAY, cutoff: $CUTOFF_DATE, max upcoming: $MAX_UPCOMING)..."
 
-          # Collect upcoming cycle dates (on or after today), sorted
+          # ── Helpers ────────────────────────────────────────────────────────────
+
+          # Returns the milestone number for a given title, or empty string
+          milestone_number() {
+            local title="$1"
+            gh api "repos/$GH_REPO/milestones?state=all&per_page=100" \
+              --jq ".[] | select(.title == \"$title\") | .number" | head -1
+          }
+
+          # Creates or updates a milestone; echoes its number
+          upsert_milestone() {
+            local title="$1" due_date="$2" description="$3"
+            local due_on="${due_date}T00:00:00Z"
+            local existing
+            existing=$(milestone_number "$title")
+
+            if [[ -n "$existing" ]]; then
+              gh api "repos/$GH_REPO/milestones/$existing" -X PATCH \
+                -f title="$title" \
+                -f description="$description" \
+                -f due_on="$due_on" \
+                -f state="open" \
+                --silent
+              echo "$existing"
+            else
+              gh api "repos/$GH_REPO/milestones" -X POST \
+                -f title="$title" \
+                -f description="$description" \
+                -f due_on="$due_on" \
+                -f state="open" \
+                --jq '.number'
+            fi
+          }
+
+          # Deletes a milestone if it exists and has no open issues or PRs
+          delete_milestone_if_empty() {
+            local title="$1"
+            local number
+            number=$(milestone_number "$title")
+            [[ -z "$number" ]] && return
+
+            local open_items
+            open_items=$(gh api "repos/$GH_REPO/milestones/$number" --jq '.open_issues')
+            if [[ "$open_items" -eq 0 ]]; then
+              gh api "repos/$GH_REPO/milestones/$number" -X DELETE --silent
+              echo "Deleted milestone: $title"
+            else
+              echo "Keeping milestone: $title ($open_items open items)"
+            fi
+          }
+
+          # ── Collect upcoming cycle dates ───────────────────────────────────────
+
           upcoming=()
           while IFS=: read -r date cycle_raw; do
             [[ "$date" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || continue
@@ -67,14 +119,19 @@ jobs:
           # Keep only the next N upcoming cycles
           upcoming=("${upcoming[@]:0:$MAX_UPCOMING}")
 
-          # Process all entries
+          # ── Process all entries ────────────────────────────────────────────────
+
+          labels_synced=0
+          milestones_synced=0
+
           while IFS=: read -r date cycle_raw; do
             [[ "$date" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || continue
             cycle=$(echo "$cycle_raw" | tr -d ' "')
             label="airac/$cycle"
+            milestone_title="AIRAC $cycle"
 
             if [[ "$date" < "$CUTOFF_DATE" ]]; then
-              # Delete stale labels with no open PRs
+              # ── Stale: delete label and milestone if nothing references them ──
               if gh label view "$label" --repo "$GH_REPO" --json name &>/dev/null; then
                 open_prs=$(gh pr list --repo "$GH_REPO" --label "$label" \
                   --state open --json number --jq 'length')
@@ -85,14 +142,22 @@ jobs:
                   echo "Keeping stale label: $label ($open_prs open PRs)"
                 fi
               fi
+              delete_milestone_if_empty "$milestone_title"
+
             elif [[ " ${upcoming[*]} " == *" $date "* ]]; then
-              # Create/update labels for the next N upcoming cycles
+              # ── Upcoming window: create/update label and milestone ─────────────
               description="AIRAC $cycle - effective $date"
               gh label create "$label" --repo "$GH_REPO" \
                 --color "$LABEL_COLOR" --description "$description" --force
               echo "Synced label: $label"
+              (( labels_synced++ )) || true
+
+              ms_number=$(upsert_milestone "$milestone_title" "$date" "$description")
+              echo "Synced milestone: $milestone_title (due $date, #$ms_number)"
+              (( milestones_synced++ )) || true
+
             else
-              # Beyond the window - delete if no open PRs reference it
+              # ── Out-of-window: delete if empty ────────────────────────────────
               if gh label view "$label" --repo "$GH_REPO" --json name &>/dev/null; then
                 open_prs=$(gh pr list --repo "$GH_REPO" --label "$label" \
                   --state open --json number --jq 'length')
@@ -101,7 +166,11 @@ jobs:
                   gh label delete "$label" --repo "$GH_REPO" --yes
                 fi
               fi
+              delete_milestone_if_empty "$milestone_title"
             fi
+
           done < .github/airac-cycles.yml
 
-          echo "### ✅ AIRAC labels synced" >> "$GITHUB_STEP_SUMMARY"
+          echo "### ✅ AIRAC sync complete" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Labels synced:** $labels_synced" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Milestones synced:** $milestones_synced" >> "$GITHUB_STEP_SUMMARY"
