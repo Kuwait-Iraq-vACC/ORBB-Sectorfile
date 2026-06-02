@@ -1,5 +1,5 @@
 # ORBB-Sectorfile
-[vacc name] sectorfile for ORBB FIR.
+Kuwait & Iraq vACC sectorfile for ORBB FIR.
 
 [![latest-version](https://img.shields.io/github/v/release/New-vACC/ORBB-Sectorfile?include_prereleases)](https://github.com/New-vACC/ORBB-Sectorfile/releases)
 [![cdm-version](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/New-vACC/ORBB-Sectorfile/main/.github/badges/CDM.json)](https://github.com/rpuig2001/CDM)
