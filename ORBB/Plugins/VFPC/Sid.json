@@ -314,159 +314,88 @@
    {
       "icao": "ORNI",
       "sids": {
-         "VCT": [
+         "ALI": [
             {
-               "direction": "ANY"
+               "direction": "EVEN",
+               "min_fl": 160,
+               "max_fl": 460,
+               "airways": [
+                  "LAGLO L718 KABAN"
+               ]
             }
          ],
-         "AMLUH": [
+         "SEPTU": [
             {
-               "direction": "ODD",
-               "min_fl": 0,
-               "max_fl": 0,
-               "forbidden_fls": [],
-               "destinations": [
-                  "ED"
+               "direction": "EVEN",
+               "min_fl": 195,
+               "airways": [
+                  "M860 NINVA"
                ],
-               "airways": [],
-               "engine": []
-            },
-            {
-               "direction": "ODD"
-            }
-         ],
-         "BASUM": [
-            {
-               "direction": "EVEN",
-               "max_fl": 240,
-               "destinations": [
-                  "EDDL",
-                  "EDDK",
-                  "EDLW",
-                  "EDLV",
-                  "EDLN",
-                  "EDDG"
-               ]
-            }
-         ],
-         "ELSOB": [
-            {
-               "direction": "EVEN",
-               "max_fl": 240,
-               "destinations": [
-                  "EDDL",
-                  "EDDK",
-                  "EDLW",
-                  "EDLV",
-                  "EDLN",
-                  "EDDG"
-               ]
+               "max_fl": 285,
+               "suffix": "1A"
             },
             {
                "direction": "EVEN",
+               "suffix": "1B",
                "airways": [
-                  "L619",
-                  "P992",
-                  "N125",
-                  "M170"
-               ]
-            },
-            {
-               "direction": "ODD"
+                  "M860 NINVA"
+               ],
+               "min_fl": 195,
+               "max_fl": 285
             }
          ],
-         "EKERN": [
-            {
-               "direction": "ODD"
-            }
-         ],
-         "HAM": [
-            {
-               "direction": "ANY"
-            }
-         ],
-         "IDEKO": [
-            {
-               "direction": "EVEN",
-               "destinations": [
-                  "EDDK",
-                  "EDDL",
-                  "EDDG",
-                  "EDLW",
-                  "EDLN",
-                  "EDLP",
-                  "EDGS",
-                  "EDLV"
-               ]
-            },
+         "NOLDO": [
             {
                "direction": "ODD",
-               "max_fl": 230,
-               "destinations": [
-                  "EDDF",
-                  "EDFH"
-               ]
-            },
-            {
-               "direction": "EVEN",
-               "max_fl": 100,
-               "destinations": [
-                  "EDDV"
-               ]
-            },
-            {
-               "direction": "ODD"
+               "airways": [
+                  "B411 PAXAT"
+               ],
+               "min_fl": 80,
+               "max_fl": 600
             }
          ],
-         "LBV": [
+         "ILMAP": [
+            {
+               "direction": "ODD",
+               "airways": [
+                  "P975 SIDAD"
+               ],
+               "min_fl": 160,
+               "max_fl": 460
+            }
+         ],
+         "RUKAM": [
             {
                "direction": "EVEN",
                "airways": [
-                  "L619",
-                  "P992"
-               ]
-            },
-            {
-               "direction": "ODD"
+                  "B411 MURIB"
+               ],
+               "min_fl": 80,
+               "max_fl": 600
             }
          ],
-         "LUB": [
-            {
-               "direction": "ODD"
-            }
-         ],
-         "LUGEG": [
-            {
-               "direction": "ODD"
-            }
-         ],
-         "RAMAR": [
-            {
-               "direction": "ODD"
-            }
-         ],
-         "WSN": [
+         "SIGBI": [
             {
                "direction": "EVEN",
-               "max_fl": 240,
-               "destinations": [
-                  "EDDL",
-                  "EDDK",
-                  "EDLW",
-                  "EDLV",
-                  "EDLN",
-                  "EDDG"
-               ]
+               "airways": [
+                  "RAPLU G202 MODIK"
+               ],
+               "min_fl": 100
             },
             {
                "direction": "EVEN",
-               "max_fl": 100,
-               "destinations": [
-                  "EDDW"
+               "airways": [
+                  "L200 PASIP"
+               ],
+               "min_fl": 70,
+               "max_fl": 600,
+               "forbidden_fls": [
+                  240,
+                  250,
+                  260,
+                  270,
+                  280
                ]
-            },
-            {
-               "direction": "EVEN"
             }
          ]
       }
