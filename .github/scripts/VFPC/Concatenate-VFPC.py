@@ -8,7 +8,7 @@ import json
 # ============================================================
 
 VFPC_SOURCE = '.data/VFPC/'
-OUTPUT_FILE = 'ORBB/Plugins/VFPC/VFPC.json'
+OUTPUT_FILE = 'ORBB/Plugins/VFPC/Sid.json'
 INDEX       = '.Index.txt'
 
 
