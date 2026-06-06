@@ -133,7 +133,8 @@ def get_file_list(folder_path, folder_label):
          Supports:
            - Specific files:   SubFolder/File.txt
            - Whole subfolders: SubFolder/
-         Files within a subfolder entry are sorted alphabetically.
+         Files within a subfolder entry are discovered recursively
+         and sorted alphabetically (subdirs first, then loose files).
       2. Auto-discovery: subdirs alphabetically, then loose root .txt files
     """
     index_path = folder_path + INDEX
@@ -153,18 +154,14 @@ def read_index(index_path, folder_label, folder_path):
                 continue
 
             if line.endswith('/'):
-                # Whole subfolder — discover all .txt files alphabetically
+                # Whole subfolder — discover all .txt files recursively, alphabetically
                 sub_path = folder_path + line
                 if not os.path.exists(sub_path):
                     print(f'[WARN] Subfolder not found: {sub_path}')
                     continue
-                sub_files = sorted(
-                    e.name for e in os.scandir(sub_path)
-                    if e.is_file() and e.name.endswith('.txt')
-                )
-                for f_name in sub_files:
-                    files.append(line + f_name)
-                print(f'[INFO] {line} expanded to {len(sub_files)} file(s)')
+                sub_files = collect_txt_recursive(sub_path, line)
+                files.extend(sub_files)
+                print(f'[INFO] {line} expanded to {len(sub_files)} file(s) (recursive)')
 
             elif '.' in line:
                 # Specific file
@@ -177,33 +174,43 @@ def read_index(index_path, folder_label, folder_path):
     return files
 
 
-def auto_discover(folder_path):
+def collect_txt_recursive(abs_folder, rel_prefix):
     """
-    Walks the folder structure:
-      - Subdirectories first, sorted alphabetically
-      - .txt files within each subdir, sorted alphabetically
-      - Then any loose .txt files at the root, sorted alphabetically
+    Recursively collects all .txt files under abs_folder.
+    Returns paths relative to the parent shared folder, prefixed with rel_prefix.
+    Ordering: subdirectories alphabetically first (recursed), then loose
+    .txt files at the current level alphabetically.
     """
     files = []
 
     try:
-        entries = sorted(os.scandir(folder_path), key=lambda e: e.name)
+        entries = sorted(os.scandir(abs_folder), key=lambda e: e.name)
     except FileNotFoundError:
-        print(f'[WARN] Folder not found: {folder_path}')
+        print(f'[WARN] Folder not found: {abs_folder}')
         return files
 
+    # Subdirectories first, recursed alphabetically
     for entry in entries:
         if entry.is_dir() and not entry.name.startswith('.'):
-            sub_entries = sorted(os.scandir(entry.path), key=lambda e: e.name)
-            for sub in sub_entries:
-                if sub.is_file() and sub.name.endswith('.txt'):
-                    files.append(os.path.join(entry.name, sub.name))
+            sub_rel = rel_prefix + entry.name + '/'
+            files.extend(collect_txt_recursive(entry.path, sub_rel))
 
+    # Then loose .txt files at this level
     for entry in entries:
-        if entry.is_file() and entry.name.endswith('.txt'):
-            files.append(entry.name)
+        if entry.is_file() and entry.name.endswith('.txt') and entry.name != '.Index.txt':
+            files.append(rel_prefix + entry.name)
 
     return files
+
+
+def auto_discover(folder_path):
+    """
+    Walks the folder structure:
+      - Subdirectories first, sorted alphabetically (recursed)
+      - .txt files within each subdir, sorted alphabetically
+      - Then any loose .txt files at the root, sorted alphabetically
+    """
+    return collect_txt_recursive(folder_path, '')
 
 
 # ============================================================
