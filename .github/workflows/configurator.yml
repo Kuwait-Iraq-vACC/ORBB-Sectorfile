@@ -109,11 +109,11 @@ jobs:
 
       - name: Move executable to root
         run: |
-          if (Test-Path ".github/scripts/configurator/dist/Configurator.exe") {
-            Move-Item -Path ".github/scripts/configurator/dist/Configurator.exe" -Destination "ORBB/Plugins/Configurator/Configurator.exe" -Force
+          if (Test-Path ".github/scripts/configurator/Configurator.exe") {
+            Move-Item -Path ".github/scripts/configurator/Configurator.exe" -Destination "ORBB/Plugins/Configurator/Configurator.exe" -Force
             Write-Host "Successfully moved Configurator.exe to ORBB/Plugins/Configurator/"
           } else {
-            Write-Host "ERROR: Configurator.exe not found at .github/scripts/configurator/dist/Configurator.exe"
+            Write-Host "ERROR: Configurator.exe not found at .github/scripts/configurator/Configurator.exe"
             exit 1
           }
 
