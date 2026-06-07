@@ -102,7 +102,6 @@ jobs:
           cd .github/scripts/configurator
           pyinstaller --onefile --windowed `
             --add-data "logo.ico;." `
-            --add-data "structure.json;." `
             --icon logo.ico `
             --name Configurator `
             configurator.py
