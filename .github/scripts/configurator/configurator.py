@@ -1,16 +1,10 @@
 import os
-import re
 import shutil
-from pathlib import Path
 import sys
 import json
 import time
-import winreg
 import tkinter as tk
 from tkinter import messagebox, ttk
-import tkinter.simpledialog as simpledialog
-from PIL import Image, ImageTk
-from ctypes import windll, c_uint
 
 # ── Paths ──────────────────────────────────────────────────────────────────────
 def resource_path(filename):
@@ -675,6 +669,22 @@ def main():
 if __name__ == "__main__":
     try:
         main()
+    except Exception as e:
+        import traceback
+        # Write crash log next to exe so silent crashes can be diagnosed
+        log_path = os.path.join(BASE_DIR, "configurator_crash.log")
+        with open(log_path, "w") as lf:
+            traceback.print_exc(file=lf)
+        try:
+            tk.messagebox.showerror("Configurator Error",
+                f"An unexpected error occurred:
+
+{e}
+
+Details written to:
+{log_path}")
+        except Exception:
+            pass
     finally:
         try:
             if tk._default_root:
