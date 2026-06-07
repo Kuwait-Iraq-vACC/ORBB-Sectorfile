@@ -210,7 +210,7 @@ def ask_rating(current=None):
         'Developing Controller (S1)',
         'Aerodrome Controller (S2)',
         'Terminal Controller (S3)',
-        'Enroute Controlle (C1)',
+        'Enroute Controller (C1)',
         'Senior Controller (C3)',
         'Instructor (I1)',
         'Senior Instructor (I3)',
