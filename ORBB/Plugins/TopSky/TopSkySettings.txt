@@ -1,20 +1,30 @@
+// File created for the Levant vACC (OLBB, OSTT, ORBB)
+// Developed and maintained by Joshua Ong - 1499880
+//
+// To be used on the VATSIM Network only
+
 RDF_Mode=-1
 
+; GENERAL SETUP
+Setup_COOPANS=1
+Setup_AutoSignIn=1
 
 Shortcut_RadarMenu_Combo=0x12
 Shortcut_Map_Xfr_Key=1,0x54 ; T
 Shortcut_Map_Target=1,(Extended) Centrelines\All Centrelines
 
-; GENERAL SETUP
-Setup_COOPANS=1
-Setup_AutoSignIn=1
-Label_N_Default=1
+Label_GS_Digits=2
+Label_GS_Digits_Metric=2
+
+System_RepHdg_Correction=2
+Label_AHDG_HideDctIfCOPX=0
+Label_AHDG_ShowDct=2
 
 ; TAG COLORS
 Color_Unconcerned=90,90,90
 Color_Concerned=64,150,202
 Color_Coordination=64,150,202
-Color_Assumed=165,202,228
+Color_Assumed=255,255,255
 Color_Redundant=32,74,106
 Color_Warning=255,255,149
 Color_Informed=0,0,255
@@ -30,10 +40,10 @@ Color_Selected_Period=255,255,255
 Color_Overflown=99,100,101
 
 ; OTHER COLORS
-Color_Map_Info=70,70,60
+Color_Map_Info=255,255,255
 Color_Active_Sector=59,59,59
-Color_Active_Map=170,145,60
-Color_Active_Map_Type_1=170,145,60
+Color_Active_Map=255,255,255
+Color_Active_Map_Type_1=255,255,255
 Color_Active_Map_Type_2=170,145,60
 Color_Active_Map_Type_3=170,145,60
 Color_Active_Map_Type_4=170,145,60
@@ -76,6 +86,9 @@ WXR_Longitude=44
 WXR_Longitude_Max=49
 WXR_Longitude_Min=38.5
 
+Label_GS_Prefix= 
+Label_N_Default=0
+
 ; AIRSPACE
 STCA_AlertSound=1
 STCA_AlertSound_Filter=1
@@ -111,7 +124,6 @@ System_LocalCSfirst=0
 System_MagModel_Type=2
 System_MagModel_Model=0
 System_MagModel_Year=2015
-System_RepHdg_Correction=1
 System_TaxiTime=6
 System_ProxySounds=0
 System_TrackData_Time=600
@@ -186,7 +198,6 @@ RwyAppLines_Auto=0
 
 System_UseReportedGS=0
 System_FPASD=1
-System_RepHdg_Correction=2
 System_TaxiTime=15
 System_TransferConfirmation=0
 System_MagModel_Year=2020
@@ -274,7 +285,7 @@ MTCD_DeAcknowledge=1
 
 HTTP_SIGMET_Server=http://aviationweather.gov/
 
-Shortcut_RadarMenu_Combo=0x00
+Label_GS_Prefix=
 
 Label_OpTextCaps=1
 Label_SI_ShowFreq=1
@@ -287,8 +298,6 @@ Label_Alt_Digits=2
 Label_AFL_ForceNautical=0
 Label_ASP_Digits=3
 Label_AFL_Buffer=200
-Label_AHDG_Point_Label=2
-Label_AHDG_ShowExtra=1
 Label_RTE_Origin=EB
 Label_MetricAlt_Digits=4
 Label_Field18_Flag_Items=STS/,newbie,NEWBIE,Newbie,beginner,noob,NOOB,new,NEW
@@ -297,7 +306,6 @@ Label_DAPs=1
 Label_Coord_RJC_Time=45
 
 Menu_MaxListItems=12
-Menu_AHDG_Rounding=5
 Menu_DAPs=1
 Menu_Level_MaxValue=510
 Menu_Level_MaxValue_10=410
@@ -332,6 +340,3 @@ Window_PredTfc_Warning=20
 
 FlightLeg_FontSize=10
 FlightLeg_LineWidth=1
-
-Vector_AHDG_Label_Dist=1
-Vector_AHDG_Label_Time=1

@@ -18,7 +18,6 @@ _original_init = simpledialog.Dialog.__init__
 def _custom_init(self, master, title=None):
     _original_init(self, master, title)
     try:
-        # Try to load icon if it exists
         icon_path = resource_path("logo.ico")
         if os.path.exists(icon_path):
             self.wm_iconbitmap(icon_path)
@@ -31,11 +30,9 @@ simpledialog.Dialog.__init__ = _custom_init
 def resource_path(filename):
     """Path to a bundled resource (works frozen and unfrozen)."""
     if getattr(sys, 'frozen', False):
-        # PyInstaller creates a temp folder and stores files in _MEIPASS
         base_path = sys._MEIPASS
     else:
         base_path = os.path.abspath(".")
-    
     return os.path.join(base_path, filename)
 
 if getattr(sys, 'frozen', False):
@@ -43,11 +40,17 @@ if getattr(sys, 'frozen', False):
 else:
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-OPTIONS_PATH = os.path.join(BASE_DIR, "controller_pack_config.json")
+# Configurator\ → Plugins\ → ORBB\ → repo root
+# e.g. C:\GitHub\ORBB-Sectorfile\ORBB\Plugins\Configurator\  →  C:\GitHub\ORBB-Sectorfile\
+PACK_ROOT = os.path.abspath(os.path.join(BASE_DIR, "..", "..", ".."))
+
+# controller_pack_config.json lives at the repo root alongside the .prf files
+OPTIONS_PATH = os.path.join(PACK_ROOT, "controller_pack_config.json")
+
+# structure.json lives in the same folder as the exe
+DEFAULT_STRUCTURE_JSON = os.path.join(BASE_DIR, "structure.json")
 
 # ── Structure JSON ─────────────────────────────────────────────────────────────
-DEFAULT_STRUCTURE_JSON = os.path.join(BASE_DIR, "ORBB", "Plugins", "structure.json")
-
 def get_structure_json_path():
     """Return the path to structure.json, respecting any override in the saved config."""
     saved = load_previous_options()
@@ -219,7 +222,6 @@ def ask_rating(current=None):
 
     try:
         prf_val = int(current)
-        # If saved value was C2(5) or I2(8), fall back to C1(4) or I1(7)
         if prf_val == 5:
             prf_val = 4
         elif prf_val == 8:
@@ -260,12 +262,12 @@ def ask_rating(current=None):
 
 # ── Field prompts ──────────────────────────────────────────────────────────────
 FIELD_DESCRIPTIONS = {
-    "name":             "Enter your preferred name convention. (Code of Conduct A4(B))",
-    "initials":         "Enter your observer initials (e.g. AB, JS) (Code of Conduct A4(B)).",
-    "cid":              "Enter your CID.",
-    "rating":           "Select your controller rating.",
-    "password":         "Enter your password.",
-    "cpdlc":            "Enter your ACARS logon code."
+    "name":     "Enter your preferred name convention. (Code of Conduct A4(B))",
+    "initials": "Enter your observer initials (e.g. AB, JS) (Code of Conduct A4(B)).",
+    "cid":      "Enter your CID.",
+    "rating":   "Select your controller rating.",
+    "password": "Enter your password.",
+    "cpdlc":    "Enter your ACARS logon code."
 }
 
 def prompt_for_field(key, current):
@@ -315,8 +317,8 @@ def collect_basic_config():
 # ── PRF restructure ────────────────────────────────────────────────────────────
 def restructure_prf_files():
     """
-    Move .prf files from the root (next to the exe) into the folders defined
-    in structure.json.  Any .prf not listed in structure.json is left alone.
+    Move .prf files from the repo root into the folders defined in structure.json.
+    Any .prf not listed in structure.json is left alone.
     """
     structure = load_structure()
     if not structure:
@@ -326,12 +328,11 @@ def restructure_prf_files():
     skipped = []
 
     for prf_name, target_rel in structure.items():
-        src = os.path.join(BASE_DIR, prf_name)
+        src = os.path.join(PACK_ROOT, prf_name)           # .prf files live at repo root
         if not os.path.exists(src):
-            # Already moved, or never existed — skip silently
             continue
 
-        target_dir = os.path.join(BASE_DIR, target_rel)
+        target_dir = os.path.join(PACK_ROOT, target_rel)  # target folder also relative to repo root
         os.makedirs(target_dir, exist_ok=True)
         dst = os.path.join(target_dir, prf_name)
 
@@ -427,13 +428,13 @@ def patch_profiles_file(file_path, cid):
         print(f"Failed to write {file_path}: {e}")
 
 def patch_topsky_cpdlc(cpdlc_code):
-    """Write the Hoppie code to all four TopSky CPDLC code files."""
+    """Write the Hoppie code to all TopSky CPDLC code files."""
     topsky_paths = [
         "Data/Plugin/TopSky/TopSkyCPDLChoppieCode.txt",
         "Data/Plugin/TopSkyGRP/TopSkyCPDLChoppieCode.txt",
     ]
     for rel_path in topsky_paths:
-        full_path = os.path.join(BASE_DIR, rel_path)
+        full_path = os.path.join(PACK_ROOT, rel_path)     # relative to repo root
         os.makedirs(os.path.dirname(full_path), exist_ok=True)
         try:
             with open(full_path, "w") as f:
@@ -443,8 +444,8 @@ def patch_topsky_cpdlc(cpdlc_code):
 
 # ── Main apply ─────────────────────────────────────────────────────────────────
 def apply_configuration(name, initials, cid, rating, password, cpdlc):
-    """Walk every subdirectory and patch all relevant files."""
-    for root, _, files in os.walk(BASE_DIR):
+    """Walk the entire repo root and patch all relevant files."""
+    for root, _, files in os.walk(PACK_ROOT):              # walk from repo root
         for file in files:
             path = os.path.join(root, file)
 
@@ -454,7 +455,6 @@ def apply_configuration(name, initials, cid, rating, password, cpdlc):
             elif file.endswith("Profiles.txt"):
                 patch_profiles_file(path, cid)
 
-    # TopSky CPDLC files (written to fixed locations)
     patch_topsky_cpdlc(cpdlc)
 
 # ── Entry point ────────────────────────────────────────────────────────────────
@@ -464,6 +464,7 @@ def main():
         root.withdraw()
         tk._default_root = root
 
+    # Lock file stays next to the exe in BASE_DIR
     lockfile = os.path.join(BASE_DIR, "configurator.lock")
     if os.path.exists(lockfile):
         messagebox.showerror("Already Running", "Configurator is already running.")
@@ -489,7 +490,7 @@ def main():
             cpdlc=options["cpdlc"],
         )
 
-        # 4. Persist options for next run
+        # 4. Persist options for next run (saved at repo root)
         save_options(options)
 
         messagebox.showinfo("Complete", "Profile configuration complete.")
