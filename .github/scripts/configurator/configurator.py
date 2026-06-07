@@ -45,7 +45,7 @@ else:
 PACK_ROOT = os.path.abspath(os.path.join(BASE_DIR, "..", "..", ".."))
 
 # controller_pack_config.json lives at the repo root alongside the .prf files
-OPTIONS_PATH = os.path.join(PACK_ROOT, "controller_pack_config.json")
+OPTIONS_PATH = os.path.join(BASE_DIR, "configurator_config.json")
 
 # structure.json lives in the same folder as the exe
 DEFAULT_STRUCTURE_JSON = os.path.join(BASE_DIR, "structure.json")
