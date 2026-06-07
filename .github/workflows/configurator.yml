@@ -102,6 +102,7 @@ jobs:
           cd .github/scripts/configurator
           pyinstaller --onefile --windowed `
             --add-data "logo.ico;." `
+            --add-data "structure.json;." `
             --icon logo.ico `
             --name Configurator `
             configurator.py
@@ -110,8 +111,8 @@ jobs:
       - name: Move executable to root
         run: |
           if (Test-Path ".github/scripts/configurator/dist/Configurator.exe") {
-            Move-Item -Path ".github/scripts/configurator/dist/Configurator.exe" -Destination "." -Force
-            Write-Host "Successfully moved Configurator.exe to root"
+            Move-Item -Path ".github/scripts/configurator/dist/Configurator.exe" -Destination "ORBB/Plugins/Configurator/Configurator.exe" -Force
+            Write-Host "Successfully moved Configurator.exe to ORBB/Plugins/Configurator/"
           } else {
             Write-Host "ERROR: Configurator.exe not found at .github/scripts/configurator/dist/Configurator.exe"
             exit 1
@@ -121,6 +122,7 @@ jobs:
         run: |
           git config --local user.email "github-actions@users.noreply.github.com"
           git config --local user.name "ORBB Automation"
-          git add Configurator.exe
+          git add ORBB/Plugins/Configurator/Configurator.exe
           git diff --staged --quiet || git commit -m "chore: update Configurator.exe [skip ci]"
+          git pull --rebase origin main
           git push
