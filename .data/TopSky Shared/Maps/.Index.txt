@@ -3,4 +3,6 @@ Overrides.txt
 Colour Definitions.txt
 Symbol Definitions.txt
 (Extended) Centrelines/
+ARTCC/
+Prohibited Airspace/
 WIP.txt
