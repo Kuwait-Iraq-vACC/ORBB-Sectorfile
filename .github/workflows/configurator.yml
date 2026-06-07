@@ -107,13 +107,16 @@ jobs:
             configurator.py
           cd ../../..
 
-      - name: Move executable to root
+      - name: Move executable to destination
         run: |
-          if (Test-Path ".github/scripts/configurator/Configurator.exe") {
-            Move-Item -Path ".github/scripts/configurator/Configurator.exe" -Destination "ORBB/Plugins/Configurator/Configurator.exe" -Force
-            Write-Host "Successfully moved Configurator.exe to ORBB/Plugins/Configurator/"
+          $src = ".github\scripts\configurator\dist\Configurator.exe"
+          $dst = "ORBB\Plugins\Configurator"
+          if (Test-Path $src) {
+            New-Item -ItemType Directory -Force -Path $dst | Out-Null
+            Copy-Item -Path $src -Destination "$dst\Configurator.exe" -Force
+            Write-Host "Successfully copied Configurator.exe to $dst"
           } else {
-            Write-Host "ERROR: Configurator.exe not found at .github/scripts/configurator/Configurator.exe"
+            Write-Host "ERROR: Configurator.exe not found at $src"
             exit 1
           }
 
