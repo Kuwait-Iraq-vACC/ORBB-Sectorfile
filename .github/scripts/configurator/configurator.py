@@ -1,10 +1,30 @@
 import os
+import re
 import shutil
+from pathlib import Path
 import sys
 import json
 import time
+import winreg
 import tkinter as tk
 from tkinter import messagebox, ttk
+import tkinter.simpledialog as simpledialog
+from PIL import Image, ImageTk
+from ctypes import windll, c_uint
+
+# ── Monkey-patch Dialog icon ───────────────────────────────────────────────────
+_original_init = simpledialog.Dialog.__init__
+
+def _custom_init(self, master, title=None):
+    _original_init(self, master, title)
+    try:
+        icon_path = resource_path("logo.ico")
+        if os.path.exists(icon_path):
+            self.wm_iconbitmap(icon_path)
+    except Exception:
+        pass
+
+simpledialog.Dialog.__init__ = _custom_init
 
 # ── Paths ──────────────────────────────────────────────────────────────────────
 def resource_path(filename):
@@ -21,123 +41,18 @@ else:
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Configurator\ → Plugins\ → ORBB\ → repo root
+# e.g. C:\GitHub\ORBB-Sectorfile\ORBB\Plugins\Configurator\  →  C:\GitHub\ORBB-Sectorfile\
 PACK_ROOT = os.path.abspath(os.path.join(BASE_DIR, "..", "..", ".."))
 
+# configurator_config.json lives next to the exe in the Configurator folder
 OPTIONS_PATH = os.path.join(BASE_DIR, "configurator_config.json")
+
+# structure.json lives in the same folder as the exe
 DEFAULT_STRUCTURE_JSON = os.path.join(BASE_DIR, "structure.json")
-
-# ── Theme ──────────────────────────────────────────────────────────────────────
-CLR_BG        = "#F7F8FA"   # window background
-CLR_CARD      = "#FFFFFF"   # card / dialog surface
-CLR_BORDER    = "#DDE1E7"   # subtle border
-CLR_ACCENT    = "#1A6FBF"   # primary button / header bar
-CLR_ACCENT_HV = "#155A9E"   # hover
-CLR_TEXT      = "#1C2333"   # primary text
-CLR_SUBTEXT   = "#5A6478"   # secondary / hint text
-CLR_ERROR     = "#C0392B"   # error red
-CLR_SUCCESS   = "#1E7E4A"   # success green
-
-FONT_FAMILY   = "Segoe UI"
-FONT_BODY     = (FONT_FAMILY, 10)
-FONT_LABEL    = (FONT_FAMILY, 10)
-FONT_BOLD     = (FONT_FAMILY, 10, "bold")
-FONT_TITLE    = (FONT_FAMILY, 13, "bold")
-FONT_HEADER   = (FONT_FAMILY, 11, "bold")
-FONT_SMALL    = (FONT_FAMILY, 8)
-
-def apply_theme(root):
-    """Apply a clean light theme via ttk.Style."""
-    style = ttk.Style(root)
-    style.theme_use("clam")
-
-    style.configure(".",
-        background=CLR_BG,
-        foreground=CLR_TEXT,
-        font=FONT_BODY,
-        borderwidth=0,
-        relief="flat",
-    )
-    style.configure("TFrame", background=CLR_BG)
-    style.configure("Card.TFrame", background=CLR_CARD,
-                    relief="solid", borderwidth=1)
-
-    style.configure("TLabel",
-        background=CLR_BG,
-        foreground=CLR_TEXT,
-        font=FONT_LABEL,
-        padding=(0, 2),
-    )
-    style.configure("Card.TLabel", background=CLR_CARD)
-    style.configure("Sub.TLabel",
-        background=CLR_CARD,
-        foreground=CLR_SUBTEXT,
-        font=FONT_SMALL,
-    )
-    style.configure("Title.TLabel",
-        background=CLR_ACCENT,
-        foreground="#FFFFFF",
-        font=FONT_TITLE,
-        padding=(16, 10),
-    )
-    style.configure("Heading.TLabel",
-        background=CLR_CARD,
-        foreground=CLR_TEXT,
-        font=FONT_HEADER,
-    )
-
-    style.configure("TEntry",
-        fieldbackground=CLR_CARD,
-        foreground=CLR_TEXT,
-        borderwidth=1,
-        relief="solid",
-        padding=(6, 4),
-        font=FONT_BODY,
-    )
-    style.map("TEntry",
-        bordercolor=[("focus", CLR_ACCENT), ("!focus", CLR_BORDER)],
-        lightcolor=[("focus", CLR_ACCENT)],
-    )
-
-    style.configure("TCombobox",
-        fieldbackground=CLR_CARD,
-        background=CLR_CARD,
-        foreground=CLR_TEXT,
-        borderwidth=1,
-        relief="solid",
-        padding=(6, 4),
-        font=FONT_BODY,
-    )
-
-    # Primary accent button
-    style.configure("Accent.TButton",
-        background=CLR_ACCENT,
-        foreground="#FFFFFF",
-        font=FONT_BOLD,
-        padding=(14, 7),
-        relief="flat",
-        borderwidth=0,
-    )
-    style.map("Accent.TButton",
-        background=[("active", CLR_ACCENT_HV), ("pressed", CLR_ACCENT_HV)],
-        foreground=[("active", "#FFFFFF")],
-    )
-
-    # Ghost / secondary button
-    style.configure("Ghost.TButton",
-        background=CLR_BG,
-        foreground=CLR_SUBTEXT,
-        font=FONT_BODY,
-        padding=(14, 7),
-        relief="flat",
-        borderwidth=1,
-    )
-    style.map("Ghost.TButton",
-        background=[("active", CLR_BORDER)],
-        foreground=[("active", CLR_TEXT)],
-    )
 
 # ── Structure JSON ─────────────────────────────────────────────────────────────
 def get_structure_json_path():
+    """Return the path to structure.json, respecting any override in the saved config."""
     saved = load_previous_options()
     override = saved.get("structure_json_path", "").strip()
     if override:
@@ -146,29 +61,25 @@ def get_structure_json_path():
     return DEFAULT_STRUCTURE_JSON
 
 def load_structure():
+    """
+    Load the prf→folder mapping from structure.json.
+    Returns a dict like {"Baghdad ACC.prf": "Baghdad ACC/", ...}
+    """
     path = get_structure_json_path()
     if not os.path.exists(path):
-        show_error(
+        messagebox.showwarning(
             "structure.json missing",
-            f"Could not find structure.json at:\n{path}\n\nPRF files will not be reorganised."
+            f"Could not find structure.json at:\n{path}\n\n"
+            "PRF files will not be reorganised."
         )
         return {}
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
-def set_icon(win):
-    try:
-        icon_path = resource_path("logo.ico")
-        if os.path.exists(icon_path):
-            win.iconbitmap(icon_path)
-    except Exception:
-        pass
-
-def center_window(win, w=None, h=None):
+def center_window(win):
     win.update_idletasks()
-    w = w or win.winfo_width()
-    h = h or win.winfo_height()
+    w, h = win.winfo_width(), win.winfo_height()
     x = (win.winfo_screenwidth() // 2) - (w // 2)
     y = (win.winfo_screenheight() // 2) - (h // 2)
     win.geometry(f"{w}x{h}+{x}+{y}")
@@ -176,7 +87,7 @@ def center_window(win, w=None, h=None):
 def on_close():
     try:
         if tk._default_root:
-            for w in list(tk._default_root.children.values()):
+            for w in tk._default_root.children.values():
                 w.destroy()
             tk._default_root.destroy()
     except Exception:
@@ -186,50 +97,16 @@ def on_close():
 def is_valid_cid(cid):
     return cid.isdigit() and 6 <= len(cid) <= 7
 
-def _make_dialog(title_text, subtitle=None, width=440):
-    """Create a styled top-level dialog with a header bar."""
-    dlg = tk.Toplevel()
-    dlg.configure(bg=CLR_BG)
-    dlg.resizable(False, False)
-    dlg.protocol("WM_DELETE_WINDOW", on_close)
-    set_icon(dlg)
-
-    # Header bar
-    hdr = tk.Frame(dlg, bg=CLR_ACCENT)
-    hdr.pack(fill="x")
-    tk.Label(hdr, text="Kuwait & Iraq vACC  ·  ORBB Sectorfile",
-             bg=CLR_ACCENT, fg="#FFFFFF", font=(FONT_FAMILY, 8),
-             padx=16, pady=6).pack(anchor="w")
-
-    # Card body
-    card = tk.Frame(dlg, bg=CLR_CARD,
-                    highlightbackground=CLR_BORDER, highlightthickness=1)
-    card.pack(fill="both", expand=True, padx=16, pady=16)
-
-    # Dialog title inside card
-    tk.Label(card, text=title_text,
-             bg=CLR_CARD, fg=CLR_TEXT,
-             font=FONT_HEADER, anchor="w",
-             padx=20, pady=(14, 0)).pack(fill="x")
-
-    if subtitle:
-        tk.Label(card, text=subtitle,
-                 bg=CLR_CARD, fg=CLR_SUBTEXT,
-                 font=(FONT_FAMILY, 9),
-                 wraplength=width - 60, justify="left",
-                 padx=20, pady=0).pack(fill="x")
-
-    # Thin divider
-    tk.Frame(card, bg=CLR_BORDER, height=1).pack(fill="x", padx=20, pady=(8, 0))
-
-    dlg.transient()
-    dlg.grab_set()
-    dlg.attributes("-topmost", True)
-    dlg.focus_force()
-
-    return dlg, card
-
 # ── Config persistence ─────────────────────────────────────────────────────────
+DEFAULT_FIELDS = {
+    "name": "",
+    "initials": "",
+    "cid": "",
+    "rating": "",
+    "password": "",
+    "cpdlc": "",
+}
+
 BASIC_FIELDS = ["name", "initials", "cid", "rating", "password", "cpdlc"]
 
 def load_previous_options():
@@ -242,151 +119,90 @@ def save_options(options):
     with open(OPTIONS_PATH, "w") as f:
         json.dump(options, f, indent=2)
 
-# ── Styled message helpers ─────────────────────────────────────────────────────
-def show_error(title, message):
-    dlg, card = _make_dialog(title, width=400)
-    tk.Label(card, text=message,
-             bg=CLR_CARD, fg=CLR_TEXT,
-             font=FONT_BODY, wraplength=360,
-             justify="left", padx=20, pady=14).pack(fill="x")
-    bf = tk.Frame(card, bg=CLR_CARD)
-    bf.pack(pady=(0, 16))
-    btn = tk.Button(bf, text="OK", command=dlg.destroy,
-                    bg=CLR_ACCENT, fg="#FFFFFF",
-                    font=FONT_BOLD, relief="flat",
-                    padx=24, pady=6, cursor="hand2",
-                    activebackground=CLR_ACCENT_HV, activeforeground="#FFFFFF",
-                    bd=0)
-    btn.pack()
-    dlg.bind("<Return>", lambda e: dlg.destroy())
-    center_window(dlg, 420)
-    dlg.wait_window()
-
-def show_info(title, message):
-    dlg, card = _make_dialog(title, width=400)
-    tk.Label(card, text=message,
-             bg=CLR_CARD, fg=CLR_TEXT,
-             font=FONT_BODY, wraplength=360,
-             justify="left", padx=20, pady=14).pack(fill="x")
-    bf = tk.Frame(card, bg=CLR_CARD)
-    bf.pack(pady=(0, 16))
-    btn = tk.Button(bf, text="OK", command=dlg.destroy,
-                    bg=CLR_SUCCESS, fg="#FFFFFF",
-                    font=FONT_BOLD, relief="flat",
-                    padx=24, pady=6, cursor="hand2",
-                    activebackground="#196640", activeforeground="#FFFFFF",
-                    bd=0)
-    btn.pack()
-    dlg.bind("<Return>", lambda e: dlg.destroy())
-    center_window(dlg, 420)
-    dlg.wait_window()
-
 # ── GUI widgets ────────────────────────────────────────────────────────────────
-def ask_string(field_label, prompt, default="", is_password=False):
-    result = [None]
+def ask_string(prompt, default=""):
+    result = None
+    dialog = tk.Toplevel()
+    try:
+        icon_path = resource_path("logo.ico")
+        if os.path.exists(icon_path):
+            dialog.iconbitmap(icon_path)
+    except Exception:
+        pass
+    dialog.title("ORBB Configurator")
+    dialog.resizable(False, False)
+    dialog.protocol("WM_DELETE_WINDOW", on_close)
 
-    dlg, card = _make_dialog(field_label, subtitle=prompt, width=440)
-
-    inner = tk.Frame(card, bg=CLR_CARD)
-    inner.pack(fill="x", padx=20, pady=14)
-
+    ttk.Label(dialog, text=prompt, wraplength=360, justify="left").pack(padx=20, pady=(15, 5))
     entry_var = tk.StringVar(value=default)
-    show_char = "" if is_password else None
-    entry = tk.Entry(inner, textvariable=entry_var,
-                     font=FONT_BODY, width=38,
-                     bg=CLR_CARD, fg=CLR_TEXT,
-                     relief="solid", bd=1,
-                     highlightthickness=2,
-                     highlightcolor=CLR_ACCENT,
-                     highlightbackground=CLR_BORDER,
-                     insertbackground=CLR_TEXT,
-                     show=show_char if show_char is not None else "")
-    entry.pack(fill="x", ipady=5)
-
-    err_lbl = tk.Label(inner, text="", bg=CLR_CARD, fg=CLR_ERROR,
-                       font=(FONT_FAMILY, 9))
-    err_lbl.pack(anchor="w", pady=(3, 0))
-
-    # Button row
-    tk.Frame(card, bg=CLR_BORDER, height=1).pack(fill="x", padx=0)
-    bf = tk.Frame(dlg, bg=CLR_BG)
-    bf.pack(fill="x", padx=16, pady=12)
+    entry = ttk.Entry(dialog, textvariable=entry_var, width=40)
+    entry.pack(padx=20, pady=5)
 
     def submit(event=None):
-        result[0] = entry_var.get()
-        dlg.destroy()
+        nonlocal result
+        result = entry_var.get()
+        dialog.destroy()
 
     def cancel(event=None):
-        dlg.destroy()
+        dialog.destroy()
 
-    ok_btn = tk.Button(bf, text="Continue →", command=submit,
-                       bg=CLR_ACCENT, fg="#FFFFFF",
-                       font=FONT_BOLD, relief="flat",
-                       padx=18, pady=6, cursor="hand2",
-                       activebackground=CLR_ACCENT_HV, activeforeground="#FFFFFF",
-                       bd=0)
-    ok_btn.pack(side="right", padx=(6, 0))
+    bf = ttk.Frame(dialog)
+    bf.pack(pady=15)
+    ttk.Button(bf, text="OK", command=submit).pack(side="left", padx=5)
+    ttk.Button(bf, text="Cancel", command=cancel).pack(side="left", padx=5)
 
-    cancel_btn = tk.Button(bf, text="Cancel", command=cancel,
-                           bg=CLR_BG, fg=CLR_SUBTEXT,
-                           font=FONT_BODY, relief="flat",
-                           padx=18, pady=6, cursor="hand2",
-                           activebackground=CLR_BORDER, activeforeground=CLR_TEXT,
-                           bd=0)
-    cancel_btn.pack(side="right")
-
-    dlg.bind("<Return>", submit)
-    dlg.bind("<Escape>", cancel)
-    center_window(dlg, 460)
+    dialog.bind("<Return>", submit)
+    dialog.bind("<Escape>", cancel)
+    dialog.transient()
+    dialog.grab_set()
+    dialog.attributes("-topmost", True)
+    dialog.focus_force()
+    center_window(dialog)
     entry.focus_set()
-    if default:
-        entry.select_range(0, "end")
-    dlg.wait_window()
-    return result[0]
+    dialog.wait_window()
+    return result
 
-def ask_yesno(prompt, subtitle=None):
-    result = [False]
+def ask_yesno(prompt, title="ORBB Configurator"):
+    result = None
+    dialog = tk.Toplevel()
+    try:
+        icon_path = resource_path("logo.ico")
+        if os.path.exists(icon_path):
+            dialog.iconbitmap(icon_path)
+    except Exception:
+        pass
+    dialog.title(title)
+    dialog.protocol("WM_DELETE_WINDOW", on_close)
+    dialog.resizable(False, False)
 
-    dlg, card = _make_dialog("Previous Configuration Found", subtitle=subtitle, width=420)
+    frame = ttk.Frame(dialog, padding=20)
+    frame.pack(fill="both", expand=True)
+    ttk.Label(frame, text=prompt, wraplength=350, justify="left").pack(pady=(0, 15))
 
-    tk.Label(card, text=prompt,
-             bg=CLR_CARD, fg=CLR_TEXT,
-             font=FONT_BODY, wraplength=380,
-             justify="left", padx=20, pady=16).pack(fill="x")
+    def yes():
+        nonlocal result
+        result = True
+        dialog.destroy()
 
-    tk.Frame(card, bg=CLR_BORDER, height=1).pack(fill="x", padx=0)
-    bf = tk.Frame(dlg, bg=CLR_BG)
-    bf.pack(fill="x", padx=16, pady=12)
+    def no():
+        nonlocal result
+        result = False
+        dialog.destroy()
 
-    def yes(event=None):
-        result[0] = True
-        dlg.destroy()
+    bf = ttk.Frame(frame)
+    bf.pack()
+    ttk.Button(bf, text="Yes", command=yes).pack(side="left", padx=10)
+    ttk.Button(bf, text="No", command=no).pack(side="left", padx=10)
 
-    def no(event=None):
-        result[0] = False
-        dlg.destroy()
-
-    yes_btn = tk.Button(bf, text="Yes, load previous", command=yes,
-                        bg=CLR_ACCENT, fg="#FFFFFF",
-                        font=FONT_BOLD, relief="flat",
-                        padx=18, pady=6, cursor="hand2",
-                        activebackground=CLR_ACCENT_HV, activeforeground="#FFFFFF",
-                        bd=0)
-    yes_btn.pack(side="right", padx=(6, 0))
-
-    no_btn = tk.Button(bf, text="Start fresh", command=no,
-                       bg=CLR_BG, fg=CLR_SUBTEXT,
-                       font=FONT_BODY, relief="flat",
-                       padx=18, pady=6, cursor="hand2",
-                       activebackground=CLR_BORDER, activeforeground=CLR_TEXT,
-                       bd=0)
-    no_btn.pack(side="right")
-
-    dlg.bind("<Return>", yes)
-    dlg.bind("<Escape>", no)
-    center_window(dlg, 460)
-    dlg.wait_window()
-    return result[0]
+    dialog.bind("<Return>", lambda e: yes())
+    dialog.bind("<Escape>", lambda e: no())
+    dialog.transient()
+    dialog.grab_set()
+    dialog.attributes("-topmost", True)
+    dialog.focus_force()
+    center_window(dialog)
+    dialog.wait_window()
+    return result
 
 def ask_rating(current=None):
     ratings_display = [
@@ -399,113 +215,93 @@ def ask_rating(current=None):
         'Instructor (I1)',
         'Senior Instructor (I3)',
         'SUP',
-        'ADM',
+        'ADM'
     ]
+    # Maps display index → original .prf index (skipping C2=5 and I2=8)
     prf_index_map = [0, 1, 2, 3, 4, 6, 7, 9, 10, 11]
 
     try:
         prf_val = int(current)
-        if prf_val == 5: prf_val = 4
-        elif prf_val == 8: prf_val = 7
+        if prf_val == 5:
+            prf_val = 4
+        elif prf_val == 8:
+            prf_val = 7
         display_index = prf_index_map.index(prf_val) if prf_val in prf_index_map else 0
     except (ValueError, TypeError):
         display_index = 0
 
     selected = tk.StringVar(value=ratings_display[display_index])
-    result = [None]
 
-    dlg, card = _make_dialog("Controller Rating",
-                             subtitle="Select your current VATSIM controller rating.",
-                             width=440)
+    def submit():
+        dialog.quit()
+        dialog.destroy()
 
-    inner = tk.Frame(card, bg=CLR_CARD)
-    inner.pack(fill="x", padx=20, pady=14)
+    dialog = tk.Toplevel()
+    try:
+        icon_path = resource_path("logo.ico")
+        if os.path.exists(icon_path):
+            dialog.iconbitmap(icon_path)
+    except Exception:
+        pass
+    dialog.minsize(300, 200)
+    dialog.title("ORBB Configurator")
+    ttk.Label(dialog, text="Select your rating:").pack(pady=5)
+    dropdown = ttk.Combobox(dialog, textvariable=selected, values=ratings_display, state="readonly")
+    dropdown.pack(pady=5)
+    ttk.Button(dialog, text="OK", command=submit).pack()
+    dialog.protocol("WM_DELETE_WINDOW", on_close)
+    dialog.transient()
+    dialog.grab_set()
+    dialog.attributes("-topmost", True)
+    dialog.focus_force()
+    center_window(dialog)
+    dialog.mainloop()
 
-    combo = ttk.Combobox(inner, textvariable=selected,
-                         values=ratings_display,
-                         state="readonly", font=FONT_BODY, width=36)
-    combo.pack(fill="x", ipady=4)
-
-    tk.Frame(card, bg=CLR_BORDER, height=1).pack(fill="x", padx=0)
-    bf = tk.Frame(dlg, bg=CLR_BG)
-    bf.pack(fill="x", padx=16, pady=12)
-
-    def submit(event=None):
-        result[0] = selected.get()
-        dlg.destroy()
-
-    ok_btn = tk.Button(bf, text="Continue →", command=submit,
-                       bg=CLR_ACCENT, fg="#FFFFFF",
-                       font=FONT_BOLD, relief="flat",
-                       padx=18, pady=6, cursor="hand2",
-                       activebackground=CLR_ACCENT_HV, activeforeground="#FFFFFF",
-                       bd=0)
-    ok_btn.pack(side="right")
-
-    dlg.bind("<Return>", submit)
-    dlg.protocol("WM_DELETE_WINDOW", on_close)
-    center_window(dlg, 460)
-    combo.focus_set()
-    dlg.wait_window()
-
-    if result[0] is None:
-        on_close()
-    chosen_display_index = ratings_display.index(result[0])
+    chosen_display_index = ratings_display.index(selected.get())
     return str(prf_index_map[chosen_display_index])
 
 # ── Field prompts ──────────────────────────────────────────────────────────────
-FIELD_LABELS = {
-    "name":     "Display Name",
-    "initials": "Observer Initials",
-    "cid":      "VATSIM CID",
-    "rating":   "Controller Rating",
-    "password": "VATSIM Password",
-    "cpdlc":    "ACARS / Hoppie Code",
-}
-
 FIELD_DESCRIPTIONS = {
-    "name":     "Your preferred name as it appears on the network. (CoC A4(B))",
-    "initials": "Your observer initials, e.g. AB or JS. (CoC A4(B))",
-    "cid":      "Your 6 or 7 digit VATSIM CID.",
-    "rating":   "Select your current VATSIM controller rating.",
-    "password": "Your VATSIM account password.",
-    "cpdlc":    "Your Hoppie ACARS logon code for CPDLC.",
+    "name":     "Enter your preferred name convention. (Code of Conduct A4(B))",
+    "initials": "Enter your observer initials (e.g. AB, JS) (Code of Conduct A4(B)).",
+    "cid":      "Enter your CID.",
+    "rating":   "Select your controller rating.",
+    "password": "Enter your password.",
+    "cpdlc":    "Enter your ACARS logon code."
 }
 
 def prompt_for_field(key, current):
-    label = FIELD_LABELS.get(key, key.replace("_", " ").title())
-    desc  = FIELD_DESCRIPTIONS.get(key, "")
+    desc = FIELD_DESCRIPTIONS.get(key, f"Enter {key.replace('_', ' ')}")
     if key == "rating":
         return ask_rating(current)
     else:
         while True:
-            response = ask_string(label, desc, current,
-                                  is_password=(key == "password"))
+            response = ask_string(desc, current)
             if response is None:
                 sys.exit()
             if key == "cid" and not is_valid_cid(response):
-                show_error("Invalid CID", "Your CID must be a 6 or 7 digit number.\nPlease try again.")
+                messagebox.showerror("Invalid CID", "CID must be a 6 or 7 digit number.")
                 continue
             return response
 
 # ── Config collection ──────────────────────────────────────────────────────────
 def collect_basic_config():
     root = tk.Tk()
-    root.configure(bg=CLR_BG)
     root.title("ORBB Configurator")
-    set_icon(root)
+    try:
+        icon_path = resource_path("logo.ico")
+        if os.path.exists(icon_path):
+            root.iconbitmap(icon_path)
+    except Exception:
+        pass
     root.withdraw()
-    apply_theme(root)
     tk._default_root = root
 
     previous_options = load_previous_options()
     options = {}
 
     if previous_options:
-        if ask_yesno(
-            "A saved configuration was found. Would you like to load it?",
-            subtitle="You can update individual fields after loading."
-        ):
+        if ask_yesno("Do you want to load your previous options?"):
             options.update(previous_options)
             for key in BASIC_FIELDS:
                 if key not in options:
@@ -520,6 +316,10 @@ def collect_basic_config():
 
 # ── PRF restructure ────────────────────────────────────────────────────────────
 def restructure_prf_files():
+    """
+    Move .prf files from the repo root into the folders defined in structure.json.
+    Any .prf not listed in structure.json is left alone.
+    """
     structure = load_structure()
     if not structure:
         return
@@ -531,9 +331,11 @@ def restructure_prf_files():
         src = os.path.join(PACK_ROOT, prf_name)
         if not os.path.exists(src):
             continue
+
         target_dir = os.path.join(PACK_ROOT, target_rel)
         os.makedirs(target_dir, exist_ok=True)
         dst = os.path.join(target_dir, prf_name)
+
         try:
             shutil.move(src, dst)
             moved.append(f"  {prf_name}  →  {target_rel}")
@@ -578,6 +380,25 @@ def patch_prf_file(file_path, name, initials, cid, rating, password):
         print(f"Failed to write {file_path}: {e}")
 
 def patch_profiles_file(file_path, cid):
+    """
+    Applies all replacements defined in the [profiles_replacements] section of
+    configurator_config.json.
+
+    Default replacement (always applied):
+        "Submit feedback at PLACEHOLDER"
+        → "Submit feedback at placeholder?cid=<CID>"
+
+    You can add extra find/replace pairs to the saved config under
+    "profiles_replacements", for example:
+        {
+          "profiles_replacements": {
+            "ORBB_PLACEHOLDER": "ORBB_REAL_VALUE",
+            "old string": "new string"
+          }
+        }
+    The token {cid} in a replacement value will be substituted with the
+    controller's actual CID automatically.
+    """
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
@@ -585,11 +406,13 @@ def patch_profiles_file(file_path, cid):
         print(f"Failed to read {file_path}: {e}")
         return
 
+    # Built-in default replacement
     replacements = {
         "Submit feedback at PLACEHOLDER":
             f"Submit feedback at placeholder?cid={cid}"
     }
 
+    # Merge in any user-defined replacements from the saved config
     saved = load_previous_options()
     user_replacements = saved.get("profiles_replacements", {})
     for find, replace in user_replacements.items():
@@ -605,6 +428,7 @@ def patch_profiles_file(file_path, cid):
         print(f"Failed to write {file_path}: {e}")
 
 def patch_topsky_cpdlc(cpdlc_code):
+    """Write the Hoppie code to all TopSky CPDLC code files."""
     topsky_paths = [
         "Data/Plugin/TopSky/TopSkyCPDLChoppieCode.txt",
         "Data/Plugin/TopSkyGRP/TopSkyCPDLChoppieCode.txt",
@@ -620,35 +444,42 @@ def patch_topsky_cpdlc(cpdlc_code):
 
 # ── Main apply ─────────────────────────────────────────────────────────────────
 def apply_configuration(name, initials, cid, rating, password, cpdlc):
+    """Walk the entire repo root and patch all relevant files."""
     for root, _, files in os.walk(PACK_ROOT):
         for file in files:
             path = os.path.join(root, file)
+
             if file.endswith(".prf"):
                 patch_prf_file(path, name, initials, cid, rating, password)
+
             elif file.endswith("Profiles.txt"):
                 patch_profiles_file(path, cid)
+
     patch_topsky_cpdlc(cpdlc)
 
 # ── Entry point ────────────────────────────────────────────────────────────────
 def main():
     if not tk._default_root:
         root = tk.Tk()
-        root.configure(bg=CLR_BG)
         root.withdraw()
-        apply_theme(root)
         tk._default_root = root
 
     lockfile = os.path.join(BASE_DIR, "configurator.lock")
     if os.path.exists(lockfile):
-        show_error("Already Running", "The configurator is already running.")
+        messagebox.showerror("Already Running", "Configurator is already running.")
         sys.exit()
 
     with open(lockfile, "w") as f:
         f.write(str(os.getpid()))
 
     try:
+        # 1. Collect options via GUI
         options = collect_basic_config()
+
+        # 2. Restructure PRF files into folders defined by structure.json
         restructure_prf_files()
+
+        # 3. Patch all files
         apply_configuration(
             name=options["name"],
             initials=options["initials"],
@@ -657,10 +488,12 @@ def main():
             password=options["password"],
             cpdlc=options["cpdlc"],
         )
+
+        # 4. Persist options for next run
         save_options(options)
-        show_info("Configuration Complete",
-                  "Your ORBB controller pack has been configured successfully.\n\nYou can now launch EuroScope.")
-        time.sleep(0.5)
+
+        messagebox.showinfo("Complete", "Profile configuration complete.")
+        time.sleep(1.5)
 
     finally:
         if os.path.exists(lockfile):
@@ -669,26 +502,10 @@ def main():
 if __name__ == "__main__":
     try:
         main()
-    except Exception as e:
-        import traceback
-        # Write crash log next to exe so silent crashes can be diagnosed
-        log_path = os.path.join(BASE_DIR, "configurator_crash.log")
-        with open(log_path, "w") as lf:
-            traceback.print_exc(file=lf)
-        try:
-            tk.messagebox.showerror("Configurator Error",
-                f"An unexpected error occurred:
-
-{e}
-
-Details written to:
-{log_path}")
-        except Exception:
-            pass
     finally:
         try:
             if tk._default_root:
-                for w in list(tk._default_root.children.values()):
+                for w in tk._default_root.children.values():
                     w.destroy()
                 tk._default_root.destroy()
         except Exception:
