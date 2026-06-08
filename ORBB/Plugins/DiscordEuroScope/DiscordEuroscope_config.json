@@ -23,8 +23,8 @@
         "sweatbox": {
             "presence_small_image_key": "",
             "presence_large_image_key" : "",
-            "state" : "Sweatbox",
-            "details" : "Testing controller competencies",
+            "state" : "Testing controller competencies",
+            "details" : "Sweatbox",
             "presence_small_image_text" : "",
             "presence_large_image_text" : "{callsign}"
         },
@@ -39,8 +39,8 @@
             "if_observer" : {
                 "presence_small_image_key": "",
                 "presence_large_image_key" : "",
-                "state" : "Observing as {callsign}",
-                "details" : "{total_inrange} aircraft in range.",
+                "state" : "{total_inrange} aircraft in range",
+                "details" : "Observing as {callsign}",
                 "presence_small_image_text" : "",
                 "presence_large_image_text" : ""
             },
@@ -48,8 +48,8 @@
             "if_controller": {
                 "presence_small_image_key": "",
                 "presence_large_image_key" : "",
-                "state" : "Controlling {rcallsign} on {frequency}MHz",
-                "details" : "Tracking {current_tracked} aircraft.",
+                "state" : "Tracking {current_tracked} aircraft",
+                "details" : "Controlling {rcallsign} on {frequency}MHz",
                 "presence_small_image_text" : "",
                 "presence_large_image_text" : ""
             },
