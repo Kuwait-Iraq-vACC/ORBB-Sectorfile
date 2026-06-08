@@ -29,3 +29,11 @@ LOGIN:LT17:ANKARA CTR:AN17
 
 LOGIN:OEJD:JEDDAH CTL:JC1
 
+DCL.txt
+Freetext/Freetext.txt
+Freetext/Descent.txt
+Stations/Baghdad.txt
+Stations/Kuwait.txt
+Stations/Ankara.txt
+Stations/Jeddah.txt
+
