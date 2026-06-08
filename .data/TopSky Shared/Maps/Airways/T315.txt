@@ -1,4 +1,4 @@
-﻿MAP:T315
+MAP:T315
 FILTER_ASR:Airway
 STYLE:Solid:1
 FOLDER:Airways

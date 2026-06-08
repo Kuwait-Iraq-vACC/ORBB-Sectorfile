@@ -1,4 +1,4 @@
-﻿MAP:L200
+MAP:L200
 FILTER_ASR:Airway
 STYLE:Solid:1
 FOLDER:Airways

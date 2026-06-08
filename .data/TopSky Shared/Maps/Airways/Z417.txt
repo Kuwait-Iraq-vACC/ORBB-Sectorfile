@@ -1,4 +1,4 @@
-﻿MAP:Z417
+MAP:Z417
 FILTER_ASR:Airway
 STYLE:Solid:1
 FOLDER:Airways

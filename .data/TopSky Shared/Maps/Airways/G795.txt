@@ -1,4 +1,4 @@
-﻿MAP:G795
+MAP:G795
 FILTER_ASR:Airway
 STYLE:Solid:1
 FOLDER:Airways
