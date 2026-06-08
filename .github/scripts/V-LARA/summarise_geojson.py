@@ -1,13 +1,4 @@
 #!/usr/bin/env python3
-"""
-summarise_geojson.py
---------------------
-Prints a Markdown summary of the built GeoJSON to stdout.
-Output is appended to GITHUB_STEP_SUMMARY by the workflow.
-
-Reads the output path from the GEOJSON_OUT environment variable,
-falling back to .data/V-LARA/orbb.geojson.
-"""
 
 import json
 import math

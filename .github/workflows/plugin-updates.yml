@@ -16,7 +16,7 @@ jobs:
     env:
       VERSION_FILE: .github/plugin_versions.json
       BADGES_DIR: .github/badges
-      REPO_OWNER: New-VACC
+      REPO_OWNER: Kuwait-Iraq-vACC
       REPO_NAME: ORBB-Sectorfile
 
     steps:
