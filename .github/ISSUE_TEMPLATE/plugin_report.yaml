@@ -11,7 +11,7 @@ body:
     attributes:
       label: Plugin Name
       description: Which plugin are you reporting an issue for?
-      placeholder: e.g. RDFplugin, DiscordEuroscope
+      placeholder: e.g. RDFplugin, DiscordEuroScope
     validations:
       required: true
   - type: input
