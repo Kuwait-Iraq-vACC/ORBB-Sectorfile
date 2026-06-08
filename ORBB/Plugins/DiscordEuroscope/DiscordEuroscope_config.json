@@ -1,6 +1,6 @@
 {
-    "discord_appid": "1383786715386347540",
-    "discord_presence_large_image_key" : "logo",
+    "discord_appid": "1513630181682577689",
+    "discord_presence_large_image_key" : "kuwait-iraq-vacc-red",
     "discord_presence_small_image_key" : "",
     "sweatbox_bypass" : false,
     "states" : {
@@ -8,25 +8,25 @@
             "presence_small_image_key": "",
             "presence_large_image_key" : "",
             "state" : "",
-            "details" : "Sleeping...",
+            "details" : "Preparing the scopes!",
             "presence_small_image_text" : "",
-            "presence_large_image_text" : "Zzz"
+            "presence_large_image_text" : ""
         },
         "playback": {
             "presence_small_image_key": "",
             "presence_large_image_key" : "",
             "state" : "",
-            "details" : "Playback",
+            "details" : "Playing back my session",
             "presence_small_image_text" : "",
-            "presence_large_image_text" : "Is it really that interesting..?"
+            "presence_large_image_text" : ""
         },
         "sweatbox": {
             "presence_small_image_key": "",
             "presence_large_image_key" : "",
-            "state" : "",
-            "details" : "Sweatbox",
+            "state" : "Sweatbox",
+            "details" : "Testing controller competencies",
             "presence_small_image_text" : "",
-            "presence_large_image_text" : "Sweating..."
+            "presence_large_image_text" : "{callsign}"
         },
         "direct": {
             "presence_small_image_key": "",
@@ -34,32 +34,26 @@
             "state" : "",
             "details" : "",
             "presence_small_image_text" : "",
-            "presence_large_image_text" : "",
-            
+            "presence_large_image_text" : "{callsign}",
+
             "if_observer" : {
                 "presence_small_image_key": "",
                 "presence_large_image_key" : "",
-                "state" : "Aircraft in range: {total_inrange}",
-                "details" : "Observing as {callsign}",
+                "state" : "Observing as {callsign}",
+                "details" : "{total_inrange} aircraft in range.",
                 "presence_small_image_text" : "",
                 "presence_large_image_text" : ""
             },
-            
+
             "if_controller": {
                 "presence_small_image_key": "",
                 "presence_large_image_key" : "",
-                "state" : "Tracking ({current_tracked} of {total_inrange} ✈)",
-                "details" : "{rcallsign} {frequency}MHz",
-                "presence_small_image_text" : "Total tracks: {total_tracked}",
-                "presence_large_image_text" : "{callsign}",
-                "buttons": [
-                    {
-                        "label": "Join Us!",
-                        "url" : "https://discord.gg/PecYZgNkQx"
-                    }
-                ]
+                "state" : "Controlling {rcallsign} on {frequency}MHz",
+                "details" : "Tracking {current_tracked} aircraft.",
+                "presence_small_image_text" : "",
+                "presence_large_image_text" : ""
             },
-            
+
             "if_supervisor": {
                 "presence_small_image_key": "",
                 "presence_large_image_key" : "",
@@ -70,20 +64,10 @@
             }
         }
     },
-    "buttons": [
-        {
-            "label": "Join Us!",
-            "url" : "https://discord.gg/PecYZgNkQx"
-        }
-    ],
     "radio_callsigns": {
         "config": {
-            "load_from_ese": false,
-            "path_to_ese" : "..\\..\\"
-        },
-        "custom_callsigns": {
-            "^HECC_CTR$": "Cairo Control Bandbox",
-            "^HECC_(\\d+)(?:_)CTR$" : "Cairo Control ACC $0"
+            "load_from_ese": "true",
+            "path_to_ese": "..\\..\\..\\"
         }
     }
 }
