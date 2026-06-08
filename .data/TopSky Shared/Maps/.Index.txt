@@ -4,5 +4,6 @@ Colour Definitions.txt
 Symbol Definitions.txt
 (Extended) Centrelines/
 ARTCC/
+Airways/
 Prohibited Airspace/
 WIP.txt
