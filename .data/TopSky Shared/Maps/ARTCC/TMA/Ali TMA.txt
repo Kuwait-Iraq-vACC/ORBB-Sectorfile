@@ -1,4 +1,4 @@
-MAP:Baghdad TMA
+MAP:Ali TMA
 FOLDER:Airspace
 COLOR:FIRboundary
 LAYER:-1
