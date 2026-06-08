@@ -6,19 +6,19 @@
     "color": "blue",
     "repo": "rpuig2001/CDM"
   },
-  "DiscordEuroscope": {
+  "DiscordEuroScope": {
     "schemaVersion": 1,
-    "label": "DiscordEuroscope",
-    "message": "1.1.0",
+    "label": "DiscordEuroScope",
+    "message": "1.3.0",
     "color": "blue",
-    "repo": "Kirollos/DiscordEuroscope"
+    "repo": "Kirollos/DiscordEuroScope"
   },
   "GroundRadar": {
     "schemaVersion": 1,
     "label": "GroundRadar",
     "message": "1.6b3",
     "color": "blue",
-    "repo": "VATSIM-SSA/GroundRadar"
+    "repo": "Kuwait-Iraq-vACC/GroundRadar"
   },
   "IASsure": {
     "schemaVersion": 1,
@@ -46,7 +46,7 @@
     "label": "TopSky",
     "message": "2.6b3",
     "color": "blue",
-    "repo": "VATSIM-SSA/TopSky"
+    "repo": "Kuwait-Iraq-vACC/TopSky"
   },
   "vacs": {
     "schemaVersion": 1,
