@@ -1,5 +1,5 @@
 MAP:P975
-FILTER_ASR:Airway
+FILTER_ASR:Realistic
 STYLE:Solid:1
 FOLDER:Airways
 ACTIVE:1
