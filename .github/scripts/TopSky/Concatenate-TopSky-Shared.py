@@ -223,9 +223,9 @@ def collect_txt_files(folder_path, prefix=''):
             sub_prefix = prefix + entry.name + '/'
             files.extend(collect_txt_files(entry.path, prefix=sub_prefix))
 
-    # Then loose .txt files
+    # Then loose .txt files (skip dotfiles like .Index.txt)
     for entry in entries:
-        if entry.is_file() and entry.name.endswith('.txt') and entry.name != INDEX.lstrip('.'):
+        if entry.is_file() and entry.name.endswith('.txt') and not entry.name.startswith('.'):
             files.append(prefix + entry.name)
 
     return files
@@ -253,9 +253,9 @@ def collect_remainder(folder_path, covered):
                 sub_files = collect_txt_files(entry.path, prefix=entry.name + '/')
                 files.extend(sub_files)
 
-    # Loose root .txt files not covered
+    # Loose root .txt files not covered (skip dotfiles like .Index.txt)
     for entry in entries:
-        if entry.is_file() and entry.name.endswith('.txt') and entry.name != INDEX.lstrip('.'):
+        if entry.is_file() and entry.name.endswith('.txt') and not entry.name.startswith('.'):
             if entry.name not in covered:
                 files.append(entry.name)
 
