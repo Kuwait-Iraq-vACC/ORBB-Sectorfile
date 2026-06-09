@@ -1248,9 +1248,3 @@ N032.09.38.000:E042.37.43.000
 N032.38.45.000:E040.54.03.000
 N032.57.43.000:E041.17.35.000
 
-CategoryDefinitions/CategoryDefs.txt
-Prohibited/
-Restricted/
-Danger/
-MOA/
-
