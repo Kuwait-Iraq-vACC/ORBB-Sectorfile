@@ -1,6 +1,6 @@
 MAP:Airways
 FILTER_ASR:Realistic
-ZOOM:-6
+ZOOM:-5
 STYLE:Solid:1
 FOLDER:ENR
 ACTIVE:1

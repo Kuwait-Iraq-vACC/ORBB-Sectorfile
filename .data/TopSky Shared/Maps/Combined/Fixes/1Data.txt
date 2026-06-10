@@ -1,6 +1,6 @@
 MAP:Fix Names
 FILTER_ASR:Realistic
-ZOOM:-6
+ZOOM:-5
 FOLDER:ENR
 STYLE:Solid:1
 ACTIVE:1
