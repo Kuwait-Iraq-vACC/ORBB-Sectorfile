@@ -3,8 +3,7 @@ Overrides.txt
 Colour Definitions.txt
 Symbol Definitions.txt
 (Extended) Centrelines/
-Airways/Realistic/
-Airways/Combined/
+Combined/
 ARTCC/
 Prohibited Airspace/
 WIP.txt
