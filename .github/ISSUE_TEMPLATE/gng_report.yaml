@@ -26,7 +26,7 @@ body:
   - type: textarea
     id: fix
     attributes:
-      label: Fix
+      label: Fixes
       description: Describe the fix, or change, you are proposing to resolve the issue if known.
     validations:
       required: false

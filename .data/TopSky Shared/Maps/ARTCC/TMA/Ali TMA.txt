@@ -1,5 +1,6 @@
 MAP:Ali TMA
 FOLDER:Airspace
+ZOOM:6
 COLOR:FIRboundary
 LAYER:-1
 ACTIVE:1
