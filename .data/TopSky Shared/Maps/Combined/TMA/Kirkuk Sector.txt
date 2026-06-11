@@ -1,4 +1,5 @@
 MAP:Kirkuk TMA
+FILTER_ASR:Combined
 FOLDER:Airspace
 COLOR:FIRBoundary
 ZOOM:5

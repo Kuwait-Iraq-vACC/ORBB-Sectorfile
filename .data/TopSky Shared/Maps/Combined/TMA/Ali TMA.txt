@@ -1,4 +1,5 @@
 MAP:Ali TMA
+FILTER_ASR:Combined
 FOLDER:Airspace
 ZOOM:5
 COLOR:FIRBoundary

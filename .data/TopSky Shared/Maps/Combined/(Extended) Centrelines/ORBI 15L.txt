@@ -1,5 +1,6 @@
 MAP:ORBI 15L Centreline
-FOLDER:(Extended) Centrelines
+FOLDER:Centrelines Combined
+FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
 STYLE:Solid:1
