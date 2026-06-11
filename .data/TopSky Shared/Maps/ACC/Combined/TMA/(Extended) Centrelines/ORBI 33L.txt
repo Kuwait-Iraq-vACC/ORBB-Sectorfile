@@ -1,6 +1,6 @@
 MAP:ORBI 33L Centreline
-FOLDER:Centrelines Combined
-FILTER_ASR:Combined
+FOLDER:Centrelines TMA
+FILTER_ASR:TMA
 COLOR:DFSGrey
 ZOOM:5
 STYLE:Solid:1

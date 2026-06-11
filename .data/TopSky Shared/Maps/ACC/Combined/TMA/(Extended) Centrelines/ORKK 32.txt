@@ -1,6 +1,6 @@
 MAP:ORKK 32 Centreline
-FOLDER:Centrelines Combined
-FILTER_ASR:Combined
+FOLDER:Centrelines TMA
+FILTER_ASR:TMA
 COLOR:DFSGrey
 ZOOM:5
 STYLE:Solid:1
