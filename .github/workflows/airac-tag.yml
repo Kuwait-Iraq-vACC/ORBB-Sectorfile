@@ -107,6 +107,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GH_REPO}.git"
+          echo "Remote URL set"
+          git remote -v
+          echo "GH_REPO is: $GH_REPO"
+          echo "GH_TOKEN is set: $( [[ -n "$GH_TOKEN" ]] && echo yes || echo NO )"
 
           # Skip entirely if placeholder is already set to this cycle
           if grep -rq "placeholder: e.g. $CYCLE" .github/ISSUE_TEMPLATE/; then
