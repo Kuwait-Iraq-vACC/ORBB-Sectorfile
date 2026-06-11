@@ -2,7 +2,7 @@ MAP:All Centrelines
 FOLDER:Centrelines TMA
 FILTER_ASR:TMA
 COLOR:DFSGrey
-ZOOM:5
+ZOOM:2
 STYLE:Solid:1
 
 // ORBI 15L

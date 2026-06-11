@@ -3,8 +3,8 @@ from pathlib import Path
 # Folder containing the files
 folder = Path(r"C:\GitHub\ORBB-Sectorfile\.data\TopSky Shared\Maps\ACC\Combined\TMA\(Extended) Centrelines")
 
-old_text = "Centrelines Combined"
-new_text = "Centrelines TMA"
+old_text = "ZOOM:5"
+new_text = "ZOOM:2"
 
 files_modified = 0
 
