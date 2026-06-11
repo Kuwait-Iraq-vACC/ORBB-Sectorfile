@@ -11,7 +11,8 @@ Setup_AutoSignIn=1
 
 Shortcut_RadarMenu_Combo=0x12
 Shortcut_Map_Xfr_Key=1,0x54 ; T
-Shortcut_Map_Target=1,(Extended) Centrelines\All Centrelines
+Shortcut_Map_Target=1,Centrelines Combined\All Centrelines
+Shortcut_Map_Target=1,Centrelines TMA\All Centrelines
 
 Label_GS_Digits=2
 Label_GS_Digits_Metric=2

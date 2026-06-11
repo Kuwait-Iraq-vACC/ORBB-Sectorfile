@@ -1,4 +1,5 @@
 MAP:ACC North South
+FILTER_ASR:Combined
 STYLE:Dash:1
 ZOOM:-5
 FOLDER:ENR
@@ -21,3 +22,5 @@ ACTIVE:ID:BN:*:*:*
 ACTIVE:ID:BNU:*:*:*
 ACTIVE:ID:BS:*:*:*
 ACTIVE:ID:BSU:*:*:*
+
+FILTER_ASR_OFF

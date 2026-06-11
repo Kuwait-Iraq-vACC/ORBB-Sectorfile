@@ -1,6 +1,6 @@
 MAP:Baghdad Ali TMA
+FILTER_ASR:Normal
 STYLE:Dash:1
-ZOOM:-5
 FOLDER:ENR
 ACTIVE:1
 COLOR:ReleaseLine
@@ -21,3 +21,5 @@ ACTIVE:ID:BN:*:*:*
 ACTIVE:ID:BNU:*:*:*
 ACTIVE:ID:BS:*:*:*
 ACTIVE:ID:BSU:*:*:*
+
+FILTER_ASR_OFF
