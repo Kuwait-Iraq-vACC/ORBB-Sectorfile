@@ -1,4 +1,5 @@
 MAP:Baghdad TMA
+FILTER_ASR:TMA
 FOLDER:Airspace
 COLOR:FIRboundary
 ZOOM:6
