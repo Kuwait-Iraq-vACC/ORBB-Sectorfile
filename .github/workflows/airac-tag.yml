@@ -109,7 +109,7 @@ jobs:
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GH_REPO}.git"
 
           find .github/ISSUE_TEMPLATE -name "*.yml" -o -name "*.yaml" | \
-            xargs sed -i "s/placeholder: e\.g\. [0-9]\{4\}\/[0-9]\{2\}/placeholder: e.g. $CYCLE/g"
+            xargs sed -i "s/placeholder: e\.g\. [0-9]\{4\}\/[0-9]\{2\}/placeholder: e.g. $CYCLE\/01/g"
 
           if git diff --quiet; then
             echo "No placeholder changes needed."
