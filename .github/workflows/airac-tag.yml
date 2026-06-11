@@ -26,6 +26,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
+          ref: main
           persist-credentials: false
           token: ${{ steps.generate-token.outputs.token }}
 
@@ -107,8 +108,12 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GH_REPO}.git"
 
+          # Skip entirely if placeholder is already set to this cycle
+          if grep -rq "placeholder: e.g. $CYCLE" .github/ISSUE_TEMPLATE/; then
+            echo "Placeholder already set to $CYCLE, skipping."
+            exit 0
+          fi
 
-          # Replace any existing AIRAC placeholder (e.g. 2604/01) with the new cycle
           find .github/ISSUE_TEMPLATE -name "*.yml" -o -name "*.yaml" | \
             xargs sed -i "s/placeholder: e\.g\. [0-9]\{4\}\/[0-9]\{2\}/placeholder: e.g. $CYCLE/g"
 
@@ -119,6 +124,7 @@ jobs:
 
           git add .github/ISSUE_TEMPLATE/
           git commit -m "chore: update issue template AIRAC placeholder to $CYCLE"
+          git pull --rebase origin main
           git push
 
       - name: Unlock AIRAC PRs
