@@ -1,5 +1,5 @@
-MAP:All Centrelines
-FOLDER:ENR Combined
+MAP:Combined
+FOLDER:All Centrelines
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5

@@ -1,7 +1,7 @@
 from pathlib import Path
 
 # Folder containing the files
-folder = Path(r"C:\GitHub\ORBB-Sectorfile\.data\TopSky Shared\Maps\TMA\(Extended) Centrelines")
+folder = Path(r"C:\GitHub\ORBB-Sectorfile\.data\TopSky Shared\Maps\TMA\(Extended) All Centrelines")
 
 old_text = "\nZOOM:5"
 new_text = ""

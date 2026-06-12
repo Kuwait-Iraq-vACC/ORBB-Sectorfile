@@ -1,7 +1,7 @@
 from pathlib import Path
 
 # Folder containing the map files
-folder = Path(r"C:\GitHub\ORBB-Sectorfile\.data\TopSky Shared\Maps\Combined\(Extended) Centrelines")
+folder = Path(r"C:\GitHub\ORBB-Sectorfile\.data\TopSky Shared\Maps\Combined\(Extended) All Centrelines")
 
 for file_path in folder.glob("*"):
     if not file_path.is_file():

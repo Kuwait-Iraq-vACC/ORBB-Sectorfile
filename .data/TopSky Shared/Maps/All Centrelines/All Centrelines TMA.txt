@@ -1,5 +1,5 @@
-MAP:All Centrelines
-FOLDER:TMA
+MAP:TMA
+FOLDER:All Centrelines
 FILTER_ASR:TMA
 COLOR:DFSGrey
 ZOOM:2
