@@ -1,6 +1,6 @@
-MAP:Baghdad TMA
+MAP:Baghdad TMA_Combined
 FILTER_ASR:Combined
-FOLDER:Airspace
+FOLDER:ENR Combined
 COLOR:FIRBoundary
 ZOOM:5
 LAYER:-1

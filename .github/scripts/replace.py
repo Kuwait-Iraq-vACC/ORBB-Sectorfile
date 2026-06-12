@@ -1,10 +1,10 @@
 from pathlib import Path
 
 # Folder containing the files
-folder = Path(r"C:\GitHub\ORBB-Sectorfile\.data\TopSky Shared\Maps\ACC\Combined\TMA\(Extended) Centrelines")
+folder = Path(r"C:\GitHub\ORBB-Sectorfile\.data\TopSky Shared\Maps\ACC\Combined\(Extended) Centrelines")
 
-old_text = "FILTER_ASR:Combined"
-new_text = "FILTER_ASR:TMA"
+old_text = "FOLDER:Centrelines Combined"
+new_text = "FOLDER:ENR Combined"
 
 files_modified = 0
 

@@ -1,7 +1,7 @@
 MAP:Fix Names_Combined
 FILTER_ASR:Combined
 ZOOM:-5
-FOLDER:ENR
+FOLDER:ENR Combined
 STYLE:Solid:1
 ACTIVE:1
 COLOR:Airway
