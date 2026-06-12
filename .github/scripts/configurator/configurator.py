@@ -100,14 +100,14 @@ def is_valid_cid(cid):
 # ── Config persistence ─────────────────────────────────────────────────────────
 DEFAULT_FIELDS = {
     "name": "",
-    "initials": "",
-    "cid": "",
     "rating": "",
+    "cid": "",
     "password": "",
+    "initials": "",
     "cpdlc": "",
 }
 
-BASIC_FIELDS = ["name", "initials", "cid", "rating", "password", "cpdlc"]
+BASIC_FIELDS = ["name", "rating", "cid", "password", "initials", "cpdlc"]
 
 def load_previous_options():
     if os.path.exists(OPTIONS_PATH):
@@ -263,10 +263,10 @@ def ask_rating(current=None):
 # ── Field prompts ──────────────────────────────────────────────────────────────
 FIELD_DESCRIPTIONS = {
     "name":     "Enter your preferred name convention. (Code of Conduct A4(B))",
-    "initials": "Enter your observer initials (e.g. AB, JS) (Code of Conduct A4(B)).",
-    "cid":      "Enter your CID.",
     "rating":   "Select your controller rating.",
+    "cid":      "Enter your CID.",
     "password": "Enter your password.",
+    "initials": "Enter your observer initials (e.g. AB, JS) (Code of Conduct A4(B)).",
     "cpdlc":    "Enter your ACARS logon code."
 }
 
@@ -348,6 +348,19 @@ def restructure_prf_files():
         print("Could not move:\n" + "\n".join(skipped))
 
 # ── File patchers ──────────────────────────────────────────────────────────────
+def fix_orbb_paths(lines):
+    """
+    For each line, if a tab-separated value starts with \ORBB\ (but not already
+    \..\ORBB\), prepend ..\ to make it \..\ORBB\.
+    Handles both tab-separated and space-separated .prf lines.
+    """
+    fixed = []
+    for line in lines:
+        # Match a value that starts with \ORBB\ not already preceded by ..\
+        # Works on tab-delimited fields (the standard .prf format)
+        fixed.append(re.sub(r'(?<!\.\.)(\\ORBB\\)', r'\\..\\\1'.replace('\\\\', '\\'), line))
+    return fixed
+
 def patch_prf_file(file_path, name, initials, cid, rating, password):
     try:
         with open(file_path, "r", encoding="utf-8") as f:
@@ -356,20 +369,29 @@ def patch_prf_file(file_path, name, initials, cid, rating, password):
         print(f"Failed to read {file_path}: {e}")
         return
 
+    # Fix \ORBB\ paths → \..\ORBB\
+    lines = fix_orbb_paths(lines)
+
+    # Remove any existing LastSession credential lines (including server, so we always
+    # write a clean canonical block)
     lines = [l for l in lines if not (
-        l.startswith("LastSession\trealname") or
-        l.startswith("LastSession\tcertificate") or
-        l.startswith("LastSession\trating") or
-        l.startswith("LastSession\tcallsign") or
-        l.startswith("LastSession\tpassword")
+            l.startswith("LastSession\trealname") or
+            l.startswith("LastSession\tcertificate") or
+            l.startswith("LastSession\trating") or
+            l.startswith("LastSession\tcallsign") or
+            l.startswith("LastSession\tpassword") or
+            l.startswith("LastSession\tserver")
     )]
 
+    # Write credentials in the required order:
+    # real name → rating → certificate → password → callsign → server
     new_lines = [
         f"LastSession\trealname\t{name}\n",
-        f"LastSession\tcertificate\t{cid}\n",
         f"LastSession\trating\t{rating}\n",
-        f"LastSession\tcallsign\t{initials}_OBS\n",
+        f"LastSession\tcertificate\t{cid}\n",
         f"LastSession\tpassword\t{password}\n",
+        f"LastSession\tcallsign\t{initials}_OBS\n",
+        f"LastSession\tserver\tAUTOMATIC\n",
     ]
     lines += ["\n"] + new_lines
 

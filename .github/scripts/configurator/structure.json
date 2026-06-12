@@ -1,13 +1,21 @@
 {
-  "Baghdad ACC.prf":           "ORBB/Baghdad ACC/",
-  "Baghdad ACC - Realistic.prf": "ORBB/Baghdad ACC/",
-  "Baghdad ACC - Dark Mode.prf": "ORBB/Baghdad ACC/",
+  "Bandbox.prf": "ACC/",
+  "Bandbox SMGCS.prf": "ACC/",
+  "North.prf": "ACC/",
+  "North SMGCS.prf": "ACC/",
+  "South.prf": "ACC/",
+  "South SMGCS.prf": "ACC/",
 
-  "Baghdad TMA.prf":           "ORBB/Baghdad/",
-  "Baghdad Aerodrome.prf":     "ORBB/Baghdad/",
+  "Ali.prf": "Ali/",
+  "Al Najaf SMGCS.prf": "Ali/",
+  "Basrah SMGCS.prf": "Ali/",
 
-  "Basrah TMA.prf":            "ORBB/Basrah/",
-  "Basrah Aerodrome.prf":      "ORBB/Basrah/",
+  "Baghdad.prf": "Baghdad/",
+  "Baghdad SMGCS.prf": "Baghdad/",
 
-  "Al Najaf Aerodrome.prf":    "ORBB/Al Najaf/"
+  "Kirkuk.prf": "Kirkuk/",
+  "Erbil SMGCS.prf": "Kirkuk/",
+  "Jal Talabani SMGCS.prf": "Kirkuk/",
+  "Kirkuk SMGCS.prf": "Kirkuk/",
+  "Mosul SMGCS.prf": "Kirkuk/"
 }

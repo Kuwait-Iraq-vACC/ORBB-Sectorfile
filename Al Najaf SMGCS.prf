@@ -1,19 +1,18 @@
 Settings	alias	\ORBB\Alias\alias.txt
-Settings	sector
-Settings	SettingsfileSYMBOLOGY	\ORBB\Settings\GRP\Symbology.txt
+Settings	SettingsfileSYMBOLOGY	\ORBB\Settings\Symbology.txt
 Settings	SettingsfileVOICE	\ORBB\Settings\VoiceChannels.txt
-Settings	SettingsfilePROFILE	\ORBB\Settings\GRP\Profiles.txt
-Settings	SettingsfileTAGS	\ORBB\Settings\GRP\Tags.txt
-Settings	SettingsfileSIL	\ORBB\Settings\GRP\Lists.txt
-Settings	SettingsfileSEL	\ORBB\Settings\GRP\Lists.txt
-Settings	SettingsfileDEP	\ORBB\Settings\GRP\Lists.txt
-Settings	SettingsfileARR	\ORBB\Settings\GRP\Lists.txt
-Settings	SettingsfileFP	\ORBB\Settings\GRP\Lists.txt
-Settings	SettingsfilePLUGINS	\ORBB\Settings\GRP\Plugins.txt
-Settings	Settingsfile	\ORBB\Settings\GRP\General.txt
-Settings	SettingsfileSCREEN	\ORBB\Settings\GRP\Screen.txt
-Settings	SettingsfileCONFLICT	\ORBB\Settings\GRP\Lists.txt
-Settings	SettingsfileVCCS	\ORBB\Settings\GRP\VCCS.txt
+Settings	SettingsfilePROFILE	\ORBB\Settings\Profiles.txt
+Settings	SettingsfileTAGS	\ORBB\Settings\Tags.txt
+Settings	SettingsfileSIL	\ORBB\Settings\Lists.txt
+Settings	SettingsfileSEL	\ORBB\Settings\Lists.txt
+Settings	SettingsfileDEP	\ORBB\Settings\Lists.txt
+Settings	SettingsfileARR	\ORBB\Settings\Lists.txt
+Settings	SettingsfileFP	\ORBB\Settings\Lists.txt
+Settings	SettingsfilePLUGINS	\ORBB\Settings\Plugins.txt
+Settings	Settingsfile	\ORBB\Settings\General.txt
+Settings	SettingsfileSCREEN	\ORBB\Settings\Screen.txt
+Settings	SettingsfileCONFLICT	\ORBB\Settings\Lists.txt
+Settings	SettingsfileVCCS	\ORBB\Settings\VCCS.txt
 Settings	AselKey	5111808
 Settings	FreqKey	3604480
 Settings	airlines	\ORBB\ICAO\ICAO_Airlines.txt
@@ -21,7 +20,6 @@ Settings	airports	\ORBB\ICAO\ICAO_Airports.txt
 Settings	aircraft	\ORBB\ICAO\ICAO_Aircraft.txt
 Settings	airportcoords	\ORBB\NavData\icao.txt
 Settings	airways	\ORBB\NavData\airway.txt
-RecentFiles	Recent1	\ORBB\ASR\Baghdad SMC.asr
 Sounds	Sound0	\ORBB\Sounds\handoff_request.wav
 Sounds	Sound1	\ORBB\Sounds\handoff_accept.wav
 Sounds	Sound2	\ORBB\Sounds\conflict_alert.wav
@@ -43,20 +41,15 @@ Sounds	Sound17	\ORBB\Sounds\pointout.wav
 Sounds	Sound18	\ORBB\Sounds\startup.wav
 Plugins	Plugin0	\ORBB\Plugins\DiscordEuroScope\DiscordEuroscope.dll
 Plugins	Plugin1	\ORBB\Plugins\RDFPlugin\RDFPlugin.dll
-Plugins	Plugin2	\ORBB\Plugins\GRplugin\GRplugin.dll
 LastSession	atis_freq4	118000
-ASRFastKeys	1	\ORBB\ASR\Baghdad SMC.asr
-ASRFastKeys	2	\ORBB\ASR\Al Najaf SMC.asr
-ASRFastKeys	3	\ORBB\ASR\Basrah SMC.asr
-ASRFastKeys	4	\ORBB\ASR\Kirkuk SMC.asr
-ASRFastKeys	5	\ORBB\ASR\Erbil SMC.asr
-ASRFastKeys	6	\ORBB\ASR\Sulaymaniyah SMC.asr
-ASRFastKeys	7	\ORBB\ASR\Mosul SMC.asr
 Plugins	Plugin1Display0	Ground Radar display
-Plugins	Plugin2Display0	Ground Radar display
+Plugins	Plugin2	\ORBB\Plugins\TopSky\TopSky.dll
+Plugins	Plugin2Display0	Standard ES radar screen
 Plugins	Plugin1Display1	Standard ES radar screen
-Plugins	Plugin2Display1	Standard ES radar screen
-Plugins	Plugin3	\ORBB\Plugins\TopSky GRP\TopSky.dll
-Plugins	Plugin3Display0	Standard ES radar screen
-Plugins	Plugin3Display1	Ground Radar display
-Settings	sector	\ORBB-Beta-Package_20251002185621-251001-0001.sct
+Plugins	Plugin3	\ORBB\Plugins\GRplugin\GRplugin.dll
+Plugins	Plugin3Display0	Ground Radar display
+ASRFastKeys	1	\ORBB\ASR\CTR.asr
+ASRFastKeys	2	\ORBB\ASR\CTR_APP.asr
+RecentFiles	Recent1	\ORBB\ASR\CTR.asr
+RecentFiles	Recent2	\ORBB\ASR\CTR_APP.asr
+Settings	sector	\ORBB-Developer_20260612184253-260601-0003.sct

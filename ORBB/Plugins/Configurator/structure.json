@@ -1,4 +1,21 @@
 {
-  "Baghdad.prf": "Baghdad ACC/",
-  "Baghdad GRP.prf": "Baghdad 2/"
+  "Bandbox.prf": "ACC/",
+  "Bandbox SMGCS.prf": "ACC/",
+  "North.prf": "ACC/",
+  "North SMGCS.prf": "ACC/",
+  "South.prf": "ACC/",
+  "South SMGCS.prf": "ACC/",
+
+  "Ali.prf": "Ali/",
+  "Al Najaf SMGCS.prf": "Ali/",
+  "Basrah SMGCS.prf": "Ali/",
+
+  "Baghdad.prf": "Baghdad/",
+  "Baghdad SMGCS.prf": "Baghdad/",
+
+  "Kirkuk.prf": "Kirkuk/",
+  "Erbil SMGCS.prf": "Kirkuk/",
+  "Jal Talabani SMGCS.prf": "Kirkuk/",
+  "Kirkuk SMGCS.prf": "Kirkuk/",
+  "Mosul SMGCS.prf": "Kirkuk/"
 }
