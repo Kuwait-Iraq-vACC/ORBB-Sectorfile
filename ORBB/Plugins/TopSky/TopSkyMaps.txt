@@ -66,7 +66,7 @@ ARC:0:0:2:0:360
 
 
 MAP:All Centrelines
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -309,7 +309,7 @@ LINE:N035.19.51.952:E045.38.16.731:N035.18.50.560:E045.37.06.565
 FILTER_ASR_OFF
 
 MAP:ORBI 15L Centreline
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -333,7 +333,7 @@ ACTIVE:ID:BAG,BIT:*:*:*
 FILTER_ASR_OFF
 
 MAP:ORBI 15R Centreline
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -357,7 +357,7 @@ ACTIVE:ID:BAG,BIT:*:*:*
 FILTER_ASR_OFF
 
 MAP:ORBI 33L Centreline
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -381,7 +381,7 @@ ACTIVE:ID:BAG,BIT:*:*:*
 FILTER_ASR_OFF
 
 MAP:ORBI 33R Centreline
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -405,7 +405,7 @@ ACTIVE:ID:BAG,BIT:*:*:*
 FILTER_ASR_OFF
 
 MAP:ORBI Centrelines
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -420,7 +420,7 @@ ACTIVE:ID:BAG,BIT:*:*:*
 FILTER_ASR_OFF
 
 MAP:ORBM 15 Centreline
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -444,7 +444,7 @@ ACTIVE:ID:KIR,BMT:*:*:*
 FILTER_ASR_OFF
 
 MAP:ORBM 33 Centreline
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -468,7 +468,7 @@ ACTIVE:ID:KIR,BMT:*:*:*
 FILTER_ASR_OFF
 
 MAP:ORBM Centrelines
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -482,7 +482,7 @@ ACTIVE:ID:KIR,BMT:*:*:*
 FILTER_ASR_OFF
 
 MAP:ORER 18 Centreline
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -506,7 +506,7 @@ ACTIVE:ID:KIR,ERT:*:*:*
 FILTER_ASR_OFF
 
 MAP:ORSJ 13 Centreline
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -530,7 +530,7 @@ ACTIVE:ID:KIR,ERT:*:*:*
 FILTER_ASR_OFF
 
 MAP:ORER Centrelines
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -544,7 +544,7 @@ ACTIVE:ID:KIR,ERT:*:*:*
 FILTER_ASR_OFF
 
 MAP:ORKK 13 Centreline
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -568,7 +568,7 @@ ACTIVE:ID:KIR,KKT:*:*:*
 FILTER_ASR_OFF
 
 MAP:ORKK 14 Centreline
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -592,7 +592,7 @@ ACTIVE:ID:KIR,KKT:*:*:*
 FILTER_ASR_OFF
 
 MAP:ORKK 31 Centreline
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -616,7 +616,7 @@ ACTIVE:ID:KIR,KKT:*:*:*
 FILTER_ASR_OFF
 
 MAP:ORKK 32 Centreline
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -640,7 +640,7 @@ ACTIVE:ID:KIR,KKT:*:*:*
 FILTER_ASR_OFF
 
 MAP:ORKK Centrelines
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -655,7 +655,7 @@ ACTIVE:ID:KIR,KKT:*:*:*
 FILTER_ASR_OFF
 
 MAP:ORMM 14 Centreline
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -679,7 +679,7 @@ ACTIVE:ID:ALI,MMT:*:*:*
 FILTER_ASR_OFF
 
 MAP:ORMM 32 Centreline
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -703,7 +703,7 @@ ACTIVE:ID:ALI,MMT:*:*:*
 FILTER_ASR_OFF
 
 MAP:ORMM Centrelines
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -717,7 +717,7 @@ ACTIVE:ID:ALI,MMT:*:*:*
 FILTER_ASR_OFF
 
 MAP:ORNI 10 Centreline
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -741,7 +741,7 @@ ACTIVE:ID:BAG,ALI,NIT:*:*:*
 FILTER_ASR_OFF
 
 MAP:ORNI 28 Centreline
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -765,7 +765,7 @@ ACTIVE:ID:BAG,ALI,NIT:*:*:*
 FILTER_ASR_OFF
 
 MAP:ORNI Centrelines
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -779,7 +779,7 @@ ACTIVE:ID:BAG,ALI,NIT:*:*:*
 FILTER_ASR_OFF
 
 MAP:ORSJ 13 Centreline
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -803,7 +803,7 @@ ACTIVE:ID:KIR,SJT:*:*:*
 FILTER_ASR_OFF
 
 MAP:ORSJ 31 Centreline
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -827,7 +827,7 @@ ACTIVE:ID:KIR,SJT:*:*:*
 FILTER_ASR_OFF
 
 MAP:ORSJ Centrelines
-FOLDER:Centrelines Combined
+FOLDER:ENR Combined
 FILTER_ASR:Combined
 COLOR:DFSGrey
 ZOOM:5
@@ -843,7 +843,7 @@ FILTER_ASR_OFF
 MAP:Airways_Combined
 FILTER_ASR:Combined
 ZOOM:-5
-FOLDER:ENR
+FOLDER:ENR Combined
 STYLE:Solid:1
 ACTIVE:1
 COLOR:Airway
@@ -1000,7 +1000,7 @@ FILTER_ASR_OFF
 MAP:Fix Names_Combined
 FILTER_ASR:Combined
 ZOOM:-5
-FOLDER:ENR
+FOLDER:ENR Combined
 STYLE:Solid:1
 ACTIVE:1
 COLOR:Airway
@@ -1143,11 +1143,11 @@ SYMBOL:BORDER_FIX:RAGET:RAGET:20.5:-8
 
 FILTER_ASR_OFF
 
-MAP:Baghdad Ali TMA
+MAP:Baghdad Ali TMA_Combined
 FILTER_ASR:Combined
 STYLE:Dash:1
 ZOOM:-5
-FOLDER:ENR
+FOLDER:ENR Combined
 ACTIVE:1
 COLOR:ReleaseLine
 LINE:N031.12.37.000:E041.50.36.000:N031.41.47.000:E043.17.12.000
@@ -1170,11 +1170,11 @@ ACTIVE:ID:BSU:*:*:*
 
 FILTER_ASR_OFF
 
-MAP:Baghdad Kirkuk TMA
+MAP:Baghdad Kirkuk TMA_Combined
 FILTER_ASR:Combined
 STYLE:Dot:1
 ZOOM:-5
-FOLDER:ENR
+FOLDER:ENR Combined
 ACTIVE:1
 COLOR:ReleaseLine
 LINE:N034.46.43.000:E041.13.39.000:N034.30.54.000:E041.47.05.000
@@ -1191,11 +1191,11 @@ ACTIVE:ID:BSU:*:*:*
 
 FILTER_ASR_OFF
 
-MAP:ACC North South
+MAP:ACC North South_Combined
 FILTER_ASR:Combined
 STYLE:Dash:1
 ZOOM:-5
-FOLDER:ENR
+FOLDER:ENR Combined
 ACTIVE:1
 COLOR:ReleaseLine
 LINE:N033.26.10.000:E046.02.00.000:N033.18.00.000:E045.15.00.000
@@ -1218,9 +1218,9 @@ ACTIVE:ID:BSU:*:*:*
 
 FILTER_ASR_OFF
 
-MAP:Ali TMA
+MAP:Ali TMA_Combined
 FILTER_ASR:Combined
-FOLDER:Airspace
+FOLDER:ENR Combined
 COLOR:FIRBoundary
 ZOOM:5
 LAYER:-1
@@ -1229,9 +1229,9 @@ SCTFILEDATA:ARTCC HIGH\Ali TMA
 
 FILTER_ASR_OFF
 
-MAP:Baghdad TMA
+MAP:Baghdad TMA_Combined
 FILTER_ASR:Combined
-FOLDER:Airspace
+FOLDER:ENR Combined
 COLOR:FIRBoundary
 ZOOM:5
 LAYER:-1
@@ -1240,9 +1240,9 @@ SCTFILEDATA:ARTCC HIGH\Baghdad TMA
 
 FILTER_ASR_OFF
 
-MAP:Kirkuk TMA
+MAP:Kirkuk TMA_Combined
 FILTER_ASR:Combined
-FOLDER:Airspace
+FOLDER:ENR Combined
 COLOR:FIRBoundary
 ZOOM:5
 LAYER:-1
