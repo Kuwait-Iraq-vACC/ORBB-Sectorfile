@@ -2,8 +2,8 @@ Data.txt
 Overrides.txt
 Colour Definitions.txt
 Symbol Definitions.txt
-(Extended) Centrelines/
-Combined/
+ACC/
+TMA/
 ARTCC/
 Prohibited Airspace/
 WIP.txt
