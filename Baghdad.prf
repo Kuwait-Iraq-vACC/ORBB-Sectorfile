@@ -1,5 +1,4 @@
 Settings	alias	\ORBB\Alias\alias.txt
-Settings	sector
 Settings	SettingsfileSYMBOLOGY	\ORBB\Settings\Symbology.txt
 Settings	SettingsfileVOICE	\ORBB\Settings\VoiceChannels.txt
 Settings	SettingsfilePROFILE	\ORBB\Settings\Profiles.txt
@@ -21,7 +20,6 @@ Settings	airports	\ORBB\ICAO\ICAO_Airports.txt
 Settings	aircraft	\ORBB\ICAO\ICAO_Aircraft.txt
 Settings	airportcoords	\ORBB\NavData\icao.txt
 Settings	airways	\ORBB\NavData\airway.txt
-RecentFiles	Recent1	\ORBB\ASR\Baghdad ACC.asr
 ASRFastKeys	1	\ORBB\ASR\Baghdad ACC.asr
 Sounds	Sound0	\ORBB\Sounds\handoff_request.wav
 Sounds	Sound1	\ORBB\Sounds\handoff_accept.wav
@@ -51,4 +49,7 @@ Plugins	Plugin2Display0	Standard ES radar screen
 Plugins	Plugin1Display1	Standard ES radar screen
 Plugins	Plugin3	\ORBB\Plugins\GRplugin\GRplugin.dll
 Plugins	Plugin3Display0	Ground Radar display
-Settings	sector	\ORBB-Beta-Package_20251002185621-251001-0001.sct
+Settings	sector	\ORBB-Developer_20260611211625-260601-0002.sct
+RecentFiles	Recent1	\ORBB\ASR\CTR.asr
+RecentFiles	Recent2	\ORBB\ASR\CTR_APP.asr
+RecentFiles	Recent3	\ORBB\ASR\APP.asr
