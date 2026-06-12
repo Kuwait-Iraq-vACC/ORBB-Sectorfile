@@ -1,0 +1,18 @@
+PROFILE
+PROFILE:BAG_APP:150:5
+ATIS2:Baghdad Approach
+ATIS3:Check coverage at vatglasses.uk
+ATIS4:Submit feedback at vats.im/kwiq-fb
+PROFILE:ORBI_F_APP:150:5
+ATIS2:Baghdad Director
+ATIS3:
+ATIS4:Submit feedback at vats.im/kwiq-fb
+PROFILE:ORBI_GND:20:3
+ATIS2:Baghdad Ground
+ATIS3:
+ATIS4:Submit feedback at vats.im/kwiq-fb
+PROFILE:ORBI_TWR:50:4
+ATIS2:Baghdad Tower
+ATIS3:
+ATIS4:Submit feedback at vats.im/kwiq-fb
+END

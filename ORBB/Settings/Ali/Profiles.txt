@@ -1,0 +1,22 @@
+PROFILE
+PROFILE:ALI_APP:150:5
+ATIS2:Baghdad Approach
+ATIS3:Check coverage at vatglasses.uk
+ATIS4:Submit feedback at vats.im/kwiq-fb
+PROFILE:ORMM_GND:20:3
+ATIS2:Basrah Ground
+ATIS3:
+ATIS4:Submit feedback at vats.im/kwiq-fb
+PROFILE:ORMM_TWR:50:4
+ATIS2:Basrah Tower
+ATIS3:
+ATIS4:Submit feedback at vats.im/kwiq-fb
+PROFILE:ORNI_GND:20:3
+ATIS2:Al-Najaf Ground
+ATIS3:
+ATIS4:Submit feedback at vats.im/kwiq-fb
+PROFILE:ORNI_TWR:50:4
+ATIS2:Al-Najaf Tower
+ATIS3:
+ATIS4:Submit feedback at vats.im/kwiq-fb
+END

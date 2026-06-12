@@ -1,0 +1,30 @@
+PROFILE
+PROFILE:KIR_APP:150:5
+ATIS2:Baghdad Approach
+ATIS3:Check coverage at vatglasses.uk
+ATIS4:Submit feedback at vats.im/kwiq-fb
+PROFILE:ORBM_GND:20:3
+ATIS2:Mosul Ground
+ATIS3:
+ATIS4:Submit feedback at vats.im/kwiq-fb
+PROFILE:ORBM_TWR:50:4
+ATIS2:Mosul Tower
+ATIS3:
+ATIS4:Submit feedback at vats.im/kwiq-fb
+PROFILE:ORER_TWR:50:4
+ATIS2:Erbil Tower
+ATIS3:
+ATIS4:Submit feedback at vats.im/kwiq-fb
+PROFILE:ORKK_GND:20:3
+ATIS2:Kirkuk Ground
+ATIS3:
+ATIS4:Submit feedback at vats.im/kwiq-fb
+PROFILE:ORKK_TWR:50:4
+ATIS2:Kirkuk Tower
+ATIS3:
+ATIS4:Submit feedback at vats.im/kwiq-fb
+PROFILE:ORSJ_TWR:50:4
+ATIS2:Sulaimaniyah Tower
+ATIS3:
+ATIS4:Submit feedback at vats.im/kwiq-fb
+END
