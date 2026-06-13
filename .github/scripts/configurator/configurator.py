@@ -474,7 +474,7 @@ def apply_configuration(name, initials, cid, rating, password, cpdlc):
             if file.endswith(".prf"):
                 patch_prf_file(path, name, initials, cid, rating, password)
 
-            elif file.endswith("Profiles.txt"):
+            elif file.endswith("Bandbox.txt"):
                 patch_profiles_file(path, cid)
 
     patch_topsky_cpdlc(cpdlc)

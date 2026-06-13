@@ -1,27 +1,38 @@
 from pathlib import Path
 
 # Folder containing the files
-folder = Path(r"C:\GitHub\ORBB-Sectorfile\.data\TopSky Shared\Maps\TMA\(Extended) All Centrelines")
+folder = Path(r"C:\GitHub\ORBB-Sectorfile")
 
-old_text = "\nZOOM:5"
-new_text = ""
+# Set to None to process all files
+# Example: ".prf", ".txt", ".ese"
+# "file_extention = None"
+file_extension = ".prf"
+
+old_text = "\ORBB\Settings\Lists.txt"
+new_text = "\ORBB\Settings\Lists\ADC_Lists.txt"
 
 files_modified = 0
 
 for file in folder.rglob("*"):
-    if file.is_file():
-        try:
-            content = file.read_text(encoding="utf-8")
-        except UnicodeDecodeError:
-            try:
-                content = file.read_text(encoding="cp1252")
-            except Exception:
-                continue
+    if not file.is_file():
+        continue
 
-        if old_text in content:
-            content = content.replace(old_text, new_text)
-            file.write_text(content, encoding="utf-8")
-            files_modified += 1
-            print(f"Modified: {file}")
+    # Skip files that don't match the selected extension
+    if file_extension and file.suffix.lower() != file_extension.lower():
+        continue
+
+    try:
+        content = file.read_text(encoding="utf-8")
+    except UnicodeDecodeError:
+        try:
+            content = file.read_text(encoding="cp1252")
+        except Exception:
+            continue
+
+    if old_text in content:
+        content = content.replace(old_text, new_text)
+        file.write_text(content, encoding="utf-8")
+        files_modified += 1
+        print(f"Modified: {file}")
 
 print(f"\nDone. Modified {files_modified} file(s).")
