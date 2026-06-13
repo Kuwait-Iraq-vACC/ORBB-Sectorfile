@@ -38,8 +38,6 @@ Sounds	Sound15	\ORBB\Sounds\new_atis.wav
 Sounds	Sound16	\ORBB\Sounds\handoff_refused.wav
 Sounds	Sound17	\ORBB\Sounds\pointout.wav
 Sounds	Sound18	\ORBB\Sounds\startup.wav
-ASRFastKeys	1	\ORBB\ASR\CTR.asr
-ASRFastKeys	2	\ORBB\ASR\CTR_APP.asr
 Plugins	Plugin0	\ORBB\Plugins\DiscordEuroScope\DiscordEuroscope.dll
 Plugins	Plugin1	\ORBB\Plugins\RDFPlugin\RDFPlugin.dll
 Plugins	Plugin1Display0	Ground Radar display
@@ -48,6 +46,14 @@ Plugins	Plugin2	\ORBB\Plugins\TopSky\TopSky.dll
 Plugins	Plugin2Display0	Standard ES radar screen
 Plugins	Plugin3	\ORBB\Plugins\GRplugin\GRplugin.dll
 Plugins	Plugin3Display0	Ground Radar display
-RecentFiles	Recent1	\ORBB\ASR\CTR.asr
-RecentFiles	Recent2	\ORBB\ASR\CTR_APP.asr
+ASRFastKeys	1	\ORBB\ASR\SMGCS\Baghdad SMGCS.asr
+ASRFastKeys	2	\ORBB\ASR\SMGCS\Erbil SMGCS.asr
+ASRFastKeys	3	\ORBB\ASR\SMGCS\Kirkuk SMGCS.asr
+ASRFastKeys	4	\ORBB\ASR\SMGCS\Jalal Talabani SMGCS.asr
+ASRFastKeys	5	\ORBB\ASR\SMGCS\Mosul SMGCS.asr
+RecentFiles	Recent1	\ORBB\ASR\SMGCS\Baghdad SMGCS.asr
+RecentFiles	Recent2	\ORBB\ASR\SMGCS\Erbil SMGCS.
+RecentFiles	Recent3	\ORBB\ASR\SMGCS\Kirkuk SMGCS.
+RecentFiles	Recent4	\ORBB\ASR\SMGCS\Jalal Talabani SMGCS.asr
+RecentFiles	Recent5	\ORBB\ASR\SMGCS\Mosul SMGCS.asr
 LastSession	server	AUTOMATIC

@@ -48,6 +48,11 @@ Plugins	Plugin2	\ORBB\Plugins\TopSky\TopSky.dll
 Plugins	Plugin2Display0	Standard ES radar screen
 Plugins	Plugin3	\ORBB\Plugins\GRplugin\GRplugin.dll
 Plugins	Plugin3Display0	Ground Radar display
+Plugins	Plugin4	\ORBB\Plugins\CDM\CDM.dll
+Plugins	Plugin4Display0	Ground Radar display
+Plugins	Plugin5	\ORBB\Plugins\VFPC\VFPC.dll
+Plugins	Plugin6	\ORBB\Plugins\VATCAN Bookings\VATCANBookings.dll
+Plugins	Plugin7	\ORBB\Plugins\VCH\VCH.dll
 RecentFiles	Recent1	\ORBB\ASR\CTR.asr
 RecentFiles	Recent2	\ORBB\ASR\CTR_APP.asr
 LastSession	server	AUTOMATIC

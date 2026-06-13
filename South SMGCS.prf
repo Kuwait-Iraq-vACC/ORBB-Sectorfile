@@ -38,8 +38,6 @@ Sounds	Sound15	\ORBB\Sounds\new_atis.wav
 Sounds	Sound16	\ORBB\Sounds\handoff_refused.wav
 Sounds	Sound17	\ORBB\Sounds\pointout.wav
 Sounds	Sound18	\ORBB\Sounds\startup.wav
-ASRFastKeys	1	\ORBB\ASR\CTR.asr
-ASRFastKeys	2	\ORBB\ASR\CTR_APP.asr
 Plugins	Plugin0	\ORBB\Plugins\DiscordEuroScope\DiscordEuroscope.dll
 Plugins	Plugin1	\ORBB\Plugins\RDFPlugin\RDFPlugin.dll
 Plugins	Plugin1Display0	Ground Radar display
@@ -48,6 +46,8 @@ Plugins	Plugin2	\ORBB\Plugins\TopSky\TopSky.dll
 Plugins	Plugin2Display0	Standard ES radar screen
 Plugins	Plugin3	\ORBB\Plugins\GRplugin\GRplugin.dll
 Plugins	Plugin3Display0	Ground Radar display
+ASRFastKeys	1	\ORBB\ASR\CTR.asr
+ASRFastKeys	2	\ORBB\ASR\CTR_APP.asr
 RecentFiles	Recent1	\ORBB\ASR\CTR.asr
 RecentFiles	Recent2	\ORBB\ASR\CTR_APP.asr
 LastSession	server	AUTOMATIC
