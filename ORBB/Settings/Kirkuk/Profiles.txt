@@ -24,7 +24,7 @@ ATIS2:Kirkuk Tower
 ATIS3:
 ATIS4:Submit feedback at vats.im/kwiq-fb
 PROFILE:ORSJ_TWR:50:4
-ATIS2:Sulaimaniyah Tower
+ATIS2:Jalal Talabani Tower
 ATIS3:
 ATIS4:Submit feedback at vats.im/kwiq-fb
 END

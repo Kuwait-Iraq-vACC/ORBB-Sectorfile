@@ -12,11 +12,11 @@ ATIS2:Basrah Tower
 ATIS3:
 ATIS4:Submit feedback at vats.im/kwiq-fb
 PROFILE:ORNI_GND:20:3
-ATIS2:Al-Najaf Ground
+ATIS2:Najaf Ground
 ATIS3:
 ATIS4:Submit feedback at vats.im/kwiq-fb
 PROFILE:ORNI_TWR:50:4
-ATIS2:Al-Najaf Tower
+ATIS2:Al Najaf Tower
 ATIS3:
 ATIS4:Submit feedback at vats.im/kwiq-fb
 END
