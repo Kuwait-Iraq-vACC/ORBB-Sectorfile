@@ -18,7 +18,7 @@ Settings	SettingsfileSIL	\ORBB\Settings\Lists\ACC_Lists.txt
 Settings	SettingsfileSYMBOLOGY	\ORBB\Settings\Symbology.txt
 Settings	SettingsfileTAGS	\ORBB\Settings\Tags.txt
 Settings	SettingsfileVCCS	\ORBB\Settings\VCCS.txt
-Settings	SettingsfileVOICE	\ORBB\Settings\VoiceChannels.txt
+Settings	SettingsfileVOICE	\ORBB\Settings\Kirkuk\Voice.txt
 Sounds	Sound0	\ORBB\Sounds\handoff_request.wav
 Sounds	Sound1	\ORBB\Sounds\handoff_accept.wav
 Sounds	Sound2	\ORBB\Sounds\conflict_alert.wav

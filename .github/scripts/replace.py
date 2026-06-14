@@ -1,15 +1,15 @@
 from pathlib import Path
 
 # Folder containing the files
-folder = Path(r"C:\GitHub\ORBB-Sectorfile\.data\TopSky Shared\Maps\ACC\Combined\(Extended) Centrelines")
+folder = Path(r"C:\GitHub\ORBB-Sectorfile")
 
 # Set to None to process all files
 # Example: ".prf", ".txt", ".ese"
 # "file_extention = None"
-file_extension = None
+file_extension = ".prf"
 
-old_text = "BAG"
-new_text = "BGD"
+old_text = "\ORBB\ASR\CTR"
+new_text = "\ORBB\ASR\Radar\CTR"
 
 files_modified = 0
 
