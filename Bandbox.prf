@@ -11,7 +11,7 @@ Settings	SettingsfileCONFLICT	\ORBB\Settings\Lists\ACC_Lists.txt
 Settings	SettingsfileDEP	\ORBB\Settings\Lists\ACC_Lists.txt
 Settings	SettingsfileFP	\ORBB\Settings\Lists\ACC_Lists.txt
 Settings	SettingsfilePLUGINS	\ORBB\Settings\Plugins.txt
-Settings	SettingsfilePROFILE	\ORBB\Settings\Profiles.txt
+Settings	SettingsfilePROFILE	\ORBB\Settings\ACC\Profiles\Bandbox.txt
 Settings	SettingsfileSCREEN	\ORBB\Settings\Screen.txt
 Settings	SettingsfileSEL	\ORBB\Settings\Lists\ACC_Lists.txt
 Settings	SettingsfileSIL	\ORBB\Settings\Lists\ACC_Lists.txt

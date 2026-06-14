@@ -1,5 +1,5 @@
 PROFILE
-PROFILE:BAG_APP:150:5
+PROFILE:BGD_APP:150:5
 ATIS2:Baghdad Approach
 ATIS3:Check coverage at vatglasses.uk
 ATIS4:Submit feedback at vats.im/kwiq-fb
