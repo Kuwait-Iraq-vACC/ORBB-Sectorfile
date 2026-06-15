@@ -23,7 +23,6 @@ Color_Active_Map_Type_5=255,255,255
 
 Label_GS_Prefix=
 
-
 Setup_COOPANS=1
 Setup_AutoSignIn=1
 
