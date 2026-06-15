@@ -351,13 +351,21 @@ def restructure_prf_files():
 def fix_orbb_paths(lines):
     fixed = []
     for line in lines:
-        fixed.append(
-            re.sub(
-                r'(?<!\.\.)(\\ORBB\\)',
-                r'\\..\\ORBB\\',
-                line
-            )
+        # Fix \ORBB\ paths → \..\ORBB\
+        line = re.sub(
+            r'(?<!\.\.)(\\ORBB\\)',
+            r'\\..\\ORBB\\',
+            line
         )
+        # Fix Settings\tsector value: prepend \.. if not already present
+        # Matches e.g.: Settings\tsector\tORBB-Install-Package_....sct
+        #                              or  \ORBB-Developer-Package_....sct
+        line = re.sub(
+            r'^(Settings\tsector\t)(?!\.\.)(?=ORBB)',
+            r'\1\\..',
+            line
+        )
+        fixed.append(line)
     return fixed
 
 def patch_prf_file(file_path, name, initials, cid, rating, password):
