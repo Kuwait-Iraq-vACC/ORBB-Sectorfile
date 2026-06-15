@@ -53,5 +53,5 @@ Plugins	Plugin6	\ORBB\Plugins\VATCAN Bookings\VATCANBookings.dll
 Plugins	Plugin7	\ORBB\Plugins\VCH\VCH.dll
 ASRFastKeys	1	\ORBB\ASR\SMGCS\Basrah SMGCS.asr
 RecentFiles	Recent1	\ORBB\ASR\SMGCS\Basrah SMGCS.asr
-RecentFiles	Recent2	\ORBB\ASR\Radar\CTR_APP.asr
+RecentFiles	Recent2	\ORBB\ASR\Radar\APP.asr
 LastSession	server	AUTOMATIC
