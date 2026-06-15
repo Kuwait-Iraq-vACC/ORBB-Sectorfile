@@ -34,7 +34,6 @@ Areas_NOTAM_Activation=1
 Airspace_ASSR_Type=2
 Airspace_ASSR_AutoAssign_Type=2
 
-RDF_Mode=2
 RDF_Floor=0
 
 AIW=1
@@ -181,8 +180,6 @@ CPDLC_CFL=1
 CPDLC_DCT=1
 CPDLC_AHDG=1
 CPDLC_ASP=1
-
-RDF_Mode=0
 
 Equip_ModeS=PISXEHL
 Equip_UseCodes=2
