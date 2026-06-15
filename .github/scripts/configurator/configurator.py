@@ -349,16 +349,15 @@ def restructure_prf_files():
 
 # ── File patchers ──────────────────────────────────────────────────────────────
 def fix_orbb_paths(lines):
-    """
-    For each line, if a tab-separated value starts with \ORBB\ (but not already
-    \..\ORBB\), prepend ..\ to make it \..\ORBB\.
-    Handles both tab-separated and space-separated .prf lines.
-    """
     fixed = []
     for line in lines:
-        # Match a value that starts with \ORBB\ not already preceded by ..\
-        # Works on tab-delimited fields (the standard .prf format)
-        fixed.append(re.sub(r'(?<!\.\.)(\\ORBB\\)', r'\\..\\\1'.replace('\\\\', '\\'), line))
+        fixed.append(
+            re.sub(
+                r'(?<!\.\.)(\\ORBB\\)',
+                r'\\..\\ORBB\\',
+                line
+            )
+        )
     return fixed
 
 def patch_prf_file(file_path, name, initials, cid, rating, password):
