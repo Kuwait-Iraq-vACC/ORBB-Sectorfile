@@ -54,7 +54,19 @@ Plugins	Plugin7	\ORBB\Plugins\VCH\VCH.dll
 ASRFastKeys	1	\ORBB\ASR\Radar\CTR.asr
 ASRFastKeys	2	\ORBB\ASR\Radar\CTR_APP.asr
 ASRFastKeys	3	\ORBB\ASR\Radar\APP.asr
+ASRFastKeys	4	\ORBB\ASR\SMGCS\Baghdad SMGCS.asr
+ASRFastKeys	5	\ORBB\ASR\SMGCS\Erbil SMGCS.asr
+ASRFastKeys	6	\ORBB\ASR\SMGCS\Kirkuk SMGCS.asr
+ASRFastKeys	7	\ORBB\ASR\SMGCS\Jalal Talabani SMGCS.asr
+ASRFastKeys	8	\ORBB\ASR\SMGCS\Basrah SMGCS.asr
+ASRFastKeys	9	\ORBB\ASR\SMGCS\Al Najaf SMGCS.asr
 RecentFiles	Recent1	\ORBB\ASR\Radar\CTR.asr
 RecentFiles	Recent2	\ORBB\ASR\Radar\CTR_APP.asr
 RecentFiles	Recent3	\ORBB\ASR\Radar\APP.asr
+RecentFiles	Recent4	\ORBB\ASR\SMGCS\Baghdad SMGCS.asr
+RecentFiles	Recent5	\ORBB\ASR\SMGCS\Erbil SMGCS.asr
+RecentFiles	Recent6	\ORBB\ASR\SMGCS\Kirkuk SMGCS.asr
+RecentFiles	Recent7	\ORBB\ASR\SMGCS\Jalal Talabani SMGCS.asr
+RecentFiles	Recent8	\ORBB\ASR\SMGCS\Basrah SMGCS.asr
+RecentFiles	Recent9	\ORBB\ASR\SMGCS\Al Najaf SMGCS.asr
 LastSession	server	AUTOMATIC
