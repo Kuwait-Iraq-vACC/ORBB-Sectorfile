@@ -1,5 +1,5 @@
 Settings	alias	\ORBB\Alias\alias.txt
-Settings	sector	\ORBB-Developer_20260612184253-260601-0003.sct
+Settings	sector	\ORBB-Install-Package_20260615160335-260601-0002.sct
 Settings	aircraft	\ORBB\ICAO\ICAO_Aircraft.txt
 Settings	airlines	\ORBB\ICAO\ICAO_Airlines.txt
 Settings	airports	\ORBB\ICAO\ICAO_Airports.txt
@@ -52,6 +52,7 @@ Plugins	Plugin5	\ORBB\Plugins\VFPC\VFPC.dll
 Plugins	Plugin6	\ORBB\Plugins\VATCAN Bookings\VATCANBookings.dll
 Plugins	Plugin7	\ORBB\Plugins\VCH\VCH.dll
 ASRFastKeys	1	\ORBB\ASR\SMGCS\Erbil SMGCS.asr
+ASRFastKeys	2	\ORBB\ASR\Radar\APP.asr
 RecentFiles	Recent1	\ORBB\ASR\SMGCS\Erbil.asr
 RecentFiles	Recent2	\ORBB\ASR\Radar\APP.asr
 LastSession	server	AUTOMATIC

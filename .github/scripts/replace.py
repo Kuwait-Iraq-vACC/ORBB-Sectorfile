@@ -8,8 +8,8 @@ folder = Path(r"C:\GitHub\ORBB-Sectorfile")
 # "file_extention = None"
 file_extension = ".prf"
 
-old_text = "\ORBB\ASR\CTR"
-new_text = "\ORBB\ASR\Radar\CTR"
+old_text = "ORBB-Developer_20260612184253-260601-0003"
+new_text = "ORBB-Install-Package_20260615160335-260601-0002"
 
 files_modified = 0
 

@@ -1,5 +1,5 @@
 SIL
-m_Visible:1
+m_Visible:0
 m_X:0
 m_Y:45
 m_LineNumber:10
@@ -26,9 +26,9 @@ m_Column:SI:3:1:64:6:20:1::::1:0.0
 m_Column:ASSR:5:1:10041:62:81:1:TopSky plugin:TopSky plugin:TopSky plugin:1:0.0
 END
 SEL
-m_Visible:1
+m_Visible:0
 m_X:0
-m_Y:79
+m_Y:77
 m_LineNumber:20
 m_Resizable:1
 m_OrderingColumn:2
@@ -55,7 +55,7 @@ m_Column:RMK:7:1:156:2:2:1:TopSky plugin:TopSky plugin:TopSky plugin:1:0.0
 END
 DEP
 m_Visible:1
-m_X:673
+m_X:0
 m_Y:45
 m_LineNumber:0
 m_Resizable:1
@@ -63,10 +63,10 @@ m_OrderingColumn:16
 m_HeaderOnly:0
 m_Column:EOBT:5:1:1:117:100:0:CDM Plugin:CDM Plugin:CDM Plugin:4:3.6
 m_Column:TOBT:5:1:4:114:121:0:CDM Plugin:CDM Plugin:CDM Plugin:0:3.6
-m_Column:TSAT:5:1:2:114:123:1:CDM Plugin:CDM Plugin:CDM Plugin:0:3.6
+m_Column:TSAT:5:1:2:114:123:0:CDM Plugin:CDM Plugin:CDM Plugin:0:3.6
 m_Column:ASAT:5:1:6:123:123:0:CDM Plugin:CDM Plugin:CDM Plugin:0:3.6
 m_Column:ASRT:5:1:7:107:123:0:CDM Plugin:CDM Plugin:CDM Plugin:0:3.6
-m_Column:TTOT:5:1:3:128:123:1:CDM Plugin:CDM Plugin:CDM Plugin:0:3.6
+m_Column:TTOT:5:1:3:128:123:0:CDM Plugin:CDM Plugin:CDM Plugin:0:3.6
 m_Column:CTOT:5:1:10:108:123:0:CDM Plugin:CDM Plugin:CDM Plugin:0:3.6
 m_Column:EVNT:5:1:15:129:130:0:CDM Plugin:CDM Plugin:CDM Plugin:0:3.6
 m_Column:NET:5:1:18:137:123:0:CDM Plugin:CDM Plugin:CDM Plugin:0:3.6
@@ -88,7 +88,6 @@ m_Column:RWY:3:1:47:19:19:1::::3:3.6
 m_Column:SID:8:0:10011:17:17:1:TopSky plugin:::4:3.6
 m_Column:CFL:4:1:43:109:11:1:TopSky plugin:TopSky plugin::7:3.6
 m_Column:ASSR:5:1:60:62:137:1::TopSky plugin:TopSky plugin:1:3.6
-m_Column:DCL:4:0:10128:155:0:0:TopSky plugin:TopSky plugin::0:3.6
 m_Column:C:3:1:58:27:155:1:::TopSky plugin:4:3.6
 END
 ARR
