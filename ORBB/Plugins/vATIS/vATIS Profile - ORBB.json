@@ -1,6 +1,8 @@
 {
-  "name": "Iraq (ORBB) v2",
+  "name": "ORBB - Baghdad",
   "id": "d9a1df52-f2b5-4901-bf06-89199e698e41",
+  "updateUrl": "https://raw.githubusercontent.com/Kuwait-Iraq-vACC/ORBB-Sectorfile/refs/heads/main/ORBB/Plugins/vATIS/vATIS%20Profile%20-%20ORBB.json",
+  "updateSerial": 2026061601,
   "stations": [
     {
       "id": "4a9c0299-3214-4a00-800a-373bdd16c2ea",
