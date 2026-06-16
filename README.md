@@ -3,7 +3,7 @@ Kuwait & Iraq vACC sectorfile for the ORBB FIR.
 
 [![latest-version](https://img.shields.io/github/v/release/Kuwait-Iraq-vACC/ORBB-Sectorfile?include_prereleases)](https://github.com/Kuwait-Iraq-vACC/ORBB-Sectorfile/releases)
 [![cdm-version](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Kuwait-Iraq-vACC/ORBB-Sectorfile/main/.github/badges/CDM.json)](https://github.com/rpuig2001/CDM)
-[![discordeuroscope-version](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Kuwait-Iraq-vACC/ORBB-Sectorfile/main/.github/badges/DiscordEuroscope.json)](https://github.com/Kirollos/DiscordEuroscope)
+[![discordeuroscope-version](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Kuwait-Iraq-vACC/ORBB-Sectorfile/main/.github/badges/DiscordEuroScope.json)](https://github.com/Kirollos/DiscordEuroscope)
 [![gr-version](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Kuwait-Iraq-vACC/ORBB-Sectorfile/main/.github/badges/GroundRadar.json)](https://forum.vatsim-scandinavia.org/t/topsky)
 [![iassure-version](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Kuwait-Iraq-vACC/ORBB-Sectorfile/main/.github/badges/IASsure.json)](https://github.com/MorpheusXAUT/IASsure)
 [![RDFPlugin-version](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Kuwait-Iraq-vACC/ORBB-Sectorfile/main/.github/badges/RDFPlugin.json)](https://github.com/KingfuChan/RDF)
