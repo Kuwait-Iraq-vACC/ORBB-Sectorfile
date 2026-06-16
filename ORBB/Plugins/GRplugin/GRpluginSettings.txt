@@ -1,3 +1,5 @@
+MAPS_URL=https://raw.githubusercontent.com/Kuwait-Iraq-vACC/ORBB-Sectorfile/refs/heads/main/ORBB/Plugins/GRplugin/GRpluginMaps.txt
+
 Equip_ProMode=0
 RawVideo=1
 Track_Heading_Line=0
