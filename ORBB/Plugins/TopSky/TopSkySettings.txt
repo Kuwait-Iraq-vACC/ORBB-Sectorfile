@@ -137,6 +137,18 @@ Color_Unknown=225,225,225
 Color_Selected_Period=255,255,255
 Color_Overflown=99,100,101
 
+Color_Background=38,38,38
+Color_Foreground=255,255,255
+Color_Field_Highlight=72,72,73
+Color_Flight_Highlight=36,41,45
+Color_Flight_Leg=170,231,197
+Color_CARD_Time_Vector=170,231,197
+Color_FPLSEP_Tool_1=153,217,234
+Color_FPLSEP_Tool_2=255,153,184
+Color_FPLSEP_Tool_3=255,209,143
+Color_FPLSEP_Tool_4=197,64,212
+Color_FPLSEP_Tool_5=166,160,245
+
 [_CTR]
 // CARD
 Window_CARD=1,1000,800
