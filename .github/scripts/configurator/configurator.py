@@ -129,7 +129,7 @@ def ask_string(prompt, default=""):
             dialog.iconbitmap(icon_path)
     except Exception:
         pass
-    dialog.title("ORBB Configurator")
+    dialog.title("ORBB Sectorfile Configurator")
     dialog.resizable(False, False)
     dialog.protocol("WM_DELETE_WINDOW", on_close)
 
@@ -162,7 +162,7 @@ def ask_string(prompt, default=""):
     dialog.wait_window()
     return result
 
-def ask_yesno(prompt, title="ORBB Configurator"):
+def ask_yesno(prompt, title="ORBB Sectorfile Configurator"):
     result = None
     dialog = tk.Toplevel()
     try:
@@ -244,7 +244,7 @@ def ask_rating(current=None):
     except Exception:
         pass
     dialog.minsize(300, 200)
-    dialog.title("ORBB Configurator")
+    dialog.title("ORBB Sectorfile Configurator")
     ttk.Label(dialog, text="Select your rating:").pack(pady=5)
     dropdown = ttk.Combobox(dialog, textvariable=selected, values=ratings_display, state="readonly")
     dropdown.pack(pady=5)
@@ -287,7 +287,7 @@ def prompt_for_field(key, current):
 # ── Config collection ──────────────────────────────────────────────────────────
 def collect_basic_config():
     root = tk.Tk()
-    root.title("ORBB Configurator")
+    root.title("ORBB Sectorfile Configurator")
     try:
         icon_path = resource_path("logo.ico")
         if os.path.exists(icon_path):
