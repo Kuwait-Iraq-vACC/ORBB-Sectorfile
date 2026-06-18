@@ -43,6 +43,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -58,9 +60,7 @@ jobs:
             ${{ runner.os }}-pip-
 
       - name: Install dependencies
-        run: |
-          pip install Pillow
-          pip install pyinstaller
+        run: pip install Pillow customtkinter pyinstaller
 
       - name: Skip tests
         run: echo "No tests configured"
@@ -78,6 +78,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          lfs: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -93,19 +94,14 @@ jobs:
             ${{ runner.os }}-pip-
 
       - name: Install dependencies
-        run: |
-          pip install Pillow
-          pip install pyinstaller
+        run: pip install Pillow customtkinter pyinstaller
 
       - name: Compile executable
         run: |
           cd .github/scripts/configurator
-          pyinstaller --onefile --windowed `
-            --add-data "logo.ico;." `
-            --icon logo.ico `
-            --name Configurator `
-            configurator.py
-          cd ../../..
+          Remove-Item -Force Configurator.spec -ErrorAction SilentlyContinue
+          Remove-Item -Force configurator.spec -ErrorAction SilentlyContinue
+          pyinstaller --noconfirm --onefile --windowed --name Configurator --icon logo.ico --add-data "logo.ico;." --add-data "banner.png;." --add-data "structure.json;." configurator.py
 
       - name: Move executable to destination
         run: |
