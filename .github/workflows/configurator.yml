@@ -59,8 +59,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install Pillow
-          pip install pyinstaller
+          pip install Pillow customtkinter pyinstaller
 
       - name: Skip tests
         run: echo "No tests configured"
@@ -94,16 +93,17 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install Pillow
-          pip install pyinstaller
+          pip install Pillow customtkinter pyinstaller
 
       - name: Compile executable
         run: |
           cd .github/scripts/configurator
-          pyinstaller --onefile --windowed `
-            --add-data "logo.ico;." `
-            --icon logo.ico `
+          pyinstaller --noconfirm --onefile --windowed `
             --name Configurator `
+            --icon logo.ico `
+            --add-data "logo.ico;." `
+            --add-data "banner.png;." `
+            --add-data "structure.json;." `
             configurator.py
           cd ../../..
 
