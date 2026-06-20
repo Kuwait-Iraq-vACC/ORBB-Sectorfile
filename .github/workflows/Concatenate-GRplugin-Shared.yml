@@ -9,6 +9,12 @@ on:
       - '.data/DataFiles/**'
       - '.github/workflows/Concatenate-GRplugin-Shared.yml'
       - '.github/scripts/GRplugin/Concatenate-GRplugin-Shared.py'
+  pull_request:
+    paths:
+      - '.data/GRplugin Shared/**'
+      - '.data/DataFiles/**'
+      - '.github/workflows/Concatenate-GRplugin-Shared.yml'
+      - '.github/scripts/GRplugin/Concatenate-GRplugin-Shared.py'
 
 concurrency:
   group: GRplugin-Compile

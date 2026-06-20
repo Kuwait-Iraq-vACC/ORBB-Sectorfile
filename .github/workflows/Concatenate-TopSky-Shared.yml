@@ -8,6 +8,11 @@ on:
       - '.data/TopSky Shared/**'
       - '.github/workflows/Concatenate-TopSky-Shared.yml'
       - '.github/scripts/TopSky/Concatenate-TopSky-Shared.py'
+  pull_request:
+    paths:
+      - '.data/TopSky Shared/**'
+      - '.github/workflows/Concatenate-TopSky-Shared.yml'
+      - '.github/scripts/TopSky/Concatenate-TopSky-Shared.py'
 
 concurrency:
   group: TopSky-Compile
