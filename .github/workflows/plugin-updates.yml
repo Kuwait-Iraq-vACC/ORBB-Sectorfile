@@ -106,7 +106,7 @@ jobs:
           update_badge() {
             local plugin="$1"
             local new_version="$2"
-            local badge_file="$BADGES_DIR/$plugin/$plugin.json"
+            local badge_file="$BADGES_DIR/$plugin.json"
 
             if [[ ! -f "$badge_file" ]]; then
               echo "⚠️  Badge file not found for $plugin — skipping badge update"
