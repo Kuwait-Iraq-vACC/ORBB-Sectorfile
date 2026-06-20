@@ -2,7 +2,7 @@ name: Check for Plugin Updates
 
 on:
   schedule:
-    - cron: "17 22 * * *"
+    - cron: "00 12 * * *"
   workflow_dispatch:
 
 permissions:
@@ -146,7 +146,7 @@ jobs:
                   .key,
                   .value.repo,
                   (.value.message // "0.0.0"),
-                  (.value.allow_prerelease // false)
+                  (.value.allow_prerelease // true)
                 ]
               | @tsv
             ' "$VERSION_FILE"
