@@ -15,8 +15,9 @@ SIMULATION_MODE:1
 DISABLEPANNING:0
 DISABLEZOOMING:0
 DisplayRotation:317.40000
-TAGFAMILY:GRplugin
+TAGFAMILY:
 WINDOWAREA:35.460134:44.317333:35.482259:44.383124
 PLUGIN:Ground Radar plugin:AirportElevation:1061
 PLUGIN:Ground Radar plugin:AirportRadius:2.5
 PLUGIN:Ground Radar plugin:GroundMode:ORKK
+PLUGIN:TopSky plugin:ShowMapData:NONE
