@@ -1,0 +1,71 @@
+// IFR Domestic OR* Arrivals (13xx)
+RANGE:1301:1377
+NOTADEP:OR
+ADES:OR
+IFR
+
+// VFR Domestic OR* Arrivals (74xx)
+RANGE:7401:7477
+NOTADEP:OR
+ADES:OR
+VFR
+
+// International OR* Arrivals (72xx)
+RANGE:7201:7277
+NOTADEP:OR
+ADES:OR
+
+// IFR Domestic ORBI Departures (13xx)
+RANGE:1301:1377
+ADEP:ORBI
+ADES:OR
+PRIORITY:1
+IFR
+
+// VFR Domestic ORBI Departures (74xx)
+
+RANGE:7401:7477
+ADEP:ORBI
+ADES:OR
+PRIORITY:1
+VFR
+
+// IFR International ORBI Departures (10xx)
+RANGE:1001:1077
+ADEP:ORBI
+NOTADES:OR
+PRIORITY:1
+IFR
+
+// VFR International ORBI Departures (72xx)
+
+RANGE:7201:7277
+ADEP:ORBI
+NOTADES:OR
+PRIORITY:1
+VFR
+
+// Domestic OR* Departures excl. ORBI (13xx)
+RANGE:1301:1377
+ADEP:OR
+NOTADEP:ORBI
+ADES:OR
+
+// International OR* Departures excl. ORBI (72xx)
+RANGE:7201:7277
+ADEP:OR
+NOTADEP:ORBI
+ADES:OR
+
+// IFR Overflights (10xx)
+RANGE:1001:1077
+NOTADEP:OR
+NOTADES:OR
+IFR
+
+// VFR Overflights (72xx)
+RANGE:7201:7277
+NOTADEP:OR
+NOTADES:OR
+VFR
+
