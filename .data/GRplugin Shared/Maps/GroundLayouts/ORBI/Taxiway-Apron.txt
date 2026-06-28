@@ -1,5 +1,5 @@
 MAP:Taxiways and Apron
-AIRPORT:ORMM
+AIRPORT:ORBI
 FOLDER:Airport Layout
 ACTIVE:1
 COLOR:SMGCS_Background
