@@ -1,3 +1,5 @@
+Maps_URL=https://raw.githubusercontent.com/Kuwait-Iraq-vACC/ORBB-Sectorfile/refs/heads/main/ORBB/Plugins/TopSky/TopSkyMaps.txt
+
 // General Setup
 Setup_COOPANS=1
 Setup_AutoSignIn=1
