@@ -1,4 +1,4 @@
-/ MAP:Building Labels
+// MAP:Building Labels
 // AIRPORT:ORSJ
 // FOLDER:Labels
 // ACTIVE:1
