@@ -8,8 +8,8 @@ folder = Path(r"C:\GitHub\ORBB-Sectorfile")
 # "file_extention = None"
 file_extension = ".prf"
 
-old_text = "ORBB-Developer_20260612184253-260601-0003"
-new_text = "ORBB-Install-Package_20260615160335-260601-0002"
+old_text = "Plugins	Plugin2	\ORBB\Plugins\TopSky\TopSky.dll\nPlugins	Plugin2Display0	Standard ES radar screen"
+new_text = "Plugins	Plugin2	\ORBB\Plugins\TopSky\TopSky.dll\nPlugins	Plugin2Display0	Ground Radar display\nPlugins	Plugin2Display1	Standard ES radar screen"
 
 files_modified = 0
 
