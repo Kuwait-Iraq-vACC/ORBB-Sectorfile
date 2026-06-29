@@ -34,8 +34,8 @@ m_ScreenNumber:0
 m_ScreenPosition:0
 m_ScreenMaximized:0
 m_ShowTitleSelectedAc:0
-m_PlanesListX:1119
-m_PlanesListY:24
+m_PlanesListX:32
+m_PlanesListY:58
 m_MetarListX:1641
 m_MetarListY:45
 m_VoiceListX:-1000
