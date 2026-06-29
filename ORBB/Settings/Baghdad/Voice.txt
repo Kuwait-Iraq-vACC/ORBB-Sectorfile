@@ -3,5 +3,4 @@ AG:BGD_APP Baghdad Approach:122.400
 AG:ORBI_F_APP Baghdad Director:126.575
 AG:ORBI_GND Baghdad Ground:121.700
 AG:ORBI_TWR Baghdad Tower:118.900
-AG:Z ORBI_ATIS:126.925
 END
