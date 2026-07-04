@@ -121,7 +121,7 @@ APW_Buffer_Vert_L_IFR=0
 APW_Buffer_Vert_L_VFR=0
 
 
-Color_Unconcerned=120,120,120
+Color_Unconcerned=90,90,90
 Color_Concerned=57,166,73
 Color_Coordination=57,166,73
 Color_Assumed=255,255,255
