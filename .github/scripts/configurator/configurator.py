@@ -36,7 +36,34 @@ else:
 OPTIONS_PATH           = os.path.join(_EXE_DIR, "configurator_config.json")
 DEFAULT_STRUCTURE_JSON = resource_path("structure.json")
 
+def _dir_has_prf(directory):
+    """True if `directory` directly contains at least one .prf file."""
+    try:
+        for entry in os.listdir(directory):
+            if entry.lower().endswith(".prf") and os.path.isfile(os.path.join(directory, entry)):
+                return True
+    except Exception:
+        pass
+    return False
+
 def _find_orbb_root():
+    """
+    Walk upward from the exe directory and stop at the first ancestor folder
+    that directly contains .prf files. This is more reliable than matching a
+    literal "ORBB" folder name, since dev packages sometimes place the .prf
+    files a level above the ORBB folder (e.g. package_root/*.prf and
+    package_root/ORBB/Plugins/Configurator/Configurator.exe).
+    """
+    candidate = _EXE_DIR
+    for _ in range(12):
+        if _dir_has_prf(candidate):
+            return candidate
+        parent = os.path.dirname(candidate)
+        if not parent or parent == candidate:
+            break
+        candidate = parent
+
+    # Fallback: original "look for a folder literally named ORBB" heuristic.
     candidate = _EXE_DIR
     for _ in range(12):
         if os.path.basename(candidate).upper() == "ORBB":
@@ -48,7 +75,8 @@ def _find_orbb_root():
         if os.path.isdir(orbb):
             return orbb
         candidate = os.path.dirname(candidate)
-    return os.path.abspath(os.path.join(_EXE_DIR, "..", ".."))
+
+    return os.path.abspath(os.path.join(_EXE_DIR, "..", "..", ".."))
 
 ORBB_ROOT = _find_orbb_root()
 
@@ -56,7 +84,12 @@ def _find_pack_root(orbb_root):
     inner = os.path.join(orbb_root, "ORBB", "Settings")
     if os.path.isdir(inner):
         return inner
-    return os.path.join(orbb_root, "Settings")
+    settings = os.path.join(orbb_root, "Settings")
+    if os.path.isdir(settings):
+        return settings
+    # No dedicated Settings folder found - the .prf files most likely live
+    # directly in the detected root itself.
+    return orbb_root
 
 PACK_ROOT = _find_pack_root(ORBB_ROOT)
 
@@ -227,10 +260,12 @@ def apply_configuration(options):
     restructure_prf_files(load_structure())
     patched_files = []
     errors = []
+    prf_seen = False
     for root, dirs, files in os.walk(ORBB_ROOT):
         for file in files:
             fp = os.path.join(root, file)
             if file.endswith(".prf"):
+                prf_seen = True
                 try:
                     patch_prf_file(fp, options)
                     patch_profiles_file(fp, options)
@@ -242,6 +277,16 @@ def apply_configuration(options):
                     patch_profiles_file(fp, options)
                 except Exception as e:
                     errors.append((file, str(e)))
+
+    if not prf_seen:
+        raise ValueError(
+            f"No .prf files were found under:\n{ORBB_ROOT}\n\n"
+            f"Exe directory: {_EXE_DIR}\n"
+            f"Detected settings root: {PACK_ROOT}\n\n"
+            f"Make sure Configurator.exe sits inside (or a few folders below) "
+            f"the top-level package folder that actually contains your .prf profiles."
+        )
+
     cpdlc_updated = patch_topsky_cpdlc(options)
     return patched_files, cpdlc_updated, errors
 
@@ -322,7 +367,27 @@ class Configurator(ctk.CTk):
         self._hint_lbl = ctk.CTkLabel(self._body, textvariable=self._hint_var, font=("Segoe UI", 10), text_color=MUTED, anchor="w", justify="left", wraplength=400)
         self._entry_var = ctk.StringVar()
         self._entry = ctk.CTkEntry(self._body, textvariable=self._entry_var, font=("Segoe UI", 12), height=40, width=404, fg_color=INPUT_BG, border_color=INPUT_BOR, border_width=1, text_color=WHITE, placeholder_text_color="#555555")
-        self._combo = ctk.CTkComboBox(self._body, values=RATING_DISPLAY, font=("Segoe UI", 12), height=40, width=404, fg_color=INPUT_BG, border_color=INPUT_BOR, border_width=1, button_color=RED, button_hover_color=RED_HOV, dropdown_fg_color="#1A1A1A", text_color=WHITE, state="readonly")
+        # Rating selector - CTkOptionMenu instead of a "readonly" CTkComboBox:
+        # the whole control is clickable (not just a tiny arrow), it can't be
+        # typed into by accident, and colors are set explicitly so the list
+        # renders readably on the dark theme.
+        self._combo = ctk.CTkOptionMenu(
+            self._body,
+            values=RATING_DISPLAY,
+            font=("Segoe UI", 12),
+            dropdown_font=("Segoe UI", 12),
+            height=40,
+            width=404,
+            corner_radius=6,
+            anchor="w",
+            fg_color=INPUT_BG,
+            button_color=RED,
+            button_hover_color=RED_HOV,
+            dropdown_fg_color="#1A1A1A",
+            dropdown_hover_color="#2A2A2A",
+            dropdown_text_color=WHITE,
+            text_color=WHITE,
+        )
         self._err_var  = tk.StringVar()
         self._err_lbl  = ctk.CTkLabel(self._body, textvariable=self._err_var, font=("Segoe UI", 10), text_color="#FF6B6B", anchor="w")
         self._footer   = ctk.CTkFrame(self._body, fg_color="transparent")
