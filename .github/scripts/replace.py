@@ -6,10 +6,10 @@ folder = Path(r"C:\GitHub\ORBB-Sectorfile")
 # Set to None to process all files
 # Example: ".prf", ".txt", ".ese"
 # "file_extention = None"
-file_extension = ".asr"
+file_extension = ".prf"
 
-old_text = "SIMULATION_MODE:1"
-new_text = "SIMULATION_MODE:4"
+old_text = "Plugins	Plugin1Display0	Ground Radar display\nPlugins	Plugin1Display1	Standard ES radar screen"
+new_text = "Plugins	Plugin1Display0	Standard ES radar screen"
 
 files_modified = 0
 

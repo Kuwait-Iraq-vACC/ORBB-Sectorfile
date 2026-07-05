@@ -40,8 +40,7 @@ Sounds	Sound17	\ORBB\Sounds\pointout.wav
 Sounds	Sound18	\ORBB\Sounds\startup.wav
 Plugins	Plugin0	\ORBB\Plugins\DiscordEuroScope\DiscordEuroscope.dll
 Plugins	Plugin1	\ORBB\Plugins\RDFPlugin\RDFPlugin.dll
-Plugins	Plugin1Display0	Ground Radar display
-Plugins	Plugin1Display1	Standard ES radar screen
+Plugins	Plugin1Display0	Standard ES radar screen
 Plugins	Plugin2	\ORBB\Plugins\TopSky\TopSky.dll
 Plugins	Plugin2Display0	Ground Radar display
 Plugins	Plugin2Display1	Standard ES radar screen
