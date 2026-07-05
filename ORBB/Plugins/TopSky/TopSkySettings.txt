@@ -96,7 +96,7 @@ CPDLC_AHDG=1
 CPDLC_ASP=1
 CPDLC_AutoAcceptLogon_Time=15
 CPDLC_Send_FSM_RCD=0
-Window_CPDLC_Current=1,1000,0
+Window_CPDLC_Current=0,1000,0
 
 
 
