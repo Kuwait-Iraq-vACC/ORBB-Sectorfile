@@ -63,18 +63,20 @@ def _find_orbb_root():
             break
         candidate = parent
 
-    # Fallback: original "look for a folder literally named ORBB" heuristic.
+    # If we find an ORBB folder, the package root is its parent.
     candidate = _EXE_DIR
     for _ in range(12):
         if os.path.basename(candidate).upper() == "ORBB":
-            parent = os.path.dirname(candidate)
-            if os.path.basename(parent).upper() == "ORBB":
-                return parent
-            return candidate
+            return os.path.dirname(candidate)
+
         orbb = os.path.join(candidate, "ORBB")
         if os.path.isdir(orbb):
-            return orbb
-        candidate = os.path.dirname(candidate)
+            return candidate
+
+        parent = os.path.dirname(candidate)
+        if parent == candidate:
+            break
+        candidate = parent
 
     return os.path.abspath(os.path.join(_EXE_DIR, "..", "..", ".."))
 
@@ -162,12 +164,22 @@ STEPS = [
 # Business logic
 
 def restructure_prf_files(structure):
+    print("Using PACK_ROOT:", PACK_ROOT)
+
     for prf_name, target_rel in structure.items():
         src = os.path.join(PACK_ROOT, prf_name)
+
+        print("Looking for:", src)
+
         if not os.path.exists(src):
+            print("NOT FOUND")
             continue
+
         target_dir = os.path.join(PACK_ROOT, target_rel)
         os.makedirs(target_dir, exist_ok=True)
+
+        print(f"Moving {src} -> {target_dir}")
+
         shutil.move(src, os.path.join(target_dir, prf_name))
 
 def patch_prf_file(file_path, options):
@@ -178,7 +190,8 @@ def patch_prf_file(file_path, options):
     rating_code = options.get("rating", RATING_DEFAULT)
     name        = options.get("name", "")
     password    = options.get("password", "")
-    callsign    = ""
+    initials    = options.get("initials", "").strip().upper()
+    callsign    = f"{initials}_OBS" if initials else ""
 
     found = {k: False for k in ("realname", "certificate", "rating", "callsign", "password", "server")}
     new = []
