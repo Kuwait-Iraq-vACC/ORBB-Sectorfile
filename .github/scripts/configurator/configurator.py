@@ -83,17 +83,30 @@ def _find_orbb_root():
 ORBB_ROOT = _find_orbb_root()
 
 def _find_pack_root(orbb_root):
+    """
+    Find the Settings folder. This is used for finding where .prf files
+    might be initially located, but we'll move them to ORBB_ROOT level.
+    """
+    # Check for Settings folder in various locations
     inner = os.path.join(orbb_root, "ORBB", "Settings")
     if os.path.isdir(inner):
         return inner
+
     settings = os.path.join(orbb_root, "Settings")
     if os.path.isdir(settings):
         return settings
-    # No dedicated Settings folder found - the .prf files most likely live
-    # directly in the detected root itself.
-    return orbb_root
 
-PACK_ROOT = _find_pack_root(ORBB_ROOT)
+    # Try to find any Settings folder
+    for root, dirs, files in os.walk(orbb_root):
+        if "Settings" in dirs:
+            potential = os.path.join(root, "Settings")
+            # Check if it has .prf files
+            for f in os.listdir(potential):
+                if f.endswith(".prf"):
+                    return potential
+
+    # No Settings folder found - .prf files might be directly in ORBB_ROOT
+    return orbb_root
 
 def get_structure_json_path():
     try:
@@ -166,14 +179,17 @@ STEPS = [
 def restructure_prf_files(structure):
     """
     Move .prf files from their current location to the target directories
-    specified in structure.json.
+    specified in structure.json, relative to ORBB_ROOT.
     """
-    print("Using PACK_ROOT:", PACK_ROOT)
-    print("Structure:", structure)
+    print(f"ORBB_ROOT (root folder): {ORBB_ROOT}")
+    print(f"Structure: {structure}")
 
-    # First, find all .prf files in the entire PACK_ROOT tree
+    # We want to organize profiles at the ORBB_ROOT level, not inside Settings
+    profiles_base = ORBB_ROOT
+
+    # First, find all .prf files in the entire ORBB_ROOT tree
     prf_files = {}
-    for root, dirs, files in os.walk(PACK_ROOT):
+    for root, dirs, files in os.walk(ORBB_ROOT):
         for file in files:
             if file.endswith(".prf"):
                 full_path = os.path.join(root, file)
@@ -182,25 +198,22 @@ def restructure_prf_files(structure):
 
     print(f"\nTotal .prf files found: {len(prf_files)}")
 
+    if not prf_files:
+        print("WARNING: No .prf files found anywhere in ORBB_ROOT!")
+        return 0
+
     moved_count = 0
     for prf_name, target_rel in structure.items():
         if prf_name not in prf_files:
-            print(f"WARNING: {prf_name} not found anywhere in {PACK_ROOT}")
-            # Try to find it in ORBB_ROOT as fallback
-            for root, dirs, files in os.walk(ORBB_ROOT):
-                if prf_name in files:
-                    full_path = os.path.join(root, prf_name)
-                    prf_files[prf_name] = full_path
-                    print(f"Found {prf_name} in fallback location: {full_path}")
-                    break
-            if prf_name not in prf_files:
-                continue
+            print(f"WARNING: {prf_name} not found in ORBB_ROOT")
+            continue
 
         src = prf_files[prf_name]
 
         # Determine target directory - remove trailing slash if present
         target_rel_clean = target_rel.rstrip('/')
-        target_dir = os.path.join(PACK_ROOT, target_rel_clean)
+        # Create the target directory at ORBB_ROOT level (not inside Settings)
+        target_dir = os.path.join(profiles_base, target_rel_clean)
 
         # Create target directory if it doesn't exist
         os.makedirs(target_dir, exist_ok=True)
@@ -216,7 +229,7 @@ def restructure_prf_files(structure):
                     os.remove(target_path)
                 shutil.move(src, target_path)
                 moved_count += 1
-                print(f"✓ Successfully moved {prf_name}")
+                print(f"✓ Successfully moved {prf_name} to {target_rel_clean}/")
             except Exception as e:
                 print(f"✗ Error moving {prf_name}: {e}")
         else:
@@ -362,7 +375,7 @@ def apply_configuration(options):
         )
 
     print(f"ORBB_ROOT: {ORBB_ROOT}")
-    print(f"PACK_ROOT: {PACK_ROOT}")
+    print(f"PACK_ROOT (Settings folder): {PACK_ROOT}")
     print(f"Options: {options}")
 
     # Load structure and restructure
@@ -374,14 +387,14 @@ def apply_configuration(options):
     errors = []
     prf_seen = False
 
-    # Now patch all .prf files
-    for root, dirs, files in os.walk(PACK_ROOT):
+    # Now patch all .prf files - search everywhere in ORBB_ROOT
+    for root, dirs, files in os.walk(ORBB_ROOT):
         for file in files:
             fp = os.path.join(root, file)
             if file.endswith(".prf"):
                 prf_seen = True
                 try:
-                    print(f"Patching profile: {file}")
+                    print(f"Patching profile: {file} at {fp}")
                     patch_prf_file(fp, options)
                     patch_profiles_file(fp, options)
                     patched_files.append(os.path.basename(fp))
@@ -395,29 +408,13 @@ def apply_configuration(options):
                     errors.append((file, str(e)))
 
     if not prf_seen:
-        # Try ORBB_ROOT as fallback
-        print("No .prf files found in PACK_ROOT, checking ORBB_ROOT...")
-        for root, dirs, files in os.walk(ORBB_ROOT):
-            for file in files:
-                if file.endswith(".prf"):
-                    prf_seen = True
-                    fp = os.path.join(root, file)
-                    try:
-                        print(f"Patching profile (fallback): {file}")
-                        patch_prf_file(fp, options)
-                        patch_profiles_file(fp, options)
-                        patched_files.append(os.path.basename(fp))
-                    except Exception as e:
-                        errors.append((os.path.basename(fp), str(e)))
-
-        if not prf_seen:
-            raise ValueError(
-                f"No .prf files were found under:\n{ORBB_ROOT}\n\n"
-                f"Exe directory: {_EXE_DIR}\n"
-                f"Detected settings root: {PACK_ROOT}\n\n"
-                f"Make sure Configurator.exe sits inside (or a few folders below) "
-                f"the top-level package folder that actually contains your .prf profiles."
-            )
+        raise ValueError(
+            f"No .prf files were found under:\n{ORBB_ROOT}\n\n"
+            f"Exe directory: {_EXE_DIR}\n"
+            f"Detected settings root: {PACK_ROOT}\n\n"
+            f"Make sure Configurator.exe sits inside (or a few folders below) "
+            f"the top-level package folder that actually contains your .prf profiles."
+        )
 
     cpdlc_updated = patch_topsky_cpdlc(options)
     return patched_files, cpdlc_updated, errors
@@ -645,31 +642,43 @@ class Configurator(ctk.CTk):
 
     def _run_apply(self):
         self._next_btn.configure(state="disabled", text="Applying...")
-        self._back_btn.configure(state="disabled")
-        self._q_var.set("Applying configuration...")
-        self._hint_var.set(f"ORBB root:  {ORBB_ROOT}\nSettings:   {PACK_ROOT}")
-        self._hint_lbl.configure(text_color=MUTED)
-        self._entry.place_forget()
-        self._combo.place_forget()
-        self._step_var.set("")
-        self.update()
-        try:
-            save_options(self._answers)
-            patched_files, cpdlc_updated, errors = apply_configuration(self._answers)
-            summary = [f"{len(patched_files)} profile{'s' if len(patched_files) != 1 else ''} updated"]
-            if cpdlc_updated:
-                summary.append(f"Hoppie ACARS code updated ({cpdlc_updated} file{'s' if cpdlc_updated != 1 else ''})")
-            else:
-                summary.append("Hoppie ACARS code - skipped (left blank)")
-            self._show_result(
-                title="Done" if not errors else "Warning",
-                summary=summary,
-                bar_color=SUCCESS if not errors else WARN,
-                success_items=patched_files,
-                error_items=[f"{n}: {e}" for n, e in errors],
-            )
-        except Exception as e:
-            self._show_result(title="Error", summary=[str(e)], bar_color=WARN, success_items=[], error_items=[], is_hard_error=True)
+    self._back_btn.configure(state="disabled")
+    self._q_var.set("Applying configuration...")
+
+    # Show where files will be organized
+    structure = load_structure()
+    folder_info = []
+    for prf_name, target_rel in structure.items():
+        folder_info.append(f"{prf_name} → {target_rel.rstrip('/')}/")
+
+    self._hint_var.set(
+        f"ORBB root:  {ORBB_ROOT}\n"
+        f"Profiles will be organized in:\n"
+        f"{chr(10).join(folder_info[:3])}{'...' if len(folder_info) > 3 else ''}"
+    )
+    self._hint_lbl.configure(text_color=MUTED)
+    self._entry.place_forget()
+    self._combo.place_forget()
+    self._step_var.set("")
+    self.update()
+
+    try:
+        save_options(self._answers)
+        patched_files, cpdlc_updated, errors = apply_configuration(self._answers)
+        summary = [f"{len(patched_files)} profile{'s' if len(patched_files) != 1 else ''} updated"]
+        if cpdlc_updated:
+            summary.append(f"Hoppie ACARS code updated ({cpdlc_updated} file{'s' if cpdlc_updated != 1 else ''})")
+        else:
+            summary.append("Hoppie ACARS code - skipped (left blank)")
+        self._show_result(
+            title="Done" if not errors else "Warning",
+            summary=summary,
+            bar_color=SUCCESS if not errors else WARN,
+            success_items=patched_files,
+            error_items=[f"{n}: {e}" for n, e in errors],
+        )
+    except Exception as e:
+        self._show_result(title="Error", summary=[str(e)], bar_color=WARN, success_items=[], error_items=[], is_hard_error=True)
 
     def _show_result(self, title, summary, bar_color, success_items, error_items, is_hard_error=False):
         cw = self._prog_canvas.winfo_width() or self.W
