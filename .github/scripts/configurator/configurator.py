@@ -108,6 +108,8 @@ def _find_pack_root(orbb_root):
     # No Settings folder found - .prf files might be directly in ORBB_ROOT
     return orbb_root
 
+PACK_ROOT = _find_pack_root(ORBB_ROOT)
+
 def get_structure_json_path():
     try:
         with open(OPTIONS_PATH, encoding="utf-8") as f:
@@ -496,10 +498,6 @@ class Configurator(ctk.CTk):
         self._hint_lbl = ctk.CTkLabel(self._body, textvariable=self._hint_var, font=("Segoe UI", 10), text_color=MUTED, anchor="w", justify="left", wraplength=400)
         self._entry_var = ctk.StringVar()
         self._entry = ctk.CTkEntry(self._body, textvariable=self._entry_var, font=("Segoe UI", 12), height=40, width=404, fg_color=INPUT_BG, border_color=INPUT_BOR, border_width=1, text_color=WHITE, placeholder_text_color="#555555")
-        # Rating selector - CTkOptionMenu instead of a "readonly" CTkComboBox:
-        # the whole control is clickable (not just a tiny arrow), it can't be
-        # typed into by accident, and colors are set explicitly so the list
-        # renders readably on the dark theme.
         self._combo = ctk.CTkOptionMenu(
             self._body,
             values=RATING_DISPLAY,
@@ -642,43 +640,45 @@ class Configurator(ctk.CTk):
 
     def _run_apply(self):
         self._next_btn.configure(state="disabled", text="Applying...")
-    self._back_btn.configure(state="disabled")
-    self._q_var.set("Applying configuration...")
+        self._back_btn.configure(state="disabled")
+        self._q_var.set("Applying configuration...")
 
-    # Show where files will be organized
-    structure = load_structure()
-    folder_info = []
-    for prf_name, target_rel in structure.items():
-        folder_info.append(f"{prf_name} → {target_rel.rstrip('/')}/")
+        # Show where files will be organized
+        structure = load_structure()
+        folder_info = []
+        for prf_name, target_rel in list(structure.items())[:5]:  # Show first 5
+            folder_info.append(f"{prf_name} → {target_rel.rstrip('/')}/")
 
-    self._hint_var.set(
-        f"ORBB root:  {ORBB_ROOT}\n"
-        f"Profiles will be organized in:\n"
-        f"{chr(10).join(folder_info[:3])}{'...' if len(folder_info) > 3 else ''}"
-    )
-    self._hint_lbl.configure(text_color=MUTED)
-    self._entry.place_forget()
-    self._combo.place_forget()
-    self._step_var.set("")
-    self.update()
+        hint_text = f"ORBB root: {ORBB_ROOT}\n"
+        if folder_info:
+            hint_text += "Profiles will be organized in:\n" + "\n".join(folder_info)
+            if len(structure) > 5:
+                hint_text += f"\n... and {len(structure) - 5} more"
 
-    try:
-        save_options(self._answers)
-        patched_files, cpdlc_updated, errors = apply_configuration(self._answers)
-        summary = [f"{len(patched_files)} profile{'s' if len(patched_files) != 1 else ''} updated"]
-        if cpdlc_updated:
-            summary.append(f"Hoppie ACARS code updated ({cpdlc_updated} file{'s' if cpdlc_updated != 1 else ''})")
-        else:
-            summary.append("Hoppie ACARS code - skipped (left blank)")
-        self._show_result(
-            title="Done" if not errors else "Warning",
-            summary=summary,
-            bar_color=SUCCESS if not errors else WARN,
-            success_items=patched_files,
-            error_items=[f"{n}: {e}" for n, e in errors],
-        )
-    except Exception as e:
-        self._show_result(title="Error", summary=[str(e)], bar_color=WARN, success_items=[], error_items=[], is_hard_error=True)
+        self._hint_var.set(hint_text)
+        self._hint_lbl.configure(text_color=MUTED)
+        self._entry.place_forget()
+        self._combo.place_forget()
+        self._step_var.set("")
+        self.update()
+
+        try:
+            save_options(self._answers)
+            patched_files, cpdlc_updated, errors = apply_configuration(self._answers)
+            summary = [f"{len(patched_files)} profile{'s' if len(patched_files) != 1 else ''} updated"]
+            if cpdlc_updated:
+                summary.append(f"Hoppie ACARS code updated ({cpdlc_updated} file{'s' if cpdlc_updated != 1 else ''})")
+            else:
+                summary.append("Hoppie ACARS code - skipped (left blank)")
+            self._show_result(
+                title="Done" if not errors else "Warning",
+                summary=summary,
+                bar_color=SUCCESS if not errors else WARN,
+                success_items=patched_files,
+                error_items=[f"{n}: {e}" for n, e in errors],
+            )
+        except Exception as e:
+            self._show_result(title="Error", summary=[str(e)], bar_color=WARN, success_items=[], error_items=[], is_hard_error=True)
 
     def _show_result(self, title, summary, bar_color, success_items, error_items, is_hard_error=False):
         cw = self._prog_canvas.winfo_width() or self.W
