@@ -164,25 +164,74 @@ STEPS = [
 # Business logic
 
 def restructure_prf_files(structure):
+    """
+    Move .prf files from their current location to the target directories
+    specified in structure.json.
+    """
     print("Using PACK_ROOT:", PACK_ROOT)
+    print("Structure:", structure)
 
+    # First, find all .prf files in the entire PACK_ROOT tree
+    prf_files = {}
+    for root, dirs, files in os.walk(PACK_ROOT):
+        for file in files:
+            if file.endswith(".prf"):
+                full_path = os.path.join(root, file)
+                prf_files[file] = full_path
+                print(f"Found .prf file: {file} at {full_path}")
+
+    print(f"\nTotal .prf files found: {len(prf_files)}")
+
+    moved_count = 0
     for prf_name, target_rel in structure.items():
-        src = os.path.join(PACK_ROOT, prf_name)
+        if prf_name not in prf_files:
+            print(f"WARNING: {prf_name} not found anywhere in {PACK_ROOT}")
+            # Try to find it in ORBB_ROOT as fallback
+            for root, dirs, files in os.walk(ORBB_ROOT):
+                if prf_name in files:
+                    full_path = os.path.join(root, prf_name)
+                    prf_files[prf_name] = full_path
+                    print(f"Found {prf_name} in fallback location: {full_path}")
+                    break
+            if prf_name not in prf_files:
+                continue
 
-        print("Looking for:", src)
+        src = prf_files[prf_name]
 
-        if not os.path.exists(src):
-            print("NOT FOUND")
-            continue
+        # Determine target directory - remove trailing slash if present
+        target_rel_clean = target_rel.rstrip('/')
+        target_dir = os.path.join(PACK_ROOT, target_rel_clean)
 
-        target_dir = os.path.join(PACK_ROOT, target_rel)
+        # Create target directory if it doesn't exist
         os.makedirs(target_dir, exist_ok=True)
 
-        print(f"Moving {src} -> {target_dir}")
+        target_path = os.path.join(target_dir, prf_name)
 
-        shutil.move(src, os.path.join(target_dir, prf_name))
+        # Only move if the file isn't already in the target location
+        if os.path.abspath(src) != os.path.abspath(target_path):
+            print(f"Moving {src} -> {target_path}")
+            try:
+                # If target exists, remove it first (force overwrite)
+                if os.path.exists(target_path):
+                    os.remove(target_path)
+                shutil.move(src, target_path)
+                moved_count += 1
+                print(f"✓ Successfully moved {prf_name}")
+            except Exception as e:
+                print(f"✗ Error moving {prf_name}: {e}")
+        else:
+            print(f"{prf_name} is already in the correct location: {target_path}")
+
+    print(f"\nMoved {moved_count} out of {len(structure)} files")
+    return moved_count
 
 def patch_prf_file(file_path, options):
+    """
+    Patch a .prf file with the provided options.
+    Replaces existing lines instead of adding duplicates.
+    """
+    print(f"Patching: {file_path}")
+
     with open(file_path, encoding="utf-8", errors="replace") as f:
         lines = f.readlines()
 
@@ -193,42 +242,83 @@ def patch_prf_file(file_path, options):
     initials    = options.get("initials", "").strip().upper()
     callsign    = f"{initials}_OBS" if initials else ""
 
-    found = {k: False for k in ("realname", "certificate", "rating", "callsign", "password", "server")}
-    new = []
-    for line in lines:
-        if line.startswith("LastSession\trealname\t"):
-            line = f"LastSession\trealname\t{name}\n"; found["realname"] = True
-        elif line.startswith("LastSession\tcertificate\t"):
-            line = f"LastSession\tcertificate\t{cid}\n"; found["certificate"] = True
-        elif line.startswith("LastSession\trating\t"):
-            line = f"LastSession\trating\t{rating_code}\n"; found["rating"] = True
-        elif line.startswith("LastSession\tcallsign\t"):
-            line = f"LastSession\tcallsign\t{callsign}\n"; found["callsign"] = True
-        elif line.startswith("LastSession\tpassword\t"):
-            line = f"LastSession\tpassword\t{password}\n"; found["password"] = True
-        elif line.startswith("LastSession\tserver\t"):
-            line = "LastSession\tserver\tAUTOMATIC\n"; found["server"] = True
-            new.append(line)
-            if not found["realname"]:    new.append(f"LastSession\trealname\t{name}\n")
-            if not found["certificate"]: new.append(f"LastSession\tcertificate\t{cid}\n")
-            if not found["rating"]:      new.append(f"LastSession\trating\t{rating_code}\n")
-            if not found["callsign"]:    new.append(f"LastSession\tcallsign\t{callsign}\n")
-            if not found["password"]:    new.append(f"LastSession\tpassword\t{password}\n")
-            continue
-        new.append(line)
+    # Track which settings we've found and updated
+    found_settings = {
+        "realname": False,
+        "certificate": False,
+        "rating": False,
+        "callsign": False,
+        "password": False,
+        "server": False
+    }
 
-    if not found["server"]:
-        new += [
-            "LastSession\tserver\tAUTOMATIC\n",
-            f"LastSession\trealname\t{name}\n",
-            f"LastSession\tcertificate\t{cid}\n",
-            f"LastSession\trating\t{rating_code}\n",
-            f"LastSession\tcallsign\t{callsign}\n",
-            f"LastSession\tpassword\t{password}\n",
-        ]
+    new_lines = []
+
+    # First pass: Update existing lines
+    for line in lines:
+        line_updated = False
+
+        if line.startswith("LastSession\trealname\t"):
+            new_lines.append(f"LastSession\trealname\t{name}\n")
+            found_settings["realname"] = True
+            line_updated = True
+        elif line.startswith("LastSession\tcertificate\t"):
+            new_lines.append(f"LastSession\tcertificate\t{cid}\n")
+            found_settings["certificate"] = True
+            line_updated = True
+        elif line.startswith("LastSession\trating\t"):
+            new_lines.append(f"LastSession\trating\t{rating_code}\n")
+            found_settings["rating"] = True
+            line_updated = True
+        elif line.startswith("LastSession\tcallsign\t"):
+            new_lines.append(f"LastSession\tcallsign\t{callsign}\n")
+            found_settings["callsign"] = True
+            line_updated = True
+        elif line.startswith("LastSession\tpassword\t"):
+            new_lines.append(f"LastSession\tpassword\t{password}\n")
+            found_settings["password"] = True
+            line_updated = True
+        elif line.startswith("LastSession\tserver\t"):
+            new_lines.append("LastSession\tserver\tAUTOMATIC\n")
+            found_settings["server"] = True
+            line_updated = True
+
+        # Keep line if it wasn't updated
+        if not line_updated:
+            new_lines.append(line)
+
+    # Find where to insert missing settings (after server line, or at the end)
+    insert_pos = len(new_lines)
+    for i, line in enumerate(new_lines):
+        if line.startswith("LastSession\tserver\t"):
+            insert_pos = i + 1
+            found_settings["server"] = True
+            break
+
+    # Prepare missing settings to insert
+    missing_settings = []
+    if not found_settings["realname"] and name:
+        missing_settings.append(f"LastSession\trealname\t{name}\n")
+    if not found_settings["certificate"] and cid:
+        missing_settings.append(f"LastSession\tcertificate\t{cid}\n")
+    if not found_settings["rating"] and rating_code:
+        missing_settings.append(f"LastSession\trating\t{rating_code}\n")
+    if not found_settings["callsign"] and callsign:
+        missing_settings.append(f"LastSession\tcallsign\t{callsign}\n")
+    if not found_settings["password"] and password:
+        missing_settings.append(f"LastSession\tpassword\t{password}\n")
+    if not found_settings["server"]:
+        missing_settings.insert(0, "LastSession\tserver\tAUTOMATIC\n")
+
+    # Insert missing settings
+    if missing_settings:
+        new_lines = new_lines[:insert_pos] + missing_settings + new_lines[insert_pos:]
+        print(f"Added {len(missing_settings)} missing settings to {os.path.basename(file_path)}")
 
     with open(file_path, "w", encoding="utf-8", errors="replace") as f:
-        f.writelines(new)
+        f.writelines(new_lines)
+
+    print(f"✓ Successfully patched {os.path.basename(file_path)}")
 
 def patch_profiles_file(file_path, options):
     try:
@@ -270,20 +360,33 @@ def apply_configuration(options):
             f"Exe directory: {_EXE_DIR}\n\n"
             f"Place Configurator.exe inside or next to the ORBB folder."
         )
-    restructure_prf_files(load_structure())
+
+    print(f"ORBB_ROOT: {ORBB_ROOT}")
+    print(f"PACK_ROOT: {PACK_ROOT}")
+    print(f"Options: {options}")
+
+    # Load structure and restructure
+    structure = load_structure()
+    print(f"Loaded structure: {structure}")
+    restructure_prf_files(structure)
+
     patched_files = []
     errors = []
     prf_seen = False
-    for root, dirs, files in os.walk(ORBB_ROOT):
+
+    # Now patch all .prf files
+    for root, dirs, files in os.walk(PACK_ROOT):
         for file in files:
             fp = os.path.join(root, file)
             if file.endswith(".prf"):
                 prf_seen = True
                 try:
+                    print(f"Patching profile: {file}")
                     patch_prf_file(fp, options)
                     patch_profiles_file(fp, options)
                     patched_files.append(os.path.basename(fp))
                 except Exception as e:
+                    print(f"Error patching {file}: {e}")
                     errors.append((os.path.basename(fp), str(e)))
             elif file == "Bandbox.txt":
                 try:
@@ -292,13 +395,29 @@ def apply_configuration(options):
                     errors.append((file, str(e)))
 
     if not prf_seen:
-        raise ValueError(
-            f"No .prf files were found under:\n{ORBB_ROOT}\n\n"
-            f"Exe directory: {_EXE_DIR}\n"
-            f"Detected settings root: {PACK_ROOT}\n\n"
-            f"Make sure Configurator.exe sits inside (or a few folders below) "
-            f"the top-level package folder that actually contains your .prf profiles."
-        )
+        # Try ORBB_ROOT as fallback
+        print("No .prf files found in PACK_ROOT, checking ORBB_ROOT...")
+        for root, dirs, files in os.walk(ORBB_ROOT):
+            for file in files:
+                if file.endswith(".prf"):
+                    prf_seen = True
+                    fp = os.path.join(root, file)
+                    try:
+                        print(f"Patching profile (fallback): {file}")
+                        patch_prf_file(fp, options)
+                        patch_profiles_file(fp, options)
+                        patched_files.append(os.path.basename(fp))
+                    except Exception as e:
+                        errors.append((os.path.basename(fp), str(e)))
+
+        if not prf_seen:
+            raise ValueError(
+                f"No .prf files were found under:\n{ORBB_ROOT}\n\n"
+                f"Exe directory: {_EXE_DIR}\n"
+                f"Detected settings root: {PACK_ROOT}\n\n"
+                f"Make sure Configurator.exe sits inside (or a few folders below) "
+                f"the top-level package folder that actually contains your .prf profiles."
+            )
 
     cpdlc_updated = patch_topsky_cpdlc(options)
     return patched_files, cpdlc_updated, errors
