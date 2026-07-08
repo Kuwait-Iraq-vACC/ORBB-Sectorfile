@@ -243,11 +243,17 @@ def ask_rating(current=None):
             dialog.iconbitmap(icon_path)
     except Exception:
         pass
-    dialog.minsize(300, 200)
+    dialog.minsize(320, 200)
     dialog.title("ORBB Sectorfile Configurator")
     ttk.Label(dialog, text="Select your rating:").pack(pady=5)
-    dropdown = ttk.Combobox(dialog, textvariable=selected, values=ratings_display, state="readonly")
-    dropdown.pack(pady=5)
+    dropdown = ttk.Combobox(
+        dialog,
+        textvariable=selected,
+        values=ratings_display,
+        state="readonly",
+        width=max(len(r) for r in ratings_display) + 2
+    )
+    dropdown.pack(pady=5, padx=15)
     ttk.Button(dialog, text="OK", command=submit).pack()
     dialog.protocol("WM_DELETE_WINDOW", on_close)
     dialog.transient()
@@ -266,7 +272,7 @@ FIELD_DESCRIPTIONS = {
     "rating":   "Select your controller rating.",
     "cid":      "Enter your CID.",
     "password": "Enter your password.",
-    "initials": "Enter your observer initials (e.g. AB, JS) (Code of Conduct A4(B)).",
+    "initials": "Enter your observer initials (e.g. AB, JS) (Code of Conduct C3).",
     "cpdlc":    "Enter your ACARS logon code."
 }
 
