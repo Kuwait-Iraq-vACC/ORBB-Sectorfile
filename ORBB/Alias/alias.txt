@@ -12,7 +12,7 @@
 ;                                                                                                                         ;
 ;=========================================================================================================================;
 ;                                                                                                                         ;
-;  ALL RIGHTS RESERVED © AeroNav Association. NAV-DATA © NAVIGRAPH.                                                       ;
+;  ALL RIGHTS RESERVED ï¿½ AeroNav Association. NAV-DATA ï¿½ NAVIGRAPH.                                                       ;
 ;  FILES MUST NOT BE DISTRIBUTED OUTSIDE OF AERONAV SERVICES!                                                             ;
 ;                                                                                                                         ;
 ;=========================================================================================================================;
@@ -24,274 +24,282 @@
 ;  only. The data must not be copied, photocopied, translated, reverse engineered, decompiled or reduced to any           ;
 ;  electronic medium or machine legible form, neither completely nor in part.                                             ;
 ;=========================================================================================================================;
-;  AIRAC 2510/1  ++  File-Publisher: Iraq vACC - ORBB                                                                     ;
+;  AIRAC 2607/1  ++  File-Publisher: Kuwait & Iraq vACC - ORBB                                                            ;
 ;=========================================================================================================================;
-;*** ** APPROACH ** ***
-.arr? confirm able $star arrival?
-.star? confirm able $star arrival?
-.arr cleared $star arrival, runway $arrrwy. QNH $altim($arr).
-.star cleared $star arrival, runway $arrrwy. QNH $altim($arr).
-.earr expect $star arrival, runway $arrrwy. QNH $altim($arr).
-.estar expect $star arrival, runway $arrrwy. QNH $altim($arr).
-.exp expect ILS approach runway $arrrwy information $, QNH $altim($arr)
-.eils expect ILS approach runway $arrrwy information $, QNH $altim($arr)
-.ev expect vectors for $1 approach runway $arrrwy. QNH $altim($arr).
-.ernp expect RNP approach runway $arrrwy. QNH $altim($arr).
-.v vectors for $1 approach runway $arrrwy.
-.ils cleared ILS approach runway $arrrwy. Report established.
-.rnp cleared RNP approach runway $arrrwy. Report established.
-.rnpy cleared RNP-Y approach runway $arrrwy. Report established.
-.rnpz cleared RNP-Z approach runway $arrrwy. Report established.
-.vor cleared VOR/DME approach runway $arrrwy. Report established.
-.vi cleared Visual approach runway $arrrwy. Report runway in sight.
-.vapp cleared Visual approach runway $arrrwy. Report runway in sight.
-.cpla continue approach, vacate at $1.
-.coa continue approach, wind $winds($arr).
-.llc continue approach, expect late landing clearance, wind $winds($arr).
-.tm $1 track miles to touchdown.
-.ris report runway in sight.
-.wc wind $winds($arr)
-.autoclearedils cleared ILS approach runway $1. Report established.
-.autoclearedvisual cleared Visual approach runway $1. Report runway in sight.
-
-;*** ** BEFORE INITIAL CONTACT ** ***
-.cw .msg $aircraft Hello. You will enter my airspace shortly. Please contact me on $freq when 
-.cp .msg $aircraft Hello. You will enter my airspace shortly. Please contact me on $freq when passing $uc($1).
-.cpl .msg $aircraft Hello. You will enter my airspace shortly. Please contact me on $freq when passing $uc($1) and be level at FL $2.
-.degso .msg $aircraft Hello. You will enter my airspace shortly. Please contact me on $freq when passing DEGSO and be level at FL310.
-.itrax .msg $aircraft Hello. You will enter my airspace shortly. Please contact me on $freq when passing ITRAX and be level at FL160.
-.orsar .msg $aircraft Hello. You will enter my airspace shortly. Please contact me on $freq when passing ORSAR and be level at FL250.
-.orsis .msg $aircraft Hello. You will enter my airspace shortly. Please contact me on $freq when passing ORSIS and be level at FL350.
-.pasov .msg $aircraft Hello. You will enter my airspace shortly. Please contact me on $freq when passing PASOV and be level at FL230.
-.patat .msg $aircraft Hello. You will enter my airspace shortly. Please contact me on $freq when passing PATAT and be level at FL200.
-.resar .msg $aircraft Hello. You will enter my airspace shortly. Please contact me on $freq when passing RESAR and be level at FL350.
-.sodex .msg $aircraft Hello. You will enter my airspace shortly. Please contact me on $freq when passing SODEX and be level at FL160.
-.tapra .msg $aircraft Hello. You will enter my airspace shortly. Please contact me on $freq when passing TAPRA and be level at FL240.
-.tomso .msg $aircraft Hello. You will enter my airspace shortly. Please contact me on $freq when passing TOMSO and be level at FL310.
-.ct .msg $aircraft Hello. You will enter my airspace shortly. Please contact me on $freq at time $1 UTC.
-.ci .msg $aircraft No movement without permission, please! $radioname is providing top-down service for $dep. Hold position and contact me on $freq
-.cnow .msg $aircraft Hello. Please contact me on $freq as soon as possible.
-
-;*** ** CLEARANCE ** ***
-.pdc .msg $aircraft $dep **PRE-DEPARTURE CLEARANCE ... $aircraft CLRD TO $arr OFF $deprwy VIA $sid ... SQUAWK $asquawk ... ADT $ftime(20) ... NO CTOT ... ATIS $1 ... SID ALTITUDE IS $temp. REPORT READY FOR PUSH $com [END OF ACARS MESSAGE NO READ-BACK REQUIRED]**
-.pdco .msg $aircraft $dep **PRE-DEPARTURE CLEARANCE ... $aircraft CLRD TO $arr OFF $deprwy VIA OMNIDERCTIONAL DEPARTURE ... SQUAWK $asquawk ... ADT $ftime(20) ... NO CTOT ... ATIS $1 ... INITIAL ALTITUDE IS $temp. REPORT READY FOR PUSH $com [END OF ACARS MESSAGE NO READ-BACK REQUIRED]**
-.nopdc .msg $aircraft PDC UNAVAILABLE. REVERT TO VOICE PROCEDURES ON $com
-.rrc clearance available, report ready to copy.
-
-;*** ** HANDOFF ** ***
-.co contact $radioname($1) $freq($1), bye!
-.rst radar service terminated. 
-.noatc you are leaving my airspace, no further ATC service available, ATC services terminated, frequency change approved, bye!
-.uni you are leaving my airspace, no further ATC service available, ATC services terminated, frequency change approved, bye!
-.noatcb $radioname is closing, no further ATC service available, ATC services terminated, frequency change approved,  bye!
-.noatcc $radioname is closing, for further ATC service contact $radioname($1) $freq($1), bye!
-.noatco you are outside of my airspace, continue own discretion and make blind transmissions on Advisory frequency 122.800, bye!
-.blt please use Advisory frequency 122.800 for blind transmissions. Thank you.
-.coo Contact $1 $2, bye!
-
-;*** ** INITIAL CONTACT ** ***
-.h $radioname, hello. 
-.gm  $radioname, good morning.
-.gaf  $radioname, good afternoon.
-.ge  $radioname, good evening.
-.gd $radioname, good day. 
-.id identified. 
-.ids standby for identification.
-.v? are you able to receive voice?
-.pym pass your message.
-
-;*** ** LANDING ** ***
-.ctl runway $arrrwy, wind $winds($arr), cleared to land.
-.land runway $arrrwy, wind $winds($arr), cleared to land.
-.ctlr traffic is a $1 vacating ahead, runway $arrrwy, wind $winds($arr), cleared to land.
-.landr traffic is a $1 vacating ahead, runway $arrrwy, wind $winds($arr), cleared to land.
-.ctg runway $arrrwy, wind $winds($arr), cleared touch and go.
-.tg runway $arrrwy, wind $winds($arr), cleared touch and go.
-.csg runway $arrrwy, wind $winds($arr), cleared for stop and go.
-.sg runway $arrrwy, wind $winds($arr), cleared for stop and go.
-.clp runway $arrrwy, wind $winds($arr), cleared low pass runway $arrrwy.
-.lp runway $arrrwy, wind $winds($arr), cleared low pass runway $arrrwy.
-.ss side step to runway $1.
-.ga go around, I say again, go around acknowledge.
-.cvm climb to $ ft via standard missed approach
-
-;*** ** LEVEL ** ***
-.c climb FL $1.
-.cfl climb FL $1.
-.ca climb $1 ft.
-.caq climb $1 ft, QNH $altim($dep).
-.caqq climb $1 ft, QNH $2.
-.d descend FL $1.
-.dfl descend FL $1.
-.da descend $1 ft.
-.daq descend $1 ft, QNH $altim($arr).
-.daqq descend $1 ft, QNH $2.
-.mf maintain $1 feet.
-.ml maintain FL $1.
-.rpa report passing altitude.
-.rrl report requested level.
-.rd report ready for descent.
-.tod report top of descent.
-.rl report level.
-.wrd when ready, descend to FL $1.
-.wrdfl when ready, descend to FL $1.
-.wrdr when ready, descend to FL $1 to reach level at $2.
-.wrdfllb when ready, descend to FL $1 to reach level at $2.
-.cas check QNH setting and confirm level. You are indicating $calt.
-.qnh check QNH setting and confirm level. You are indicating $calt.
-.sas set standard pressure (1013.25 hPa).
-.std set standard pressure (1013.25 hPa).
-.rla reach level at $1.
-.xl cross $1 at $2 
-.xa cross $1 at $2 or above.
-.xb cross $1 at $2 or below.
-.ob or before.
-.ola or later.
-.le currently only EVEN levels available. Do you prefer FL $1 or FL $2?
-.lo currently only ODD levels available. Do you prefer FL $1 or FL $2?
-.roc climb at $1 feet per minute 
-.rod descend at $1 feet per minute 
-.og or greater.
-.om or greater.
-.ol or less.
-.rroc report rate of climb.
-.rrod report rate of descent.
-.dvsa descend via the STAR, altitude $1.
-.cvsa climb via the SID altitude $1.
-.cvsfl climb via the SID FL $1.
-
-;*** ** MISC ** ***
-.q QNH $1.
-.qd QNH $altim($dep).
-.qa QNH $altim($arr).
-.sb standby, I'll call you back.
-.r roger.
-.on / Salam, $radioname is online.
-.off / $radioname is now closed. Masalama!
-.offm / $radioname is closing in $1 minutes.
-.mic you have a stuck microphone and are blocking the frequency. Please release the transmit button immediately.
-.loudmic your microphone level is too high, causing excessive volume on the frequency. Please adjust your mic settings in your pilot client to ensure your voice stays within the green band when transmitting.
-.noob it appears that you might be unfamiliar with the correct operation of your aircraft. To ensure a smooth experience for yourself and others on the VATSIM network, we recommend taking some time to practice offline and gain proficiency. This will help you become more confident in handling your aircraft. Alternatively, consider flying an aircraft you are more comfortable and experienced with until you build your skills further.
-.charts it appears you may be unfamiliar with the aerodrome. Please ensure you're using the latest charts, which you can find at chartfox.org or explore additional chart resources at vats.im/arb/airports.
-
-;*** ** NAV ** ***
-.tl turn left heading $1.
-.tr turn right heading $1.
-.tld turn left direct $1.
-.trd turn right direct $1.
-.fh fly heading $1.
-.lh leave $1 heading $2
-.rh report heading.
-.tlb turn left by $1 degrees. 
-.trb turn right by $1 degrees. 
-.rnh report new heading.
-.pd proceed direct $1.
-.cot clear of traffic. 
-.rcw report clear of weather.
-.ron resume own navigation direct $uc($1), magnetic track $bear($1) distance $dist($1) miles.
-.cph continue present heading.
-.cphr continue present heading and report.
-.os proceed offset $1 nm $2 of $3.
-.oc cancel offset.
-.autoproceed proceed direct $1.
-
-;*** ** PUSHBACK ** ***
-.rb readback correct.
-.rc readback correct.
-.rbp readback correct, information $atiscode, QNH $altim($dep), Report ready for pushback.
-.rcr readback correct, information $atiscode, QNH $altim($dep), Report ready for pushback.
-.rrs report ready for startup.
-.rrp report ready for pushback. 
-.sa startup approved. 
-.pa pushback and start-up approved.
-.pf pushback and start-up approved, facing $1.
-.pn pushback and start-up approved, facing north.
-.pe pushback and start-up approved, facing east.
-.ps pushback and start-up approved, facing south.
-.pw pushback and start-up approved, facing west.
-.bpb behind $1 passing $2, pushback approved, face $4 BEHIND
-
-;*** ** SPEED ** ***
-.rs report indicated airspeed.
-.s maintain speed $1 knots 
-.sr reduce speed to $1 knots.
-.si increase speed to $1 knots.
-.rm report mach number.
-.m maintain mach $1 
-.mc reduce to minimum clean speed.
-.mcr reduce to minimum clean speed and report.
-.ma reduce to minimum approach speed.
-.160 speed 160kts till 4 DME.
-.1605 speed 160kts till 5 DME.
-.190 speed 190kts till 10 DME.
-.169 speed 190kts until 10 DME, and 160kts until 4 DME.
-.nsr no ATC speed restrictions.
-.rns resume normal speed.
-.autonospeed no speed restrictions.
-.autospeed maintain speed $1 knots 
-.automach maintain mach number $1
-
-;*** ** TAKEOFF ** ***
-.lu Via $1, line up and wait runway $deprwy.
-.luv Via $1, line up and wait runway $deprwy.
-.bllu behind landing $1, via $2, line up and wait runway $deprwy behind.
-.bdlu behind departing $1, via $2, line up and wait runway $deprwy behind.
-.bt Via $1, backtrack and line up runway $deprwy.
-.rrd report ready for departure.
-.rfd are you ready for departure?
-.rfid are you ready for immediate departure?
-.afid are you able for departure from intersection $1?
-.cto runway $deprwy, surface wind $winds($dep), cleared for take-off.
-.to runway $deprwy, surface wind $winds($dep), cleared for take-off.
-.ctor traffic is a $1 departing ahead, runway $deprwy, wind $winds($dep), cleared for take-off.
-.tor traffic is a $1 departing ahead, runway $deprwy, wind $winds($dep), cleared for take-off.
-.ctoi intersection $1, runway $deprwy, wind $winds($dep), cleared for take-off.
-.toi intersection $1, runway $deprwy, wind $winds($dep), cleared for take-off.
-.ctof From $1, runway $deprwy, wind $winds($dep), cleared for take-off.
-.tof From $1, runway $deprwy, wind $winds($dep), cleared for take-off.
-.cito runway $deprwy, wind $winds($dep), cleared for immediate take-off.
-.toc hold position, CANCEL take-off, I say again, CANCEL take-off, acknowledge.
-.stop STOP immediately, $aircraft, STOP immediately, acknowledge.
-
-;*** ** TAXI ** ***
-.rrt report ready for taxi. 
-.rft are you ready for taxi?
-.tv taxi via $1, hold at $2.
-.taxi taxi via $1, hold at $2. 
-.tts taxi to stand $1 via $2.
-.stand taxi via $1, stand $2. 
-.ttc taxi to a parking position of your choice. 
-.hst hold short of taxiway $1. 
-.ths taxi via $1, holding point $2. 
-.hs hold short of runway $1. 
-.xr cross runway $1.
-.xrt taxiway $uc($1), cross runway $2.
-.hp hold position. 
-.gw give way to $1. 
-.wcc when clear of $1 continue taxi.
-
-;*** ** VFR ** ***
-.in enter control zone via $1. 
-.lr landing runway $arrrwy. 
-.out leave control zone via $1.
-.rta right turn approved.
-.jld join left downind runway $arrrwy.
-.jrd join right downwind runway $arrrwy.
-.jlb join left base runway $arrrwy.
-.jrb join right base runway $arrrwy.
-.ed extend downwind until advised.
-.tb turn now for base.
-.mda make direct approach runway $arrrwy. 
-.msa make straight-in approach runway $arrrwy. 
-.mfs make full stop landing. 
-.orl orbit left.
-.orr orbit right.
-.ra routing approved.
-.hov hold over $1.
-
-;*** ** XPDR ** ***
-.sq squawk $squawk.
-.sqs squawk standby.
-.sqc squawk charlie. 
-.sqi Squawk ident.
-
+;*** All Alias ***
+;*** General ***
+.a Affirm
+.dr Disregard
+.d/r Disregard
+.n Negative
+.na Not available
+.r Roger
+.rgr Roger
+.stby Standby
+.stndby Standby
+.u Unable
+.una Unable
+.ns I am unable to provide a service to you
+.goa Go ahead
+.pm Pass your message
+.v Can you receive voice?
+.atis Information $atiscode
+.squawk Squawk $squawk
+.sq Squawk $squawk
+.airac Confirm your AIRAC version
+;*** Logging On/Off ***
+.on /Hello, $radioname is online
+.welcome Hello, welcome. Departing RWY$deprwy($1) arriving RWY$arrrwy($1). Information $atiscode($1). Zone $2
+.nh /Closing soon, no handoffs.
+.off /$radioname is now closed.
+.off5 /$radioname is closing in 5 minutes.
+.off10 /$radioname is closing in 10 minutes.
+.offh /$radioname is closing on the hour.
+.cl ALL STATIONS, ALL STATIONS, $radioname ($callsign) is now closing. Monitor $radioname($1) ($atccallsign($1)), $freq($1)
+.cluni ALL STATIONS, ALL STATIONS, $radioname ($callsign) is now closing. Monitor advisory, 122.800
+.cladv ALL STATIONS, ALL STATIONS, $radioname ($callsign) is now closing. Monitor advisory, 122.800
+.clho ALL STATIONS, ALL STATIONS, $radioname ($callsign) is now closing. Monitor advisory, 122.800
+.closed ALL STATIONS, ALL STATIONS, $radioname ($callsign) is now closing. Monitor advisory, 122.800
+.delon ALL STATIONS, ALL STATIONS, $radioname($1) ($atccallsign($1)) is online, aircraft still awaiting clearance contact $freq($1)
+.gndon ALL STATIONS, ALL STATIONS, $radioname($1) ($atccallsign($1)) is online, aircraft on the ground at $2 contact $freq($1)
+.twron ALL STATIONS, ALL STATIONS, $radioname($1) ($atccallsign($1)) is online, aircraft on the ground at $2 contact $freq($1)
+.appon ALL STATIONS, ALL STATIONS, $radioname($1) ($atccallsign($1)) is online, aircraft on the ground at $2 contact $freq($1)
+;*** Wallop ***
+.wallnoco .wallop $aircraft is not in contact with anyone and has not responded to a contact me message (B3(a))
+.wallnor .wallop $aircraft has not responded to any of my attempts to try and reach him (B3(a))
+.wallco .wallop $aircraft is unable to comply with simple ATC instructions (B8)
+.wallmayday .wallop $aircraft has initiated an emergency and is refusing to cancel their emergency (B6)
+.wallem .wallop $aircraft has initiated an emergency and is refusing to cancel their emergency (B6)
+;*** Warnings ***
+.fpl I have not received a flight plan for your callsign. Please ensure that you have filed with the callsign you are connected with, and you have the correct ICAO codes for your departure and arrival airports. If this does not work, try reconnecting. VATSIM CoC B10 refers.
+.nofp I have not received a flight plan for your callsign. Please ensure that you have filed with the callsign you are connected with, and you have the correct ICAO codes for your departure and arrival airports. If this does not work, try reconnecting. VATSIM CoC B10 refers.
+.nofpl I have not received a flight plan for your callsign. Please ensure that you have filed with the callsign you are connected with, and you have the correct ICAO codes for your departure and arrival airports. If this does not work, try reconnecting. VATSIM CoC B10 refers.
+.rte The route you have filed is invalid. Please refile a new flight plan with valid route. I recommend using http://simbrief.com.
+.paused The VATSIM CoC (B2) states that A pilot shall not pause while connected to the VATSIM Network except when operating under air traffic control. Please unpause immediately or disconnect from the network.
+.mic .msg $aircraft You have an open mic, please check your push-to-talk keybind.
+.mayday The VATSIM CoC (B6) states that air traffic control requests the pilot to terminate the emergency, then the pilot shall do so IMMEDIATELY or disconnect from the network.
+.runway The VATSIM CoC (B1) states that a pilot shall not connect to the VATSIM network on a runway. Please disconnect immediately and re-connect at an open stand.
+.helpvacate You have not properly vacated the runway. After landing, you have to continue taxiing off the runway and past the hold short line until your whole aircraft is clear. If you stop before this point, you are considered still on the runway and can cause significant delays and issues for ATC and other pilots. If you are unable to follow further instructions, a supervisor will be called.
+.helphs You have not correctly followed a hold short instruction. When instructed to hold short, you are required to hold before that position ensuring that there is enough space for other aircraft to pass on that taxiway. Taxiing beyond your clearance limit can cause significant delays and issues for ATC and pilots. If you are unable to follow further instructions, a supervisor will be called.
+.warn As per VATSIM CoC (B8(c)), pilots are expected to promptly comply with basic air traffic control instructions that are applicable to their flight rules. This includes instructions such as holding; flying a speed, heading or flight level; approach to land; correctly fly a cleared routing; fly a holding patter. It appears that you are unable to comply with these instructions. If you do not comply with further instructions a supervisor will be called.
+.textpilot As per VATSIM CoC (A14(a)), pilots should be able to at a minimum receive voice, but may send messages via text. If you are unable to comply you MUST disconnect from the network otherwise a supervisor will be called.
+;*** Handoffs ***
+.ho Contact $radioname($1) on $freq($1)
+.hocs Contact $radioname($1) on $freq($1), callsign only
+.ct Contact $radioname($1) on $freq($1)
+.co Contact $radioname($1) on $freq($1)
+.cso Contact $radioname($1) on $freq($1), callsign only
+.mon Monitor $radioname($1) on $freq($1)
+.honrc Radar service terminates. Contact $radioname($1) on $freq($1)
+.ctnrc Radar service terminates. Contact $radioname($1) on $freq($1)
+.rh Report your heading to $radioname($1) on $freq($1)
+.rsp Report your speed to $radioname($1) on $freq($1)
+.rhs Report your heading and speed to $radioname($1) on $freq($1)
+.oma You are outside my airspace, continue with 122.800
+.uni Radar service terminates. monitor 122.800
+.adv Radar service terminates. monitor 122.800
+.nso $1 is offline - monitor 122.800
+.bcu monitor 122.800
+.bca monitor 122.800
+.cmof monitor 122.800. Contact me on $com when on final runway $arrrwy($arr)
+.cmv monitor 122.800. Contact me on $com when vacated runway $arrrwy($arr)
+.cmac monitor 122.800. Contact me on $com after the crossing
+.wf I am not expecting you, check again with the previous controller
+;*** Coordination ***
+.rrls Request release of $aircraft
+.rlsd $aircraft released $1
+.direct Request $aircraft to $1
+;*** CDM ***
+.newrte Re-route via $uc($1) then as filed. Advise able to accept.
+.slot Check your slot time at https://vats.im/vdgs
+.tobt Submit your TOBT at https://vats.im/vdgs
+;*** Departure Clearances ***
+.clr Cleared to $arr, $sid departure, climb altitude $temp, squawk $squawk
+.clrhdg Cleared to $arr, after departure runway $1 climb straight ahead altitude $temp, squawk $squawk
+.clrvec Cleared to $arr, after departure runway $1 fly heading $2, climb altitude $temp, squawk $squawk
+.read Readback correct, report ready.
+.rbc Readback correct, report ready.
+.pdc .msg $aircraft $dep PDC $aircraft CLRD TO $arr OFF $deprwy($dep). VIA $sid. INIT CLB $temp. SQUAWK $squawk. NEXT FREQ $com. NO READBACK REQUIRED. SET YOUR TOBT @ https://vats.im/vdgs
+;*** Pushback and Startup ***
+.p Push and start approved, runway $deprwy($dep)
+.pn Push and start approved, face north, runway $deprwy($dep)
+.pe Push and start approved, face east, runway $deprwy($dep)
+.ps Push and start approved, face south, runway $deprwy($dep)
+.pw Push and start approved, face west, runway $deprwy($dep)
+.pne Push and start approved, face north east, runway $deprwy($dep)
+.pnw Push and start approved, face north west, runway $deprwy($dep)
+.pse Push and start approved, face south east, runway $deprwy($dep)
+.psw Push and start approved, face south west, runway $deprwy($dep)
+.start Start approved, runway $deprwy($dep)
+;*** Taxiway Movement ***
+.taxi Taxi holding point $1 via $2
+.taxihs Taxi via $1, hold short runway $2
+.stand Taxi stand $1 via $2
+.vlt Vacate left, taxi $1
+.vrt Vacate right, taxi $1
+.ataxi Air-Taxi $1
+;*** Meteorology ***
+.q QNH $altim($1)
+.qnh QNH $altim($1)
+.wx $metar($1)
+.wxdep $metar($dep)
+.wxarr $metar($arr)
+;*** Takeoff ***
+.to Runway $deprwy($dep), surface wind $wind($dep), cleared for takeoff
+.toa Runway $deprwy($dep), at intersection $1, surface wind $wind($dep), cleared for takeoff
+.tofl Runway $deprwy($dep) full length, surface wind $wind($dep), cleared for takeoff
+.lu Line up runway $deprwy($dep)
+.luv Via $1, line up runway $deprwy($dep)
+.lub Behind the $1, line up runway $deprwy($dep)
+.luba Behind the $1, at $2 line up runway $deprwy($dep)
+.lubfl Behind the $1, from full length line up runway $deprwy($dep)
+.bt Via $1, enter backtrack runway $deprwy($dep), report lined up
+.rrfd Report ready for departure
+.rbt Do you require a backtrack?
+.stop Stop immediately, I say again, stop immediately, acknowledge
+.rcto Readback correct, runway $deprwy($dep), surface wind $wind($dep), cleared for takeoff
+.rctoa Readback correct, runway $deprwy($dep), at intersection $1, surface wind $wind($dep), cleared for takeoff
+.rctofl Readback correct, runway $deprwy($dep) full length, surface wind $wind($dep), cleared for takeoff
+.helilift Wind $wind($dep), lift at your discretion
+;*** Landing ***
+.land Runway $arrrwy($arr), surface wind $wind($arr), cleared to land
+.ctl Runway $arrrwy($arr), surface wind $wind($arr), cleared to land
+.ctg Runway $arrrwy($arr), surface wind $wind($arr), cleared touch and go
+.cla Runway $arrrwy($arr), surface wind $wind($arr), cleared low approach
+.la Traffic vacating via $1, runway $wind($arr), cleared to land
+.capp Continue approach runway $arrrwy($arr), surface wind $wind($arr)
+.clp Cleared low pass
+.fs Make full stop
+.wind Surface wind $wind($arr)
+.ga Go around, I say again, go around acknowledge
+;*** Crossing Runway ***
+.cr Via $1, cross runway $2
+.crtaxi Via $1, cross runway $2, taxi $3
+.crb Behind the $1, Via $2, cross runway $3, behind
+;*** VFR ***
+.svfr Start up approved, runway $deprwy($dep)
+.svfrsq Start up approved, runway $deprwy($dep), squawk $squawk
+.sfw Squawk 2000
+.vfrclrl Hold position, cleared left hand circuits, runway $1, not above altitude $2ft, VFR, squawk $squawk
+.vfrclrr Hold position, cleared right hand circuits, runway $1, not above altitude $2ft, VFR, squawk $squawk
+.vfrclrctr Hold position, cleared to leave the control zone to the $1, runway $2, not above altitude $3ft, VFR, squawk $squawk
+.vfrrf Report final runway $arrrwy, number $1
+.vfrrfcwt Report final runway $arrrwy, number $1. Caution wake turbulence
+.vfrti Traffic information is a $1, report in sight
+.edl Extend downwind leg
+.ol Orbit left
+.or Orbit right
+.monuoc Monitor 122.800, remain outside of contolled airsapce
+.monaoc Monitor 122.800, remain outside of contolled airsapce
+.rout Remain outside of contolled airsapce
+.bcuq $1 QNH $altim($1), broadcast 122.800
+.vfrfpl Plan your flight to remain below the TMA. QNH $altim($1). Report ready for descent
+;*** Reporting ***
+.re Report $1
+.rpos Report your position
+.rat Report your aircraft type
+.rr Report your aircraft registration
+.rbn Report your stand number
+.rcl Report your cleared level
+.rhdg Report your heading
+.rm Report your mach number
+.rs Report your speed
+.ra Report your altitude
+.rpa Report your passing altitude
+.rfl Report your flight level
+.rest Report established
+.rel Report established on the localiser
+.regp Report established on the glide path
+.rlctr Report leaving the CTR
+.rfis Report field in sight
+.rais Report aerodrome in sight
+.rrd Report when ready for descent
+.rrfl Report requested level
+.rrl Report requested level
+.rldown report left downwind
+.rrdown report right downwind
+.rlb report left base
+.rrb report right base
+.rf report final
+.rb Approved, report back
+;*** Identification ***
+.id Radar contact
+.rc Radar contact
+.sqi Squawk ident
+.sqmc Squawk Mode C
+.stbysq Standby squawk
+;*** Lateral ***
+.fh Fly heading $1
+.tlh Turn left heading $1
+.trh Turn right heading $1
+.tld Turn left $1 degrees
+.trd Turn right $1 degrees
+.ch Continue heading $1
+.cph Continue present heading
+.cphr Continue present heading, report the heading
+.fhpd Fly heading $1, when able proceed direct $uc($2)
+.st Stop turn $1 degrees
+.tln Turn left now
+.trn Turn right now
+.rd Route direct $uc($1)
+.pd Proceed direct $uc($1)
+.ron Resume own navigation direct $uc($1)
+.rnd Resume own navigation direct $uc($1)
+.rond Resume own navigation direct $uc($1)
+.star Cleared $star
+.eapp Expect $1 runway $arrrwy($arr)
+;*** Vertical ***
+.c Climb $temp
+.cus Climb unrestricted $temp
+.ecup Expect climb until passing $1
+.d Descend $temp
+.dq Descent $temp, QNH $altim($arr)
+.ed Expedite descent
+.edup Expedite descent until passing $1
+.wrdfl When ready, descend $temp
+.wrdfllb When ready, descend $temp to be level by $uc($1)
+.hold Enter the hold at $uc($1). Onward clearance time $2
+.cstaralt Cancel altitude restrictions on STAR
+;*** Speed Control ***
+.rspd Report speed
+.s Speed $1 knots
+.ms Maintain $1 knots
+.dne Do not exceed $1 knots
+.mps Maintain present speed
+.isb Increase speed by $1 knots
+.rdb Reduce speed by $1 knots
+.imb Increae mach number by $1
+.rmb Reduce mach number by $1
+.rns Resume normal speed
+.rmas Reduce to minimum approach speed
+.rmcs Reduce to minimum clean speed
+.rps Resume published speed
+.nospd No ATC speed restrictions
+.mach Maintain mach $1
+.dnemach Do not exceed mach $1
+;*** Approach ***
+.va Vectoring for $1 approach runway $arrrwy($arr)
+.vils Vectoring for ILS approach runway $arrrwy($arr)
+.vva Vectoring for visual approach runway $arrrwy($arr) report field in sight
+.vvarfis Vectoring for visual approach runway $arrrwy($arr) report field in sight
+.vvarris Vectoring for visual approach runway $arrrwy($arr) report runway in sight
+.vpa Vectoring for precision approach runway $arrrwy($arr)
+.ca Cleared for $1 approach runway $arrrwy($arr)
+.cils Cleared for ILS approach runway $arrrwy($arr)
+.cilsre Cleared for ILS approach runway $arrrwy($arr), report established
+.cilsz Cleared for ILS Z approach runway $arrrwy($arr)
+.cilszre Cleared for ILS Z approach runway $arrrwy($arr), report established
+.crnp Cleared for RNP approach runwy $arrrwy($arr)
+.cva Cleared visual approach runway $arrrwy($arr),
+.leave Leave $uc($1) heading $2
+.rjs Rejoin STAR at $uc($1)
+.cdd Cleared direct $uc($1), descend to $temp
+.cddq Cleared direct $uc($1), descend to $temp, QNH $altim($arr)
+.dwp Descend with the procedure
+.ad The aerodrome is at your $oclock($1), $dist($1) miles. Report in sight
+;*** ACC ***
+.cd Cleared direct $uc($1)
+.ltrkrc Left of track approved, report clear
+.rtrkrc Right of track approved, report clear
+.ltrkcd Left of track approved, when able cleared direct $uc($1)
+.rtrkcd Right of track approved, when able cleared direct $uc($1)
