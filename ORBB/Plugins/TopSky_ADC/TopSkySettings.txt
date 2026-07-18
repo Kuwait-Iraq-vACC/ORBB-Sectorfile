@@ -79,11 +79,11 @@ WXR_Echo_dBZ_Med=15
 WXR_Echo_dBZ_Lo=12
 WXR_Zoom=2
 WXR_Latitude=36
-WXR_Latitude_Max=37.5
+WXR_Latitude_Max=38
 WXR_Latitude_Min=29
 WXR_Longitude=44
 WXR_Longitude_Max=49
-WXR_Longitude_Min=38.5
+WXR_Longitude_Min=38
 
 // CPDLC
 Setup_AutoSignIn=1
