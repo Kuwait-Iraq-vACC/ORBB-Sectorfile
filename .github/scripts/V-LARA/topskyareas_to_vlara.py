@@ -16,6 +16,7 @@ Usage:
 """
 
 import argparse
+import difflib
 import json
 import re
 import math
@@ -141,6 +142,59 @@ def fl_value(s: str) -> int:
 
 
 # ---------------------------------------------------------------------------
+# LARA-activation header comment detection
+# ---------------------------------------------------------------------------
+
+COMMENT_PREFIXES = (';', '//')
+
+# Words we expect to see (in some form) in a header comment like
+# "// Activated via LARA". Matched with fuzzy string comparison so
+# typos ("Activatd", "Vai", "LAR4") are still caught.
+_LARA_TOKENS = ('activated', 'via', 'lara')
+
+
+def _strip_comment_marker(line: str) -> str:
+    text = line.strip()
+    for prefix in COMMENT_PREFIXES:
+        if text.startswith(prefix):
+            return text[len(prefix):].strip()
+    return text
+
+
+def _is_comment_line(line: str) -> bool:
+    stripped = line.strip()
+    return any(stripped.startswith(p) for p in COMMENT_PREFIXES)
+
+
+def _is_lara_activation_comment(line: str, fuzz_cutoff: float = 0.75) -> bool:
+    """
+    Return True if a comment line looks like it's flagging the area as
+    activated via LARA, tolerating minor typos/case/spacing differences.
+    """
+    text = _strip_comment_marker(line)
+    if not text:
+        return False
+
+    words = re.findall(r"[A-Za-z']+", text.lower())
+    if not words:
+        return False
+
+    def _has_fuzzy_match(token: str) -> bool:
+        return any(
+            difflib.SequenceMatcher(None, token, w).ratio() >= fuzz_cutoff
+            for w in words
+        )
+
+    # Require "lara" plus at least one of "activated"/"via" to reduce
+    # false positives from unrelated comments that happen to mention LARA.
+    if not _has_fuzzy_match('lara'):
+        return False
+
+    hits = sum(1 for token in _LARA_TOKENS if _has_fuzzy_match(token))
+    return hits >= 2
+
+
+# ---------------------------------------------------------------------------
 # File parser
 # ---------------------------------------------------------------------------
 
@@ -149,24 +203,34 @@ def parse_area_file(path: Path, fallback_type: str) -> Dict[str, Any]:
     Parse a single TopSky area .txt file.
 
     Returns a dict with keys:
-        name, type, lowerFL, upperFL, coords, activePermanent
+        name, type, lowerFL, upperFL, coords, activatedViaLara
     """
-    name            = None
-    a_type          = None
-    lower_fl        = None
-    upper_fl        = None
+    name              = None
+    a_type            = None
+    lower_fl          = None
+    upper_fl          = None
     coords: List[List[float]]        = []
     circle_coords: List[List[float]] = []
-    saw_coords      = False
-    saw_circle      = False
-    active_permanent = False
+    saw_coords        = False
+    saw_circle        = False
+    activated_via_lara = False
+    in_header         = True  # still scanning leading comment/blank lines
 
     try:
         with path.open('r', encoding='utf-8', errors='ignore') as fh:
             for raw in fh:
                 line = raw.strip()
-                if not line or line.startswith(';'):
+
+                if not line:
                     continue
+
+                if _is_comment_line(line):
+                    if in_header and _is_lara_activation_comment(line):
+                        activated_via_lara = True
+                    continue
+
+                # First non-comment, non-blank line ends the header region.
+                in_header = False
 
                 if line.startswith('AREA:'):
                     parts = line.split(':')
@@ -197,11 +261,6 @@ def parse_area_file(path: Path, fallback_type: str) -> Dict[str, Any]:
                     circle_coords = parse_circle_line(line)
                     saw_circle = True
 
-                elif line.startswith('ACTIVE:'):
-                    _, val = line.split(':', 1)
-                    if val.strip() == '1':
-                        active_permanent = True
-
                 else:
                     # Bare coordinate line: N032.20.28.000:E046.55.52.000
                     # Used by MOA files (no COORD: prefix)
@@ -227,12 +286,12 @@ def parse_area_file(path: Path, fallback_type: str) -> Dict[str, Any]:
             final_coords.append(final_coords[0])
 
     return {
-        "name":            name or path.stem,
-        "type":            a_type or fallback_type,
-        "lowerFL":         lower_fl if lower_fl is not None else 0,
-        "upperFL":         upper_fl if upper_fl is not None else 999,
-        "coords":          final_coords,
-        "activePermanent": active_permanent,
+        "name":             name or path.stem,
+        "type":             a_type or fallback_type,
+        "lowerFL":          lower_fl if lower_fl is not None else 0,
+        "upperFL":          upper_fl if upper_fl is not None else 999,
+        "coords":           final_coords,
+        "activatedViaLara": activated_via_lara,
     }
 
 
@@ -278,9 +337,9 @@ def main() -> None:
         fallback_type = file_path.parent.name
         area = parse_area_file(file_path, fallback_type)
 
-        if area['activePermanent']:
+        if area['activatedViaLara']:
             if args.debug:
-                print(f"Skipping {file_path.name} — marked as permanently active.")
+                print(f"Skipping {file_path.name} — flagged as activated via LARA.")
             continue
 
         if not area['coords']:
