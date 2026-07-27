@@ -337,9 +337,9 @@ def main() -> None:
         fallback_type = file_path.parent.name
         area = parse_area_file(file_path, fallback_type)
 
-        if area['activatedViaLara']:
+        if not area['activatedViaLara']:
             if args.debug:
-                print(f"Skipping {file_path.name} — flagged as activated via LARA.")
+                print(f"Skipping {file_path.name} — not flagged as activated via LARA.")
             continue
 
         if not area['coords']:
