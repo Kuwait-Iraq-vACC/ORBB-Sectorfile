@@ -120,7 +120,7 @@ def save_options(options):
         json.dump(options, f, indent=2)
 
 # ── GUI widgets ────────────────────────────────────────────────────────────────
-def ask_string(prompt, default=""):
+def ask_string(prompt, default="", show=None):
     result = None
     dialog = tk.Toplevel()
     try:
@@ -135,7 +135,10 @@ def ask_string(prompt, default=""):
 
     ttk.Label(dialog, text=prompt, wraplength=360, justify="left").pack(padx=20, pady=(15, 5))
     entry_var = tk.StringVar(value=default)
-    entry = ttk.Entry(dialog, textvariable=entry_var, width=40)
+    entry_kwargs = {"width": 40}
+    if show:
+        entry_kwargs["show"] = show
+    entry = ttk.Entry(dialog, textvariable=entry_var, **entry_kwargs)
     entry.pack(padx=20, pady=5)
 
     def submit(event=None):
@@ -281,8 +284,9 @@ def prompt_for_field(key, current):
     if key == "rating":
         return ask_rating(current)
     else:
+        show = "*" if key == "password" else None
         while True:
-            response = ask_string(desc, current)
+            response = ask_string(desc, current, show=show)
             if response is None:
                 sys.exit()
             if key == "cid" and not is_valid_cid(response):
