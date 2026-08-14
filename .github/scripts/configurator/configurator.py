@@ -120,7 +120,7 @@ def save_options(options):
         json.dump(options, f, indent=2)
 
 # ── GUI widgets ────────────────────────────────────────────────────────────────
-def ask_string(prompt, default=""):
+def ask_string(prompt, default="", show=None):
     result = None
     dialog = tk.Toplevel()
     try:
@@ -135,7 +135,10 @@ def ask_string(prompt, default=""):
 
     ttk.Label(dialog, text=prompt, wraplength=360, justify="left").pack(padx=20, pady=(15, 5))
     entry_var = tk.StringVar(value=default)
-    entry = ttk.Entry(dialog, textvariable=entry_var, width=40)
+    entry_kwargs = {"width": 40}
+    if show:
+        entry_kwargs["show"] = show
+    entry = ttk.Entry(dialog, textvariable=entry_var, **entry_kwargs)
     entry.pack(padx=20, pady=5)
 
     def submit(event=None):
@@ -281,8 +284,9 @@ def prompt_for_field(key, current):
     if key == "rating":
         return ask_rating(current)
     else:
+        show = "*" if key == "password" else None
         while True:
-            response = ask_string(desc, current)
+            response = ask_string(desc, current, show=show)
             if response is None:
                 sys.exit()
             if key == "cid" and not is_valid_cid(response):
@@ -422,22 +426,12 @@ def patch_prf_file(file_path, name, initials, cid, rating, password):
 def patch_profiles_file(file_path, cid):
     """
     Applies all replacements defined in the [profiles_replacements] section of
-    configurator_config.json.
+    configurator_config.json to any .txt file that contains a matching string
+    (e.g. Bandbox.txt, North.txt, South.txt, and any similar ATIS profile files).
 
     Default replacement (always applied):
-        "Submit feedback at PLACEHOLDER"
-        → "Submit feedback at placeholder?cid=<CID>"
-
-    You can add extra find/replace pairs to the saved config under
-    "profiles_replacements", for example:
-        {
-          "profiles_replacements": {
-            "ORBB_PLACEHOLDER": "ORBB_REAL_VALUE",
-            "old string": "new string"
-          }
-        }
-    The token {cid} in a replacement value will be substituted with the
-    controller's actual CID automatically.
+        "Submit feedback at vats.im/kwiq-fb"
+        → "Submit feedback at kwiq.cc/<CID>"
     """
     try:
         with open(file_path, "r", encoding="utf-8") as f:
@@ -448,8 +442,8 @@ def patch_profiles_file(file_path, cid):
 
     # Built-in default replacement
     replacements = {
-        "Submit feedback at PLACEHOLDER":
-            f"Submit feedback at placeholder?cid={cid}"
+        "Submit feedback at vats.im/kwiq-fb":
+            f"Submit feedback at kwiq.cc/{cid}"
     }
 
     # Merge in any user-defined replacements from the saved config
@@ -457,6 +451,10 @@ def patch_profiles_file(file_path, cid):
     user_replacements = saved.get("profiles_replacements", {})
     for find, replace in user_replacements.items():
         replacements[find] = replace.replace("{cid}", cid)
+
+    # Only rewrite the file if something actually matched
+    if not any(find in content for find in replacements):
+        return
 
     for find, replace in replacements.items():
         content = content.replace(find, replace)
@@ -482,18 +480,23 @@ def patch_topsky_cpdlc(cpdlc_code):
         except Exception as e:
             print(f"Failed to write {full_path}: {e}")
 
+SETTINGS_DIR = os.path.join(PACK_ROOT, "Settings")
+
 # ── Main apply ─────────────────────────────────────────────────────────────────
 def apply_configuration(name, initials, cid, rating, password, cpdlc):
     """Walk the entire repo root and patch all relevant files."""
     for root, _, files in os.walk(PACK_ROOT):
         for file in files:
-            path = os.path.join(root, file)
-
             if file.endswith(".prf"):
-                patch_prf_file(path, name, initials, cid, rating, password)
+                patch_prf_file(os.path.join(root, file), name, initials, cid, rating, password)
 
-            elif file.endswith("Bandbox.txt"):
-                patch_profiles_file(path, cid)
+    if os.path.isdir(SETTINGS_DIR):
+        for root, _, files in os.walk(SETTINGS_DIR):
+            for file in files:
+                if file.endswith(".txt"):
+                    patch_profiles_file(os.path.join(root, file), cid)
+    else:
+        print(f"Settings folder not found at {SETTINGS_DIR}")
 
     patch_topsky_cpdlc(cpdlc)
 
