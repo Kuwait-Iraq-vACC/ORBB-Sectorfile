@@ -480,7 +480,7 @@ def patch_topsky_cpdlc(cpdlc_code):
         except Exception as e:
             print(f"Failed to write {full_path}: {e}")
 
-SETTINGS_DIR = os.path.join(PACK_ROOT, "Settings")
+SETTINGS_DIR = os.path.join(PACK_ROOT, "ORBB", "Settings")
 
 # ── Main apply ─────────────────────────────────────────────────────────────────
 def apply_configuration(name, initials, cid, rating, password, cpdlc):
