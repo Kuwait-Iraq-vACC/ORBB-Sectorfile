@@ -1,6 +1,7 @@
 VOICE
-AG:BGD_APP Baghdad Approach:122.400
-AG:ORBI_F_APP Baghdad Director:126.575
-AG:ORBI_GND Baghdad Ground:121.700
-AG:ORBI_TWR Baghdad Tower:118.900
+AG:BGD TMA (Baghdad Approach):122.400
+AG:ORBI FIN (Baghdad Director):126.575
+AG:ORBI GND (Baghdad Ground):121.700
+AG:ORBI TWR (Baghdad Tower):118.900
+AG:X ORBI_ATIS:126.925:ORBI_ATIS
 END
