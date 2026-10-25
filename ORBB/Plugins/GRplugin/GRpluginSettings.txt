@@ -1,9 +1,11 @@
+// Ground Radar plugin settings - Baghdad FIR (ORBB)
+// Fresh build: airport sections generated from the ORBB sector file, charts and airport data.
 // ============================================================
 // General Settings
 // ============================================================
 
-Maps_URL=https://raw.githubusercontent.com/Kuwait-Iraq-vACC/ORBB-Sectorfile/refs/heads/main/ORBB/Plugins/GRplugin/GRpluginMaps.txt
 System_GlobalMenu_FontSize=15
+Maps_FontSize=10
 RawVideo_MaxHistory=0
 Track_Heading_Line=0
 Track_HistoryDots_GND=3
@@ -27,7 +29,6 @@ System_RMCA_APP_Time_LVP=30
 System_RMCA_APP_Time_LVP_Info=50
 System_RMCA_NoLineUpState=0
 System_AutoAssignDist=100
-System_RIM=0
 
 // ============================================================
 // Filters
@@ -70,7 +71,7 @@ Color_InformationText=220,220,220
 Color_Warning=255,64,64
 
 Color_APP_Runway=255,255,255
-Color_APP_Background=10,10,12
+Color_APP_Background=8,8,8
 Color_TSW_Background=0,0,0
 
 Color_WTitleBar=160,160,160
@@ -84,7 +85,7 @@ Color_WForeground2=255,255,255
 Color_WForeground3=255,255,255
 Color_Text_Notes=255,255,255
 
-Color_WRW_Background=45,45,45
+Color_WRW_Background=8,8,8
 Color_WRW_Runway=70,70,70
 
 // ============================================================
@@ -92,12 +93,14 @@ Color_WRW_Runway=70,70,70
 // ============================================================
 
 List_Alerts=1,20,750
+List_Arrival=1,0,570
 
 List_Outbound_TYPE=1
 List_Outbound_WTC=1
-List_Outbound_SID=1
-List_Inbound=*,2
-List_Outbound=*,2
+List_Outbound_SID=0
+List_Inbound_DTT=1
+List_Inbound_ETA=1
+List_Inbound_STAND=1
 
 List_Arrival_MaxTime=25
 List_Arrival_Items=10
@@ -116,8 +119,9 @@ List_Departure_Items=30
 // Window
 // ============================================================
 
-Window_APP_DefPos=1400,500
-Window_APP_DefSize=400,400
+Window_APP=1,1,9000,9000,436,267
+Window_APP_DefPos=9000,9000
+Window_APP_DefSize=436,267
 Window_APP_AltFilter=15000
 Window_APP_Extensions=0
 Window_APP_Draw_Runways=0
@@ -196,104 +200,300 @@ Label_RMK=0,1,1
 Label_STAND=0,1,0
 Label_GS=1,0,1
 
-
 [ORBI]
+// Baghdad Intl
 Airport_Elevation=114
-Airport_Radius=1.5
-Airport_Runway_Buffer_LVP=33R:170
-Airport_Runway_Buffer_LVP=33L:150
+Airport_Radius=1.59
 Airport_Runway_Buffer_LVP=15R:150
+Airport_Runway_Buffer_LVP=33L:150
 Airport_Runway_Buffer_LVP=15L:170
+Airport_Runway_Buffer_LVP=33R:170
 
 System_CMAC_HighSpeed_Info=25
 System_CMAC_HighSpeed=40
 System_CMAC_NoContact_Distance_Info=3.0
 
-List_Inbound=33L,2,1520,800
-List_Inbound=33R,2,1720,800
-List_Inbound=15L,2,1720,800
-List_Inbound=15R,2,1520,800
+List_Inbound=15R,2,1690,230
+List_Inbound=33L,2,1690,230
+List_Outbound=15R,2,0,230
+List_Outbound=33L,2,0,230
+List_Inbound=15L,2,1690,400
+List_Inbound=33R,2,1690,400
+List_Outbound=15L,2,0,400
+List_Outbound=33R,2,0,400
+
+// --- Runway Areas ---
+Airport_Runway_Area=15R:N033.16.07.221:E044.13.01.454:N033.14.34.402:E044.14.05.163:N033.14.33.678:E044.14.03.653:N033.16.06.497:E044.12.59.944
+Airport_Runway_Area=15L:N033.17.02.242:E044.13.53.236:N033.15.09.753:E044.15.10.416:N033.15.08.787:E044.15.08.404:N033.17.01.276:E044.13.51.224
+
+// --- Approach Paths ---
+AppPath=ORBI:15R:N033.16.06.859:E044.13.00.699:146:R:114:3.0
+AppPath=ORBI:33L:N033.14.34.040:E044.14.04.408:326:L:114:3.0
+AppPath=ORBI:15L:N033.17.01.759:E044.13.52.230:146:R:114:3.0
+AppPath=ORBI:33R:N033.15.09.270:E044.15.09.410:326:L:114:3.0
+
+// --- APP Window ---
+Window_APP=1,1,9000,9000,436,267
+Window_APP_CenterPos=1,33.262500,44.234500
+Window_APP_AltFilter=1,5000
+Window_APW=15R,2/15R
+Window_APW=33L,2/33L
+Window_APW=15L,2/15L
+Window_APW=33R,2/33R
+Window_WindRose=15R,2
+Window_WindRose=33L,2
+Window_WindRose=15L,2
+Window_WindRose=33R,2
+Airport_Dep_Transfer_Height=1000
+Airport_Dep_Transfer_Dist=2
 
 [ORER]
-Airport_Elevation=1363
-Airport_Radius=1.35
-Airport_Runway_Buffer_LVP=36:150
-Airport_Runway_Buffer_LVP=18:150
+// Erbil Intl
+Airport_Elevation=1324
+Airport_Radius=1.62
+Airport_Runway_Buffer_LVP=18:170
+Airport_Runway_Buffer_LVP=36:170
 
 System_CMAC_HighSpeed_Info=25
 System_CMAC_HighSpeed=40
 System_CMAC_NoContact_Distance_Info=3.0
 
-List_Inbound=18,2,1720,800
-List_Inbound=36,2,1720,800
+List_Inbound=18,2,1690,230
+List_Inbound=36,2,1690,230
+List_Outbound=18,2,0,230
+List_Outbound=36,2,0,230
 
-Window_APP_Scale=13
+// --- Runway Areas ---
+Airport_Runway_Area=18:N036.15.35.030:E043.56.50.124:N036.12.59.312:E043.56.48.925:N036.12.59.328:E043.56.45.917:N036.15.35.046:E043.56.47.116
 
-[ORNI]
-Airport_Elevation=103
-Airport_Radius=0.85
-Airport_Runway_Buffer_LVP=10:130
-Airport_Runway_Buffer_LVP=28:130
+// --- Approach Paths ---
+AppPath=ORER:18:N036.15.35.038:E043.56.48.620:175:R:1324:3.0
+AppPath=ORER:36:N036.12.59.320:E043.56.47.421:355:L:1324:3.0
 
-System_CMAC_HighSpeed_Info=25
-System_CMAC_HighSpeed=40
-System_CMAC_NoContact_Distance_Info=3.0
+// --- APP Window ---
+Window_APP=1,1,9000,9000,436,267
+Window_APP_CenterPos=1,36.238000,43.950000
+Window_APP_AltFilter=1,5000
+Window_APW=18,2/18
+Window_APW=36,2/36
+Window_WindRose=18,2
+Window_WindRose=36,2
+Airport_Dep_Transfer_Height=1000
+Airport_Dep_Transfer_Dist=2
 
-List_Inbound=10,2,1720,800
-List_Inbound=28,2,1720,800
-
-[ORSU]
+[ORSJ]
+// Jalal Talabani Intl
 Airport_Elevation=2492
-Airport_Radius=1.00
-Airport_Runway_Buffer_LVP=13:130
-Airport_Runway_Buffer_LVP=31:130
+Airport_Radius=1.25
+Airport_Runway_Buffer_LVP=13:150
+Airport_Runway_Buffer_LVP=31:150
 
 System_CMAC_HighSpeed_Info=25
 System_CMAC_HighSpeed=40
 System_CMAC_NoContact_Distance_Info=3.0
 
-List_Inbound=13,2,1720,800
-List_Inbound=31,2,1720,800
+List_Inbound=13,2,1690,230
+List_Inbound=31,2,1690,230
+List_Outbound=13,2,0,230
+List_Outbound=31,2,0,230
+
+// --- Runway Areas ---
+Airport_Runway_Area=13:N035.34.18.263:E045.18.02.510:N035.33.00.960:E045.19.44.290:N035.32.59.896:E045.19.43.070:N035.34.17.199:E045.18.01.290
+
+// --- Approach Paths ---
+AppPath=ORSJ:13:N035.34.17.731:E045.18.01.900:129:R:2492:3.0
+AppPath=ORSJ:31:N035.33.00.428:E045.19.43.680:309:L:2492:3.0
+
+// --- APP Window ---
+Window_APP=1,1,9000,9000,436,267
+Window_APP_CenterPos=1,35.561000,45.315000
+Window_APP_AltFilter=1,5000
+Window_APW=13,2/13
+Window_APW=31,2/31
+Window_WindRose=13,2
+Window_WindRose=31,2
+Airport_Dep_Transfer_Height=1000
+Airport_Dep_Transfer_Dist=2
 
 [ORMM]
+// Basrah Intl
 Airport_Elevation=11
-Airport_Radius=1.15
-Airport_Runway_Buffer_LVP=14:140
-Airport_Runway_Buffer_LVP=32:140
+Airport_Radius=1.4
+Airport_Runway_Buffer_LVP=14:150
+Airport_Runway_Buffer_LVP=32:150
 
 System_CMAC_HighSpeed_Info=25
 System_CMAC_HighSpeed=40
 System_CMAC_NoContact_Distance_Info=3.0
 
-List_Inbound=14,2,1720,800
-List_Inbound=32,2,1720,800
+List_Inbound=14,2,1690,230
+List_Inbound=32,2,1690,230
+List_Outbound=14,2,0,230
+List_Outbound=32,2,0,230
+
+// --- Runway Areas ---
+Airport_Runway_Area=14:N030.33.43.648:E047.38.55.407:N030.32.08.399:E047.40.35.486:N030.32.07.423:E047.40.34.232:N030.33.42.672:E047.38.54.153
+
+// --- Approach Paths ---
+AppPath=ORMM:14:N030.33.43.160:E047.38.54.780:135:R:11:3.0
+AppPath=ORMM:32:N030.32.07.911:E047.40.34.859:315:L:11:3.0
+
+// --- APP Window ---
+Window_APP=1,1,9000,9000,436,267
+Window_APP_CenterPos=1,30.549000,47.662000
+Window_APP_AltFilter=1,5000
+Window_APW=14,2/14
+Window_APW=32,2/32
+Window_WindRose=14,2
+Window_WindRose=32,2
+Airport_Dep_Transfer_Height=1000
+Airport_Dep_Transfer_Dist=2
+
+[ORNI]
+// Al Najaf Al-Ashraf Intl
+Airport_Elevation=107
+Airport_Radius=1.11
+Airport_Runway_Buffer_LVP=10:150
+Airport_Runway_Buffer_LVP=28:150
+
+System_CMAC_HighSpeed_Info=25
+System_CMAC_HighSpeed=40
+System_CMAC_NoContact_Distance_Info=3.0
+
+List_Inbound=10,2,1690,230
+List_Inbound=28,2,1690,230
+List_Outbound=10,2,0,230
+List_Outbound=28,2,0,230
+
+// --- Runway Areas ---
+Airport_Runway_Area=10:N031.59.35.955:E044.23.20.469:N031.59.12.347:E044.25.10.939:N031.59.10.935:E044.25.10.519:N031.59.34.543:E044.23.20.049
+
+// --- Approach Paths ---
+AppPath=ORNI:10:N031.59.35.249:E044.23.20.259:100:R:107:3.0
+AppPath=ORNI:28:N031.59.11.641:E044.25.10.729:280:L:107:3.0
+
+// --- APP Window ---
+Window_APP=1,1,9000,9000,436,267
+Window_APP_CenterPos=1,31.989800,44.404300
+Window_APP_AltFilter=1,5000
+Window_APW=10,2/10
+Window_APW=28,2/28
+Window_WindRose=10,2
+Window_WindRose=28,2
+Airport_Dep_Transfer_Height=1000
+Airport_Dep_Transfer_Dist=2
 
 [ORKK]
+// Kirkuk Intl
 Airport_Elevation=1061
-Airport_Radius=1.10
-Airport_Runway_Buffer_LVP=13:140
-Airport_Runway_Buffer_LVP=14:140
-Airport_Runway_Buffer_LVP=31:140
-Airport_Runway_Buffer_LVP=32:140
+Airport_Radius=1.19
+Airport_Runway_Buffer_LVP=14:150
+Airport_Runway_Buffer_LVP=32:150
+Airport_Runway_Buffer_LVP=13:150
+Airport_Runway_Buffer_LVP=31:150
 
 System_CMAC_HighSpeed_Info=25
 System_CMAC_HighSpeed=40
 System_CMAC_NoContact_Distance_Info=3.0
 
-List_Inbound=13,2,1520,800
-List_Inbound=14,2,1720,800
-List_Inbound=31,2,1720,800
-List_Inbound=32,2,1520,800
+List_Inbound=14,2,1690,230
+List_Inbound=32,2,1690,230
+List_Outbound=14,2,0,230
+List_Outbound=32,2,0,230
+List_Inbound=13,2,1690,400
+List_Inbound=31,2,1690,400
+List_Outbound=13,2,0,400
+List_Outbound=31,2,0,400
+
+// --- Runway Areas ---
+Airport_Runway_Area=14:N035.28.44.370:E044.20.37.919:N035.27.35.088:E044.21.36.480:N035.27.34.190:E044.21.34.878:N035.28.43.472:E044.20.36.317
+Airport_Runway_Area=13:N035.28.44.669:E044.20.04.702:N035.27.38.177:E044.21.31.062:N035.27.37.119:E044.21.29.834:N035.28.43.611:E044.20.03.474
+
+// --- Approach Paths ---
+AppPath=ORKK:14:N035.28.43.921:E044.20.37.118:140:R:1061:3.0
+AppPath=ORKK:32:N035.27.34.639:E044.21.35.679:320:L:1061:3.0
+AppPath=ORKK:13:N035.28.44.140:E044.20.04.088:128:R:1061:3.0
+AppPath=ORKK:31:N035.27.37.648:E044.21.30.448:308:L:1061:3.0
+
+// --- APP Window ---
+Window_APP=1,1,9000,9000,436,267
+Window_APP_CenterPos=1,35.469000,44.348000
+Window_APP_AltFilter=1,5000
+Window_APW=14,2/14
+Window_APW=32,2/32
+Window_APW=13,2/13
+Window_APW=31,2/31
+Window_WindRose=14,2
+Window_WindRose=32,2
+Window_WindRose=13,2
+Window_WindRose=31,2
+Airport_Dep_Transfer_Height=1000
+Airport_Dep_Transfer_Dist=2
 
 [ORBM]
-Airport_Elevation=709
-Airport_Radius=1.10
-Airport_Runway_Buffer_LVP=15:140
-Airport_Runway_Buffer_LVP=33:140
+// Mosul
+Airport_Elevation=719
+Airport_Radius=1.03
+Airport_Runway_Buffer_LVP=15:150
+Airport_Runway_Buffer_LVP=33:150
 
 System_CMAC_HighSpeed_Info=25
 System_CMAC_HighSpeed=40
 System_CMAC_NoContact_Distance_Info=3.0
 
-List_Inbound=15,2,1520,800
-List_Inbound=33,2,1720,800
+List_Inbound=15,2,1690,230
+List_Inbound=33,2,1690,230
+List_Outbound=15,2,0,230
+List_Outbound=33,2,0,230
+
+// --- Runway Areas ---
+Airport_Runway_Area=15:N036.19.00.756:E043.08.31.225:N036.17.41.275:E043.09.11.714:N036.17.40.723:E043.09.10.044:N036.19.00.204:E043.08.29.555
+
+// --- Approach Paths ---
+AppPath=ORBM:15:N036.19.00.480:E043.08.30.390:153:R:719:3.0
+AppPath=ORBM:33:N036.17.40.999:E043.09.10.879:333:L:719:3.0
+
+// --- APP Window ---
+Window_APP=1,1,9000,9000,436,267
+Window_APP_CenterPos=1,36.306000,43.147500
+Window_APP_AltFilter=1,5000
+Window_APW=15,2/15
+Window_APW=33,2/33
+Window_WindRose=15,2
+Window_WindRose=33,2
+Airport_Dep_Transfer_Height=1000
+Airport_Dep_Transfer_Dist=2
+
+[OREZ]
+// Embassy Heliport
+Airport_Elevation=124
+Airport_Radius=0.44
+Airport_Runway_Buffer_LVP=07:150
+Airport_Runway_Buffer_LVP=25:150
+
+System_CMAC_HighSpeed_Info=25
+System_CMAC_HighSpeed=40
+System_CMAC_NoContact_Distance_Info=3.0
+
+List_Inbound=07,2,1690,230
+List_Inbound=25,2,1690,230
+List_Outbound=07,2,0,230
+List_Outbound=25,2,0,230
+
+// --- Runway Areas ---
+Airport_Runway_Area=07:N033.17.47.656:E044.22.11.107:N033.17.50.234:E044.22.23.459:N033.17.49.606:E044.22.23.646:N033.17.47.029:E044.22.11.295
+
+// --- Approach Paths ---
+AppPath=OREZ:07:N033.17.47.342:E044.22.11.201:76:R:124:3.0
+AppPath=OREZ:25:N033.17.49.920:E044.22.23.552:256:L:124:3.0
+
+// --- APP Window ---
+Window_APP=1,1,9000,9000,436,267
+Window_APP_CenterPos=1,33.296500,44.372500
+Window_APP_AltFilter=1,5000
+Window_APW=07,2/07
+Window_APW=25,2/25
+Window_WindRose=07,2
+Window_WindRose=25,2
+Airport_Dep_Transfer_Height=1000
+Airport_Dep_Transfer_Dist=2
