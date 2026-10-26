@@ -1,5 +1,5 @@
 VOICE
-AG:KIR TMA (Baghdad Approach):127.700
+AG:KRK TMA (Baghdad Approach):127.700
 AG:ORBM GND (Mosul Ground):126.700
 AG:ORBM TWR (Mosul Tower):120.200
 AG:ORER TWR (Erbil Tower):128.800

@@ -11,7 +11,7 @@ PROFILE:ALI_APP:150:5
 ATIS2:Baghdad Approach
 ATIS3:Covering the Ali TMA
 ATIS4:Submit feedback at vats.im/kwiq-fb
-PROFILE:KIR_APP:150:5
+PROFILE:KRK_APP:150:5
 ATIS2:Baghdad Approach
 ATIS3:Covering the Kirkuk TMA
 ATIS4:Submit feedback at vats.im/kwiq-fb
