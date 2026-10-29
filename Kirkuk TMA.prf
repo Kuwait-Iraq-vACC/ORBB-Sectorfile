@@ -38,19 +38,20 @@ Sounds	Sound15	\ORBB\Sounds\new_atis.wav
 Sounds	Sound16	\ORBB\Sounds\handoff_refused.wav
 Sounds	Sound17	\ORBB\Sounds\pointout.wav
 Sounds	Sound18	\ORBB\Sounds\startup.wav
-Plugins	Plugin0	\ORBB\Plugins\DiscordEuroScope\DiscordEuroscope.dll
-Plugins	Plugin1	\ORBB\Plugins\RDFPlugin\RDFPlugin.dll
-Plugins	Plugin1Display0	Standard ES radar screen
-Plugins	Plugin2	\ORBB\Plugins\TopSky\TopSky.dll
-Plugins	Plugin2Display0	Ground Radar display
-Plugins	Plugin2Display1	Standard ES radar screen
-Plugins	Plugin3	\ORBB\Plugins\GRplugin\GRplugin.dll
+Plugins	Plugin0	\ORBB\Plugins\KWIQ Controller Plugin\KWIQPlugin.dll
+Plugins	Plugin0Display0	Ground Radar display
+Plugins	Plugin0Display1	Standard ES radar screen
+Plugins	Plugin1	\ORBB\Plugins\DiscordEuroScope\DiscordEuroscope.dll
+Plugins	Plugin2	\ORBB\Plugins\RDFPlugin\RDFPlugin.dll
+Plugins	Plugin2Display0	Standard ES radar screen
+Plugins	Plugin3	\ORBB\Plugins\TopSky\TopSky.dll
 Plugins	Plugin3Display0	Ground Radar display
-Plugins	Plugin4	\ORBB\Plugins\CDM\CDM.dll
+Plugins	Plugin3Display1	Standard ES radar screen
+Plugins	Plugin4	\ORBB\Plugins\GRplugin\GRplugin.dll
 Plugins	Plugin4Display0	Ground Radar display
-Plugins	Plugin5	\ORBB\Plugins\VFPC\VFPC.dll
-Plugins	Plugin6	\ORBB\Plugins\VATCAN Bookings\VATCANBookings.dll
-Plugins	Plugin7	\ORBB\Plugins\VCH\VCH.dll
+Plugins	Plugin5	\ORBB\Plugins\CDM\CDM.dll
+Plugins	Plugin5Display0	Ground Radar display
+Plugins	Plugin6	\ORBB\Plugins\VFPC\VFPC.dll
 ASRFastKeys	1	\ORBB\ASR\Radar\APP.asr
 ASRFastKeys	2	\ORBB\ASR\SMGCS\Erbil SMGCS.asr
 ASRFastKeys	3	\ORBB\ASR\SMGCS\Kirkuk SMGCS.asr
