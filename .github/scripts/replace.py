@@ -1,7 +1,7 @@
 from pathlib import Path
 
-# Folder containing the files
-folder = Path(r"C:\GitHub\ORBB-Sectorfile")
+# Repo root (this script lives in .github/scripts/)
+folder = Path(__file__).resolve().parents[2]
 
 # Set to None to process all files
 # Example: ".prf", ".txt", ".ese"
@@ -21,17 +21,22 @@ for file in folder.rglob("*"):
     if file_extension and file.suffix.lower() != file_extension.lower():
         continue
 
-    try:
-        content = file.read_text(encoding="utf-8")
-    except UnicodeDecodeError:
+    # Remember which encoding worked so the file is written back the same
+    # way — EuroScope .prf files are often cp1252, and re-saving them as
+    # UTF-8 mangles any non-ASCII characters for EuroScope.
+    for encoding in ("utf-8", "cp1252"):
         try:
-            content = file.read_text(encoding="cp1252")
-        except Exception:
+            content = file.read_text(encoding=encoding)
+            break
+        except UnicodeDecodeError:
             continue
+    else:
+        print(f"Skipped (unreadable encoding): {file}")
+        continue
 
     if old_text in content:
         content = content.replace(old_text, new_text)
-        file.write_text(content, encoding="utf-8")
+        file.write_text(content, encoding=encoding)
         files_modified += 1
         print(f"Modified: {file}")
 

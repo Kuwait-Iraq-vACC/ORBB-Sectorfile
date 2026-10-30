@@ -23,7 +23,7 @@ import math
 import sys
 import traceback
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 # ---------------------------------------------------------------------------
 # Coordinate parsing
@@ -198,11 +198,11 @@ def _is_lara_activation_comment(line: str, fuzz_cutoff: float = 0.75) -> bool:
 # File parser
 # ---------------------------------------------------------------------------
 
-def parse_area_file(path: Path, fallback_type: str) -> Dict[str, Any]:
+def parse_area_file(path: Path, fallback_type: str) -> Optional[Dict[str, Any]]:
     """
     Parse a single TopSky area .txt file.
 
-    Returns a dict with keys:
+    Returns None if the file could not be parsed, otherwise a dict with keys:
         name, type, lowerFL, upperFL, coords, activatedViaLara
     """
     name              = None
@@ -276,6 +276,9 @@ def parse_area_file(path: Path, fallback_type: str) -> Dict[str, Any]:
     except Exception as exc:
         print(f"WARNING: Error while parsing {path}: {exc}", file=sys.stderr)
         traceback.print_exc()
+        # Don't emit a half-parsed polygon — a truncated ring would still
+        # pass validation once auto-closed, and silently show wrong airspace.
+        return None
 
     if saw_circle:
         final_coords = circle_coords
@@ -328,6 +331,7 @@ def main() -> None:
     args = parser.parse_args()
 
     features: List[Dict[str, Any]] = []
+    failed: List[Path] = []
     input_files = collect_files(args.input_dir)
 
     if args.debug:
@@ -336,6 +340,10 @@ def main() -> None:
     for file_path in input_files:
         fallback_type = file_path.parent.name
         area = parse_area_file(file_path, fallback_type)
+
+        if area is None:
+            failed.append(file_path)
+            continue
 
         if not area['activatedViaLara']:
             if args.debug:
@@ -370,6 +378,10 @@ def main() -> None:
         with out_path.open('w', encoding='utf-8') as fh:
             json.dump(feature_collection, fh, ensure_ascii=False, indent=2)
         print(f"GeoJSON written to {out_path} — {len(features)} feature(s) included.")
+        if failed:
+            print(f"⚠️  {len(failed)} file(s) skipped due to parse errors:", file=sys.stderr)
+            for p in failed:
+                print(f"::warning file={p}::Failed to parse area file — not included in GeoJSON")
     except Exception as exc:
         print(f"ERROR: Could not write output file: {exc}", file=sys.stderr)
         sys.exit(1)
