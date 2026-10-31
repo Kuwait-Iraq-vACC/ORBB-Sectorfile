@@ -4,6 +4,7 @@
 // General Settings
 // ============================================================
 
+Maps_URL=https://raw.githubusercontent.com/Kuwait-Iraq-vACC/ORBB-Sectorfile/refs/heads/main/ORBB/Plugins/GRplugin/GRpluginMaps.txt
 System_GlobalMenu_FontSize=15
 Maps_FontSize=10
 RawVideo_MaxHistory=0

@@ -1,2 +1,7 @@
-//VERSION:20260529
+//VERSION:20261025
 SCTFILEPATH:..\..\..\ORBB*
+
+// Baghdad FIR (ORBB) - Ground Radar plugin maps
+// Airports: ORBI, ORER, ORSJ, ORMM, ORNI, ORKK, ORBM, OREZ
+// Geometry: OpenStreetMap + Esri imagery; runways: ORBB sector file; CTRs: ORBB .ese;
+// stands/taxiways: Jeppesen charts. Real-world SMGCS colour scheme.
