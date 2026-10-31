@@ -1,7 +1,12 @@
 from pathlib import Path
 
-# Folder containing the map files
-folder = Path(r"C:\GitHub\ORBB-Sectorfile\.data\TopSky Shared\Maps\Combined\(Extended) All Centrelines")
+# Folder containing the map files, relative to the repo root
+# (this script lives in .github/scripts/)
+REPO_ROOT = Path(__file__).resolve().parents[2]
+folder = REPO_ROOT / ".data" / "TopSky Shared" / "Maps" / "Combined" / "(Extended) All Centrelines"
+
+if not folder.is_dir():
+    raise SystemExit(f"Folder not found: {folder}")
 
 for file_path in folder.glob("*"):
     if not file_path.is_file():
