@@ -10,7 +10,7 @@ m_Column: C/S:9:0:10021:8:170:1:TopSky plugin::TopSky plugin:0:0.0
 m_Column:RT:2:0:58:32:32:1:TopSky plugin:::0:0.0
 m_Column:FR:2:0:10031:7:7:1:TopSky plugin:::0:0.0
 m_Column:ATYP:7:1:70:29:0:1:TopSky plugin:::1:0.0
-m_Column:SSR:5:1:106:2005:2004:1:TopSky plugin:KWIQ Controller Plugin:KWIQ Controller Plugin:1:0.0
+m_Column:SSR:5:1:2:2005:2004:1::KWIQ Controller Plugin:KWIQ Controller Plugin:1:0.0
 m_Column:ASSR:5:1:10041:2005:2004:1:TopSky plugin:KWIQ Controller Plugin:KWIQ Controller Plugin:1:0.0
 m_Column:SID:8:1:10011:17:18:1:TopSky plugin:::0:0.0
 m_Column:STAR:8:1:10012:18:18:1:TopSky plugin:::1:0.0
@@ -36,8 +36,8 @@ m_Column: C/S:9:0:10021:8:99:1:TopSky plugin::TopSky plugin:0:0.0
 m_Column:RT:2:0:58:32:32:1:TopSky plugin:::0:0.0
 m_Column:FR:2:0:10031:7:7:1:TopSky plugin:::0:0.0
 m_Column:ATYP:7:1:70:29:0:1:TopSky plugin:::1:0.0
-m_Column:SSR:4:1:106:2005:2004:1:TopSky plugin:KWIQ Controller Plugin:KWIQ Controller Plugin:1:0.0
-m_Column:ASSR:5:1:10041:2005:2004:1:TopSky plugin:KWIQ Controller Plugin:KWIQ Controller Plugin:1:0.0
+m_Column:SSR:4:1:2:2005:2004:1::KWIQ Controller Plugin:KWIQ Controller Plugin:1:0.0
+m_Column:ASSR:5:1:60:2005:2004:1::KWIQ Controller Plugin:KWIQ Controller Plugin:1:0.0
 m_Column:RWY:3:1:163:19:19:1:TopSky plugin:::0:0.0
 m_Column:SID:8:0:10011:17:123:1:TopSky plugin::TopSky plugin:0:0.0
 m_Column:STAR:8:1:10012:18:124:1:TopSky plugin::TopSky plugin:1:0.0
