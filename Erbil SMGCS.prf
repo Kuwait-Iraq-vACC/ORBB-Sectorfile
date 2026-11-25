@@ -46,6 +46,7 @@ Plugins	Plugin1Display0	Ground Radar display
 Plugins	Plugin1Display1	Standard ES radar screen
 Plugins	Plugin2	\ORBB\Plugins\GRplugin\GRplugin.dll
 Plugins	Plugin2Display0	Ground Radar display
+Plugins	Plugin3	\ORBB\Plugins\CDM\CDM.dll
 Plugins	Plugin3Display0	Ground Radar display
 Plugins	Plugin3Display1	Standard ES radar screen
 ASRFastKeys	1	\ORBB\ASR\SMGCS\Erbil SMGCS.asr
