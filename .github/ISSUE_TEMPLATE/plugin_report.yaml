@@ -28,8 +28,6 @@ body:
         - "KWIQ Controller Plugin"
         - "vACS"
         - "vATIS"
-        - "VATCAN Bookings"
-        - "VCH"
         - "Other (say which below)"
     validations:
       required: false
