@@ -1,7 +1,7 @@
 <!-- ===== GUIDELINES (delete this section) ===== -->
 
 > [!IMPORTANT]
-> TopSky, GRplugin, VFPC files in `ORBB/Plugins/` are generated from `.data/`. Make the change in `.data/`, or it is overwritten on the next build.
+> TopSky, GRplugin, FPC files in `ORBB/Plugins/` are generated from `.data/`. Make the change in `.data/`, or it is overwritten on the next build.
 
 <!-- ===== GUIDELINES (delete everything above) ===== -->
 
