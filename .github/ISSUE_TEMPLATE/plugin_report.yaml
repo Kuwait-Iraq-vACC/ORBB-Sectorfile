@@ -24,12 +24,12 @@ body:
       multiple: false
       options:
         - "CDM"
+        - "FPC"
         - "KWIQ Controller Plugin"
         - "vACS"
         - "vATIS"
         - "VATCAN Bookings"
         - "VCH"
-        - "VFPC"
         - "Other (say which below)"
     validations:
       required: false
