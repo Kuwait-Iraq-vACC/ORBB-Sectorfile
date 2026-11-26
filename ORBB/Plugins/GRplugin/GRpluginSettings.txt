@@ -120,7 +120,6 @@ List_Departure_Items=30
 // Window
 // ============================================================
 
-Window_APP=1,1,9000,9000,436,267
 Window_APP_DefPos=9000,9000
 Window_APP_DefSize=436,267
 Window_APP_AltFilter=15000
@@ -200,6 +199,9 @@ Label_DRWY=0,1,0
 Label_RMK=0,1,1
 Label_STAND=0,1,0
 Label_GS=1,0,1
+
+[TWR]
+Window_APP=1,1,4000,4000,436,267
 
 [ORBI]
 // Baghdad Intl

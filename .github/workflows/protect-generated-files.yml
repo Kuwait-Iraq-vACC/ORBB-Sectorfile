@@ -1,6 +1,6 @@
 name: Protect Generated Files
 
-# Files under ORBB/Plugins/ (TopSky, GRplugin, VFPC …) are built from
+# Files under ORBB/Plugins/ (TopSky, GRplugin …) are built from
 # .data/ by the compiler workflows. A hand edit to one of them is lost the
 # next time its sources change and the compiler runs again.
 #
@@ -52,7 +52,6 @@ jobs:
         run: |
           python .github/scripts/GRplugin/Concatenate-GRplugin-Shared.py
           python .github/scripts/TopSky/Concatenate-TopSky-Shared.py
-          python .github/scripts/VFPC/Concatenate-VFPC.py
 
       - name: Find generated files edited by hand
         id: find
