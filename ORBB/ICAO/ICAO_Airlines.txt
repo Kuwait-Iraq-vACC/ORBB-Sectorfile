@@ -24,7 +24,7 @@
 ;  only. The data must not be copied, photocopied, translated, reverse engineered, decompiled or reduced to any           ;
 ;  electronic medium or machine legible form, neither completely nor in part.                                             ;
 ;=========================================================================================================================;
-;  AIRAC 2611/1  ++  File-Publisher: Kuwait & Iraq vACC - ORBB                                                            ;
+;  AIRAC 2612/1  ++  File-Publisher: Kuwait & Iraq vACC - ORBB                                                            ;
 ;=========================================================================================================================;
 AAB	ABELAG AVIATION	ABG	BELGIUM
 AAC	ARMY AIR CORPS	ARMYAIR	UNITED KINGDOM
